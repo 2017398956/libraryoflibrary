@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LibraryOfLibrary</string>
+    <string name="server_return_exception">状态异常</string>
+    <string name="internet_exception">网络异常</string>
+</resources>
