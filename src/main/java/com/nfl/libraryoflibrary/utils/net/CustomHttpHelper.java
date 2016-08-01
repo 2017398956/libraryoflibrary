@@ -2,6 +2,7 @@ package com.nfl.libraryoflibrary.utils.net;
 
 import com.nfl.libraryoflibrary.BuildConfig;
 import com.nfl.libraryoflibrary.utils.LogTool;
+import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 
 import org.json.JSONObject;
 
@@ -80,10 +81,12 @@ public class CustomHttpHelper {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                CustomProgressBarDialog.dimissProgressBarDialog();
                 LogTool.i("上传图片失败") ;
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                CustomProgressBarDialog.dimissProgressBarDialog();
                 JSONObject jsonObject = null ;
                 try {
                     jsonObject = new JSONObject(response.body().string()) ;
