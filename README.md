@@ -1,4 +1,4 @@
-# libraryoflibrary
+﻿# libraryoflibrary
 这是个工具库集合，只所以叫libraryoflibrary目的是作为其他library的library（模块化，插件式开发）
 
 ##1.添加可上拉加载更多，下拉刷新功能：RefreshListView
@@ -7,3 +7,4 @@
 ##4.添加Log工具：LogTool
 ##5.添加日期工具：DateTool
 ##6.添加网络访问工具：CustomHttpHelper
+##7.添加图片选择器（支持4.4以上版本，可选择拍照或者从相册选择）

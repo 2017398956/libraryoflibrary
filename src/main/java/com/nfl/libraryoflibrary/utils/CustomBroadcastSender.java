@@ -22,6 +22,7 @@ public class CustomBroadcastSender {
      */
     public static void sendAppStartBroadCast(Context context){
         context.sendBroadcast(new Intent(INTENT_ACTION_APP_START));
+        LogTool.i("AppStartBroadCastSended.") ;
 //        context.sendBroadcast(new Intent(INTENT_ACTION_APP_START , );
     }
 

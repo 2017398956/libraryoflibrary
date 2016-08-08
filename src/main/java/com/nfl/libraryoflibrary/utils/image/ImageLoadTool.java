@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -27,7 +28,7 @@ public class ImageLoadTool {
     public static void loadImageByPath(Context context, String filePath, ImageView view) {
         File file = new File(filePath);
         if (file.exists()) {
-            Glide.with(context).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+            Glide.with(context).load(file).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
         }
     }
 
@@ -41,15 +42,15 @@ public class ImageLoadTool {
     public static void loadImage(Activity context, String imageUrl, ImageView view, int defaultResID, CustomBitmapTransformation customBitmapTransformation) {
         if (0 == defaultResID) {
             if (null == customBitmapTransformation) {
-                Glide.with(context).load(Uri.parse(imageUrl)).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             } else {
-                Glide.with(context).load(Uri.parse(imageUrl)).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             }
         } else {
             if (null == customBitmapTransformation) {
-                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             } else {
-                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             }
         }
     }
@@ -57,17 +58,32 @@ public class ImageLoadTool {
     public static void loadImage(Context context, String imageUrl, ImageView view, int defaultResID, CustomBitmapTransformation customBitmapTransformation) {
         if (0 == defaultResID) {
             if (null == customBitmapTransformation) {
-                Glide.with(context).load(Uri.parse(imageUrl)).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             } else {
-                Glide.with(context).load(Uri.parse(imageUrl)).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             }
         } else {
             if (null == customBitmapTransformation) {
-                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             } else {
-                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.NONE).into(view);
+                Glide.with(context).load(Uri.parse(imageUrl)).error(defaultResID).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
             }
         }
     }
 
+    public static void loadImage(Context context, String imageUrl, ImageView view, Drawable drawable, CustomBitmapTransformation customBitmapTransformation) {
+        if (null == drawable) {
+            if (null == customBitmapTransformation) {
+                Glide.with(context).load(Uri.parse(imageUrl)).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
+            } else {
+                Glide.with(context).load(Uri.parse(imageUrl)).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
+            }
+        } else {
+            if (null == customBitmapTransformation) {
+                Glide.with(context).load(Uri.parse(imageUrl)).error(drawable).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
+            } else {
+                Glide.with(context).load(Uri.parse(imageUrl)).error(drawable).transform(customBitmapTransformation).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
+            }
+        }
+    }
 }

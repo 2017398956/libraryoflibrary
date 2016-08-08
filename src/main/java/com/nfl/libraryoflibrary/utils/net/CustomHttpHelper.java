@@ -1,6 +1,7 @@
 package com.nfl.libraryoflibrary.utils.net;
 
 import com.nfl.libraryoflibrary.BuildConfig;
+import com.nfl.libraryoflibrary.constant.Constants;
 import com.nfl.libraryoflibrary.utils.LogTool;
 import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 
@@ -54,7 +55,7 @@ public class CustomHttpHelper {
         }
 
         builder.add("devtype", "Android");// 设备类型（区分安卓和IOS）
-        builder.add("appversion", "3.0.0.0");// app版本
+        builder.add("appversion", Constants.APPVERSION);// app版本
         FormBody formBody = builder.build();
         Request request = new Request.Builder().url(url).post(formBody).build();
         okHttpClient.newCall(request).enqueue((Callback) customCallBack);
@@ -66,11 +67,6 @@ public class CustomHttpHelper {
         if (f != null) {
             builder.addFormDataPart("img", f.getName(), RequestBody.create(MEDIA_TYPE_PNG, f));
         }
-        //添加其它信息
-//        builder.addFormDataPart("time",takePicTime);
-//        builder.addFormDataPart("mapX", SharedInfoUtils.getLongitude());
-//        builder.addFormDataPart("mapY",SharedInfoUtils.getLatitude());
-//        builder.addFormDataPart("name",SharedInfoUtils.getUserName());
         MultipartBody requestBody = builder.build();
         //构建请求
         Request request = new Request.Builder()
