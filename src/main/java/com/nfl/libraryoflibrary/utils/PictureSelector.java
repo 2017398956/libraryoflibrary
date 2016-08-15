@@ -152,7 +152,7 @@ public class PictureSelector {
              */
             cropIntent.putExtra("return-data", false);
             cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(photoPath)));
-            // 不能用路径的方式
+            // 不建议用路径的方式，路径方式需要加“file://"
             // cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoPath);
             cropIntent.putExtra("outputFormat",
                     Bitmap.CompressFormat.JPEG.toString());
