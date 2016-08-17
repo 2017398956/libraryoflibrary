@@ -8,9 +8,9 @@ import com.nfl.libraryoflibrary.constant.Constants;
 public class URLs {
 
     public static final String BASE_URL = "http://mop.99bill.net" ;
-//    public static final String BASE_URL = "http://192.168.87.23"  ;
+    //    public static final String BASE_URL = "http://192.168.87.23"  ;
     public static final String PERSONAL_STEPS = BASE_URL + ":8097/handler/HandlerSport.ashx" ;
-    // 封面的上传地址
+    // 灏侀潰鐨勪笂浼犲湴鍧�
     public static String getUpLoadUrl(String loginName , String mDeviceId){
         return PERSONAL_STEPS +
                 "?username=" + loginName +
@@ -19,4 +19,4 @@ public class URLs {
                 "&devtype=Android" +
                 "&appversion=" + Constants.APPVERSION;
     }
- }
+}
