@@ -27,7 +27,11 @@ public abstract class CustomCallBack implements CustomCallBackInterface , Callba
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        success(response.body().string());
         CustomProgressBarDialog.dimissProgressBarDialog();
+        String resultTemp = response.body().string() ;
+        if(null == resultTemp || "".equals(resultTemp)){
+            return;
+        }
+        success(resultTemp);
     }
 }
