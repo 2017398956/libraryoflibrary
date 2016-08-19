@@ -21,19 +21,26 @@ import com.nfl.libraryoflibrary.constant.ApplicationContext;
 public class ToastTool {
 
     public static void showShortToast(String info){
+        if(null == ApplicationContext.applicationContext)
+            return;
         Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_SHORT).show();
     }
 
     public static void showShortToast(int resId){
+        if(null == ApplicationContext.applicationContext)
+            return;
         Toast.makeText(ApplicationContext.applicationContext , ApplicationContext.applicationContext.getResources().getText(resId) , Toast.LENGTH_SHORT).show();
     }
 
     public static void showLongToast(String info){
+        if(null == ApplicationContext.applicationContext)
+            return;
         Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_LONG).show();
     }
 
     public static void showCustomShortToast(String info){
-
+        if(null == ApplicationContext.applicationContext)
+            return;
         Toast toast = Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_SHORT) ;
         ViewGroup v = (ViewGroup) toast.getView() ;
         v.setBackgroundResource(R.drawable.toast_bg);
