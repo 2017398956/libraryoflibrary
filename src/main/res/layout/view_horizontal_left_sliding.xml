@@ -1,0 +1,68 @@
+<com.nfl.libraryoflibrary.view.CustomHorizontalLeftSlidingView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_displayed"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#ffffff">
+
+        <TextView
+            android:id="@+id/tv_displayed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="hello_world"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_hidden"
+        android:layout_width="150dp"
+        android:layout_height="50dp">
+
+        <RelativeLayout
+            android:id="@+id/delete_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#ff0000"
+            android:clickable="true">
+
+            <View
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/lol_img_trash" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/view_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#c2c2c2"
+            android:clickable="true">
+
+            <View
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/lol_img_search" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/star_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#aaffff"
+            android:clickable="true">
+
+            <View
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/lol_img_star" />
+        </RelativeLayout>
+    </LinearLayout>
+</com.nfl.libraryoflibrary.view.CustomHorizontalLeftSlidingView>
