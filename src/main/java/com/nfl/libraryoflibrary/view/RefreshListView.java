@@ -1,6 +1,8 @@
 package com.nfl.libraryoflibrary.view;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -84,7 +86,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
         headerView.measure(0, 0); // 系统会帮我们测量出headerView的高度
         headerViewHeight = headerView.getMeasuredHeight();
-        headerView.setPadding(0, -headerViewHeight, 0, 0);
+//        headerView.setPadding(0, -headerViewHeight, 0, 0);
         this.addHeaderView(headerView); // 向ListView的顶部添加一个view对象
         initAnimation();
     }
@@ -142,7 +144,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
                         refreshHeaderView();
                     }
                     // 下拉头布局
-                    headerView.setPadding(0, paddingTop, 0, 0);
+//                    headerView.setPadding(0, paddingTop, 0, 0);
                     return true;
                 }
                 break;
@@ -151,7 +153,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
                 if (currentState == RELEASE_REFRESH) {
                     Log.i(TAG, "刷新数据.");
                     // 把头布局设置为完全显示状态
-                    headerView.setPadding(0, 0, 0, 0);
+//                    headerView.setPadding(0, 0, 0, 0);
                     // 进入到正在刷新中状态
                     currentState = REFRESHING;
                     refreshHeaderView();
@@ -161,7 +163,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
                     }
                 } else if (currentState == DOWN_PULL_REFRESH) {
                     // 隐藏头布局
-                    headerView.setPadding(0, -headerViewHeight, 0, 0);
+//                    headerView.setPadding(0, -headerViewHeight, 0, 0);
                 }
                 break;
             default:
@@ -249,7 +251,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
      * 隐藏头布局
      */
     public void hideHeaderView() {
-        headerView.setPadding(0, -headerViewHeight, 0, 0);
+//        headerView.setPadding(0, -headerViewHeight, 0, 0);
         ivArrow.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
         tvState.setText("下拉刷新");
@@ -263,5 +265,9 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     public void hideFooterView() {
         footerView.setPadding(0, -footerViewHeight, 0, 0);
         isLoadingMore = false;
+    }
+
+    public boolean isLoadingMore(){
+        return isLoadingMore ;
     }
 }

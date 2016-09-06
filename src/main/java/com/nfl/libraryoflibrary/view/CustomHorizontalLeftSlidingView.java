@@ -21,11 +21,13 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
 
     private ViewDragHelper viewDragHelper;
     private View displayedView;// 显示的视图
+    private int displayedViewMoveCount = 0 ;
     private View hiddenView;// 被隐藏，等待滑出的视图
     private int dragDistance;// 最大滑动距离
     private boolean viewsFromXML = true ;
-    private final double AUTO_OPEN_SPEED_LIMIT = 800.0;
+    private final double AUTO_OPEN_SPEED_LIMIT = 400.0;// 滑动灵敏度，越小越灵敏，需要滑动的距离越小
     private int draggedX;
+    private OnClickCallBack clickCallBack ;
 
     public CustomHorizontalLeftSlidingView(Context context) {
         this(context, null);
@@ -65,9 +67,9 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
         @Override
         public boolean tryCaptureView(View view, int i) {
             if(view == displayedView){
-                LogTool.i("tryCaptureView:" + displayedView);
+                LogTool.i("tryCaptureView:displayedView");
             }else if(view == hiddenView){
-                LogTool.i("tryCaptureView:" + hiddenView);
+                LogTool.i("tryCaptureView:hiddenView" );
             }else{
                 LogTool.i("tryCaptureView:other");
             }
@@ -167,7 +169,6 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        // 经测试 MotionEvent.ACTION_MOVE 出现的次数不大于2，可看做OnClick事件
         LogTool.i("onInterceptTouchEvent" + ev.getAction()) ;
         /**
          * ViewDragHelper.shouldInterceptTouchEvent(MotionEvent ev)
@@ -177,13 +178,20 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
          *
          * @param ev MotionEvent provided to onInterceptTouchEvent
          * @return true if the parent view should return true from onInterceptTouchEvent
+         * @return true 事件将不会分发到子View
          */
         if(viewDragHelper.shouldInterceptTouchEvent(ev)) {
+            // 如果ViewDragHelper应该拦截触摸事件，则触摸事件不会分发到子View。
+            // 即：处理滑动事件
+            // 现在问题：displayedView滑动时不会触法该事件，hiddenView滑动会调用该事件
+            // 原因：displayedView滑动时ev.getAction()为ACTION_DOWN,
+            //       hidden滑动时ev.getAction()为ACTION_MOVE 。
+            // 这是由于hidden设置OnClickListener等触摸类监听方法时，hidden是GONE状态
+            // 而displayedView设置OnClickListener等触摸类监听方法时，displayedView是VISIBLE状态
             LogTool.i("====================") ;
             return true;
         }
-        LogTool.i("-----------------------"+ super.onInterceptTouchEvent(ev)) ;
-//        return super.onInterceptTouchEvent(ev);
+        // 由于 super.onInterceptTouchEvent(ev) = false ，所以直接返回false即可
         return false ;
     }
 
@@ -194,7 +202,28 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        LogTool.i("onTouchEvent" + " | Action:" + event.getAction()) ;
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            // 解决滑动后ACTION_UP没有被触法，displayedViewMoveCount没清空的问题
+            // 所以，重置操作不能放在ACTION_UP触法时进行。ACTION_DOWN一定会触法
+            displayedViewMoveCount = 0 ;
+        }
+        if(event.getAction() == MotionEvent.ACTION_MOVE){
+            displayedViewMoveCount++ ;
+        }
+        LogTool.i("onTouchEvent" + " | Action:" + event.getAction() + " | displayedViewMoveCount:" + displayedViewMoveCount) ;
+
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            // 经测试 MotionEvent.ACTION_MOVE 出现的次数不大于2，可看做OnClick事件
+            if(displayedViewMoveCount <= 2){
+                if(hiddenView.getVisibility() == View.VISIBLE){
+                    resetView();
+                }
+                if(null != clickCallBack){
+                    LogTool.i("displayedView has been clicked .") ;
+                    clickCallBack.OnClickListener(this);
+                }
+            }
+        }
 //        if (event.getAction() == MotionEvent.ACTION_SCROLL){
 //            displayedView.setClickable(false);
 //            viewDragHelper.processTouchEvent(event);
@@ -256,5 +285,28 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
 
     public void setDragDistance(int dragDistance) {
         this.dragDistance = dragDistance;
+    }
+
+    /**
+     * displayedView的OnClickListener方法
+     */
+    public  interface OnClickCallBack{
+        void OnClickListener(View view);
+    }
+
+    /**
+     * displayedView的OnClickListener方法 *必须* 通过该方法实现
+     * @param callBack 自定义点击事件
+     */
+    public void setDisplayedViewOnClickListener(OnClickCallBack callBack){
+        this.clickCallBack = callBack ;
+    }
+
+    /**
+     * 恢复初始状态
+     */
+    public void resetView(){
+        viewDragHelper.smoothSlideViewTo(displayedView, 0 , 0);
+        ViewCompat.postInvalidateOnAnimation(CustomHorizontalLeftSlidingView.this);
     }
 }

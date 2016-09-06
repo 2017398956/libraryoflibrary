@@ -2,4 +2,6 @@
 <resources>
     <color name="lol_bg">#d8d8d8</color>
     <color name="lol_front">#EDEDED</color>
+    <color name="swipe_refresh_layout">#ff33b5e5</color>
+    <color name="zhihu_bg">#F2F4F7</color>
 </resources>

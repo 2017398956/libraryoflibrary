@@ -14,3 +14,5 @@
 ##11.添加判断手机是否root功能
 ##12.添加RecyclerView
 ##13.添加仿造QQ侧滑删除效果（注意事项很多，还未写全注释）
+##14.仿造QQ侧滑删除效果修改（PullToRefreshSwipeMenuListView）
+##15.添加multidex以解决65536问题
