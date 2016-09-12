@@ -110,6 +110,8 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
 
     private final static float OFFSET_RADIO = 1.8f;
 
+    public boolean canLoadMore = true ;
+
     public PullToRefreshSwipeMenuListView(Context context) {
         super(context);
         init(context);
@@ -254,8 +256,9 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
                         // the first item is showing, header has shown or pull down.
                         updateHeaderHeight(deltaY / OFFSET_RADIO);
                         invokeOnScrolling();
-                    } else if ((mFooterView.getBottomMargin() > 0 || deltaY < 0)) {
+                    } else if ((mFooterView.getBottomMargin() > 0 || deltaY < 0) && canLoadMore) {
                         // last item, already pulled up or want to pull up.
+                        mFooterView.show();
                         updateFooterHeight(-deltaY / OFFSET_RADIO);
                     }
                 }
@@ -382,17 +385,21 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
     public void setPullLoadEnable(boolean enable) {
         mEnablePullLoad = enable;
         if (!mEnablePullLoad) {
+            mFooterView.setBottomMargin(0);
+            mFooterView.setVisibility(View.GONE);
             mFooterView.hide();
             mFooterView.setOnClickListener(null);
         } else {
+            mFooterView.setVisibility(View.GONE);
             mPullLoading = false;
-            mFooterView.show();
+            canLoadMore = false ;
+            mFooterView.hide();
             mFooterView.setState(PullToRefreshListFooter.STATE_NORMAL);
             // both "pull up" and "click" will invoke load more.
             mFooterView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startLoadMore();
+//                    startLoadMore();
                 }
             });
         }
@@ -474,7 +481,9 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
         if (mEnablePullLoad && !mPullLoading) {
             if (height > PULL_LOAD_MORE_DELTA) { // height enough to invoke load
                 // more.
-                mFooterView.setState(PullToRefreshListFooter.STATE_READY);
+                if(mFooterView.getState() == PullToRefreshListFooter.STATE_NORMAL){
+                    mFooterView.setState(PullToRefreshListFooter.STATE_READY);
+                }
             } else {
                 mFooterView.setState(PullToRefreshListFooter.STATE_NORMAL);
             }
@@ -503,7 +512,6 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
         mFooterView.setState(PullToRefreshListFooter.STATE_LOADING);
         if (mListViewListener != null) {
             mListViewListener.onLoadMore();
-            setFooterViewDisplayedState(View.GONE);
         }
     }
 

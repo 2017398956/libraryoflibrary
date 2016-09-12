@@ -1,9 +1,8 @@
 package com.nfl.libraryoflibrary.view;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.utils.LogTool;
 
 public class BaseActivity extends AppCompatActivity {
