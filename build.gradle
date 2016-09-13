@@ -1,11 +1,14 @@
 apply plugin: 'com.android.library'
 
+def COMPILESDK_VERSION = Integer.parseInt(file('../COMPILESDK_VERSION.txt').text)
+def BUILDTOOLS_VERSION = file('../BUILDTOOLS_VERSION.txt').text
+
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    compileSdkVersion COMPILESDK_VERSION
+    buildToolsVersion BUILDTOOLS_VERSION
 
     defaultConfig {
-        minSdkVersion 11
+        minSdkVersion 13
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"

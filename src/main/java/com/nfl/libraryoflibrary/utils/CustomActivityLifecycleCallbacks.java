@@ -107,10 +107,10 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     private View.OnTouchListener getRootViewOnTouchListener(View view){
         try {
-            Method method = View.class.getDeclaredMethod("getListenerInfo", null);
+            Method method = View.class.getDeclaredMethod("getListenerInfo", new Class<?>[]{});
             if (null != method) {
                 method.setAccessible(true);
-                Object object = method.invoke(view, null);// 得到ListenerInfo
+                Object object = method.invoke(view, new Class<?>[]{});// 得到ListenerInfo
                 if (null != object) {
                     Class listenerInfoClazz = object.getClass();
                     // 得到ListenerInfo中的mOnFocusChangeListener
@@ -154,7 +154,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
         boolean hasOnClick = view.hasOnClickListeners();
         if (hasOnClick) {
             try {
-                Method method = View.class.getDeclaredMethod("getListenerInfo", null);
+                Method method = View.class.getDeclaredMethod("getListenerInfo", new Class<?>[]{});
                 if (null != method) {
                     method.setAccessible(true);
                     Object object = method.invoke(view, null);// 得到ListenerInfo
