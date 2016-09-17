@@ -2,4 +2,6 @@
 <resources>
     <item type="id" name="scrollview"/>
     <item name="id_action_clip" type="id"/>
+    <item name="id_view_level_tag_key" type="id"></item>
+    <item name="id_view_parent_tag_key" type="id"></item>
 </resources>
