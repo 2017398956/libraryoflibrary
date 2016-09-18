@@ -40,27 +40,8 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
     }
 
     @Override
-    public void onActivityResumed(final Activity activity) {
-        context = activity ;
-        activityName = activity.getComponentName().getClassName() ;
-        LogTool.i("ActivityName:" + activityName) ;
-        rootView = (ViewGroup) activity.getWindow().getDecorView() ;
-
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                LogTool.i("======onTouch======") ;
-//                getRootViewOnTouchListener(v) ;
-//                return false;
-//            }
-//        });
-        if(null != rootView){
-            logViewsInfo(rootView);
-            viewLevel = 2 ;// logViewsInfo(View view)会改变viewLevel的值，这里恢复默认值
-        }else{
-            LogTool.i(activityName + "'s DecorView is null.") ;
-        }
-
+    public void onActivityResumed(Activity activity) {
+//        alertListener(activity) ;
     }
 
     @Override
@@ -83,6 +64,43 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     }
 
+
+    /**
+     * 拦截已定义的Listener并添加额外的处理方法。
+     * 注意：动态生成的UI无法监听到，如Dialog，Popupwindow等；
+     *       动态添加的Listener无法监听到，如满足某一条件后再添加OnClickListener；
+     *       放在onActivityResumed中会使拦截Listener后添加的新方法会随着OnResume方法的执行次数增加而增加，所以，应放在OnCreate中；
+     *       若放在OnCreate中OnCreate方法之后添加的Listener无法监听。
+     * @param activity
+     */
+    private void alertListener(Activity activity){
+        context = activity ;
+        activityName = activity.getComponentName().getClassName() ;
+        LogTool.i("ActivityName:" + activityName) ;
+        rootView = (ViewGroup) activity.getWindow().getDecorView() ;
+
+//        view.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                LogTool.i("======onTouch======") ;
+//                getRootViewOnTouchListener(v) ;
+//                return false;
+//            }
+//        });
+        if(null != rootView){
+            logViewsInfo(rootView);
+            viewLevel = 2 ;// logViewsInfo(View view)会改变viewLevel的值，这里恢复默认值
+        }else{
+            LogTool.i(activityName + "'s DecorView is null.") ;
+        }
+
+    }
+
+    /**
+     * 判断是否是ViewGroup
+     * @param view
+     * @return
+     */
     private boolean isViewGroup(View view){
         if(null != view){
 //            if(view.getClass().isAssignableFrom(ViewGroup.class)){
@@ -103,7 +121,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
     private void logViewsInfo(ViewGroup viewGroup){
         if(2 == viewLevel){
             viewGroup.setTag(R.id.id_view_level_tag_key , 2);
-            viewGroup.setTag(R.id.id_view_parent_tag_key , 0);
+            viewGroup.setTag(R.id.id_view_position_tag_key , 0);
             LogTool.i("|-DecorView:" + rootView.getClass()) ;
         }
         int count = viewGroup.getChildCount() ;
@@ -111,16 +129,13 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
             for (int i = 0 ; i < count ; i++){
                 View view = viewGroup.getChildAt(i) ;
                 view.setTag(R.id.id_view_level_tag_key , (Integer) viewGroup.getTag(R.id.id_view_level_tag_key) + 1);
-                String logHead = viewGroup.getTag(R.id.id_view_parent_tag_key) + "|";
+                view.setTag(R.id.id_view_position_tag_key , i);
+                String logHead = viewGroup.getTag(R.id.id_view_position_tag_key) + "|" + i;
                 for(int l = 0 ; l < (Integer) view.getTag(R.id.id_view_level_tag_key) ; l++){
                     logHead += "-" ;
                 }
                 LogTool.i(logHead + view.getClass().toString()) ;
                 if(isViewGroup(view)){
-                    viewGroup.setTag(R.id.id_view_parent_tag_key , i);
-
-//                    LogTool.i("ViewGroup:" + view.getClass().toString()) ;
-//                    view.setTag(R.id.id_tag_key , viewLevel );
                     logViewsInfo((ViewGroup) view);
                 }else{
                     if(canResetOnClickListener(view)){
@@ -132,6 +147,11 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
         }
     }
 
+    /**
+     * 判断view是否能被拦截OnClickListener方法
+     * @param view
+     * @return true 可以拦截该view的OnClickListener方法
+     */
     private boolean canResetOnClickListener(View view){
         if(view instanceof Button || view instanceof TextView || view instanceof ImageButton || view instanceof ImageView){
             String viewName = null ;
@@ -149,10 +169,10 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     private View.OnTouchListener getRootViewOnTouchListener(View view){
         try {
-            Method method = View.class.getDeclaredMethod("getListenerInfo", new Class<?>[]{});
+            Method method = View.class.getDeclaredMethod("getListenerInfo", new Class[0]);
             if (null != method) {
                 method.setAccessible(true);
-                Object object = method.invoke(view, new Class<?>[]{});// 得到ListenerInfo
+                Object object = method.invoke(view, new Object[]{});// 得到ListenerInfo
                 if (null != object) {
                     Class listenerInfoClazz = object.getClass();
                     // 得到ListenerInfo中的mOnFocusChangeListener
@@ -195,10 +215,10 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
         boolean hasOnClick = view.hasOnClickListeners();
         if (hasOnClick) {
             try {
-                Method method = View.class.getDeclaredMethod("getListenerInfo", new Class<?>[]{});
+                Method method = View.class.getDeclaredMethod("getListenerInfo", new Class[0]);
                 if (null != method) {
                     method.setAccessible(true);
-                    Object object = method.invoke(view, null);// 得到ListenerInfo
+                    Object object = method.invoke(view, new Object[]{});// 得到ListenerInfo
                     if (null != object) {
                         Class listenerInfoClazz = object.getClass();
                         // 得到ListenerInfo中的OnClickListener
@@ -236,10 +256,9 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
                         @Override
                         public void onClick(View v) {
                             if (null != listener) {
-//                                    LogTool.i("复写了OnClickListener方法:" + );
-//                                    v.setTag();
+                                    LogTool.i("复写了OnClickListener方法");
                                 // 为了解决activity视图改变，重新遍历
-                                logViewsInfo(rootView);
+                                // logViewsInfo(rootView);
                                 listener.onClick(v);
                             }
                         }

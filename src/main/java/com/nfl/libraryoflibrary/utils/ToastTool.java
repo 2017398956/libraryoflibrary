@@ -20,31 +20,50 @@ import com.nfl.libraryoflibrary.constant.ApplicationContext;
  */
 public class ToastTool {
 
+    private static Toast toast ;
+
     public static void showShortToast(String info){
         if(null == ApplicationContext.applicationContext)
             return;
-        Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_SHORT).show();
+        if(null != toast){
+            toast.cancel();
+        }
+        toast = Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_SHORT) ;
+        toast.show();
     }
 
     public static void showShortToast(int resId){
         if(null == ApplicationContext.applicationContext)
             return;
-        Toast.makeText(ApplicationContext.applicationContext , ApplicationContext.applicationContext.getResources().getText(resId) , Toast.LENGTH_SHORT).show();
+        if(null != toast){
+            toast.cancel();
+        }
+        toast = Toast.makeText(ApplicationContext.applicationContext , ApplicationContext.applicationContext.getResources().getText(resId) , Toast.LENGTH_SHORT) ;
+        toast.show();
     }
 
     public static void showLongToast(String info){
         if(null == ApplicationContext.applicationContext)
             return;
-        Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_LONG).show();
+        if(null != toast){
+            toast.cancel();
+        }
+        toast = Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_LONG) ;
+        toast.show();
     }
 
     public static void showCustomShortToast(String info){
         if(null == ApplicationContext.applicationContext)
             return;
-        Toast toast = Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_SHORT) ;
+        if(null != toast){
+            toast.cancel();
+        }
+        toast = Toast.makeText(ApplicationContext.applicationContext , info , Toast.LENGTH_SHORT) ;
         ViewGroup v = (ViewGroup) toast.getView() ;
         v.setBackgroundResource(R.drawable.toast_bg);
         ((TextView) v.getChildAt(0)).setTextColor(Color.WHITE);
+        int padding = ConvertTool.dp2px(5) ;
+        v.setPadding(padding , padding , padding , padding);
         toast.show();
     }
 }
