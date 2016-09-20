@@ -1,4 +1,4 @@
-﻿# libraryoflibrary
+# libraryoflibrary
 这是个工具库集合，只所以叫libraryoflibrary目的是作为其他library的library（模块化，插件式开发）
 
 ##1.添加可上拉加载更多，下拉刷新功能：RefreshListView
@@ -16,3 +16,4 @@
 ##13.添加仿造QQ侧滑删除效果（注意事项很多，还未写全注释）
 ##14.仿造QQ侧滑删除效果修改（PullToRefreshSwipeMenuListView）
 ##15.添加multidex以解决65536问题
+##16.添加仿Win10ProgressBar
