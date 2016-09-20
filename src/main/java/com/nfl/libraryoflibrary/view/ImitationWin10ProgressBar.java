@@ -112,35 +112,34 @@ public class ImitationWin10ProgressBar extends View {
 		// 绘制ProgressBar
 		Path dst = new Path();// ProgrerssBar当前的路径
 		// 每间隔0.05就画一个点，总共画4个点
-		int num = (int) (time / 0.05);
-		float s,y,x;
-		switch(num){
-			default:
-			case 3:
-				x = time - 0.15f;
-				s = mPathMeasure.getLength();
-				y = s*x;
-				mPathMeasure.getSegment(y,y+1,dst,true);
-			case 2:
-				x = time - 0.10f;
-				s = mPathMeasure.getLength();
-				y = s*x;
-				mPathMeasure.getSegment(y,y+1,dst,true);
-			case 1:
-				x = time - 0.05f;
-				s = mPathMeasure.getLength();
-				y = s*x;
-				mPathMeasure.getSegment(y,y+1,dst,true);
-			case 0:
-				x = time ;
-				s = mPathMeasure.getLength();
-				y = s*x;
-				mPathMeasure.getSegment(y,y+1,dst,true);
-				break;
-		}
-		canvas.drawPath(dst,mPaint);
-//		mPathMeasure.getSegment(mPathMeasure.getLength() * time , mPathMeasure.getLength() * time + 1f,dst, true);
-		canvas.drawPath(dst,mPaint);
+//		int num = (int) (time / 0.05);
+//		float s,y,x;
+//		switch(num){
+//			default:
+//			case 3:
+//				x = time - 0.15f;
+//				s = mPathMeasure.getLength();
+//				y = s*x;
+//				mPathMeasure.getSegment(y,y+1,dst,true);
+//			case 2:
+//				x = time - 0.10f;
+//				s = mPathMeasure.getLength();
+//				y = s*x;
+//				mPathMeasure.getSegment(y,y+1,dst,true);
+//			case 1:
+//				x = time - 0.05f;
+//				s = mPathMeasure.getLength();
+//				y = s*x;
+//				mPathMeasure.getSegment(y,y+1,dst,true);
+//			case 0:
+//				x = time ;
+//				s = mPathMeasure.getLength();
+//				y = s*x;
+//				mPathMeasure.getSegment(y,y+1,dst,true);
+//				break;
+//		}
+		mPathMeasure.getSegment(mPathMeasure.getLength() * time , mPathMeasure.getLength() * time + 1f,dst, true);
+		canvas.drawPath(dst ,mPaint);
 
 
 //		canvas.translate(mWidth/2,mHeight/2);
