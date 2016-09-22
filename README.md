@@ -17,3 +17,4 @@
 ##14.仿造QQ侧滑删除效果修改（PullToRefreshSwipeMenuListView）
 ##15.添加multidex以解决65536问题
 ##16.添加仿Win10ProgressBar
+##17.添加仿微信计步视图
