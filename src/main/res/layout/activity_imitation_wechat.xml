@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/tab_bg"
+        android:orientation="horizontal" >
+
+        <com.nfl.libraryoflibrary.view.imitationwechat.ChangColorIconWithText
+            android:id="@+id/nfl1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:image="@drawable/menu_addfriend_icon"
+            app:text="1"
+            app:text_size="12sp"
+            app:color="#ff45c01a" />
+
+        <com.nfl.libraryoflibrary.view.imitationwechat.ChangColorIconWithText
+            android:id="@+id/nfl2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:image="@drawable/menu_feedback_icon"
+            app:text="2"
+            app:text_size="12sp"
+            app:color="#ff45c01a" />
+
+        <com.nfl.libraryoflibrary.view.imitationwechat.ChangColorIconWithText
+            android:id="@+id/nfl3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:image="@drawable/menu_group_chat_icon"
+            app:text="3"
+            app:text_size="12sp"
+            app:color="#ff45c01a" />
+
+        <com.nfl.libraryoflibrary.view.imitationwechat.ChangColorIconWithText
+            android:id="@+id/nfl4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:image="@drawable/menu_scan_icon"
+            app:text="4"
+            app:text_size="12sp"
+            app:color="#ff45c01a" />
+    </LinearLayout>
+
+</LinearLayout>

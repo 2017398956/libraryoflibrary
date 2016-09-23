@@ -39,5 +39,12 @@
     <declare-styleable name="CircularImageViewStyle">
         <attr name="circularImageViewDefault" format="reference" />
     </declare-styleable>
+    <!-- 仿微信相关 -->
+    <declare-styleable name="ChangColorIconWithText">
+        <attr name="image" format="reference"></attr>
+        <attr name="color" format="color"></attr>
+        <attr name="text" format="string"></attr>
+        <attr name="text_size" format="dimension"></attr>
+    </declare-styleable>
 
 </resources>

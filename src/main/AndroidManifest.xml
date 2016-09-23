@@ -20,6 +20,9 @@
         </receiver>
 
         <activity android:name=".view.BaseActivity"></activity>
+        <activity android:name=".view.imitationwechat.ImitatationWeChatActivity"
+            android:configChanges="orientation|layoutDirection|screenLayout|screenSize"
+            android:theme="@style/AppBaseTheme"/>
     </application>
 
 </manifest>
