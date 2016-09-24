@@ -19,3 +19,16 @@
 ##16.添加仿Win10ProgressBar
 ##17.添加仿微信计步视图
 ##18.添加仿微信6_0底部滑动变色
+##19.添加app信息获得工具：AppTool
+##20.添加sp、dp、px相互转换的工具：ConvertTool
+##21.添加Assets操作工具：CopyFileForAssets
+##22.添加文件处理工具：FileTool
+##23.添加网页正则验证工具：HtmlRegexpUtil
+##24.添加软键盘处理工具：KeyBoardUtils
+##25.添加网络诊断工具：NetUtils
+##26.添加手机信息获得工具：PhoneInfoTool
+##27.添加流处理工具：StreamUtils
+##28.添加字符串处理工具：StringUtil
+##29.添加系统信息工具：SystemUtil
+##30.添加文件类型处理工具：ToolMime
+##31.添加Zip处理工具：ZipUtils
