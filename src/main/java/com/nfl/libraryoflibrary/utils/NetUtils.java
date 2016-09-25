@@ -1,4 +1,4 @@
-﻿package com.nfl.libraryoflibrary.utils;
+package com.nfl.libraryoflibrary.utils;
 
 import android.app.Activity;
 import android.content.ComponentName;

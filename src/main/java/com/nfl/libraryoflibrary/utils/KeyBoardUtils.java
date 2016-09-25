@@ -1,4 +1,4 @@
-﻿package com.nfl.libraryoflibrary.utils;
+package com.nfl.libraryoflibrary.utils;
 
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
