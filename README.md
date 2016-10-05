@@ -32,3 +32,5 @@
 ##29.添加系统信息工具：SystemUtil
 ##30.添加文件类型处理工具：ToolMime
 ##31.添加Zip处理工具：ZipUtils
+##32.添加ACRA
+##33.添加电池状态管理和LED管理
