@@ -22,6 +22,11 @@ public class PhoneInfoTool {
     private static int mScreenHeight = 0;
     private static int mScreenWidth = 0;
 
+    /**
+     * 获得屏幕高度（含状态栏）
+     * @param activity
+     * @return
+     */
     public static int getScreenHeight(Activity activity) {
         if (mScreenHeight == 0) {
             DisplayMetrics localDisplayMetrics = new DisplayMetrics();
@@ -32,6 +37,11 @@ public class PhoneInfoTool {
         return mScreenHeight;
     }
 
+    /**
+     * 获得屏幕宽度
+     * @param activity
+     * @return
+     */
     public static int getScreenWidth(Activity activity) {
         if (mScreenWidth == 0) {
             DisplayMetrics localDisplayMetrics = new DisplayMetrics();

@@ -6,7 +6,10 @@ import java.io.IOException;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
@@ -72,7 +75,20 @@ public class MyWindowManager {
 				smallWindowParams.y = screenHeight / 2;
 			}
 			smallWindow.setParams(smallWindowParams);
-			windowManager.addView(smallWindow, smallWindowParams);
+			if (Build.VERSION.SDK_INT >= 23) {
+				if(!Settings.canDrawOverlays(context)) {
+					Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+					context.startActivity(intent);
+					return;
+				} else {
+					//Android6.0以上
+					windowManager.addView(smallWindow, smallWindowParams);
+				}
+			} else {
+				//Android6.0以下，不用动态声明权限
+				windowManager.addView(smallWindow, smallWindowParams);
+			}
+
 		}
 	}
 
