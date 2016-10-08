@@ -8,6 +8,14 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 允许一个程序获取信息有关当前或最近运行的任务，一个缩略的任务状态，是否活动等等 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!-- 允许一个程序打开窗口使用 TYPE_SYSTEM_ALERT，显示在其他所有程序的顶层 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application>
         <activity android:name=".view.CustomCrop.CustomCropActivity" />
@@ -19,10 +27,46 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".broadcast_receiver.BatteryStatsReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".broadcast_receiver.PowerConnectionReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".view.BaseActivity"></activity>
         <activity android:name=".view.imitationwechat.ImitatationWeChatActivity"
             android:configChanges="orientation|layoutDirection|screenLayout|screenSize"
             android:theme="@style/AppBaseTheme"/>
+
+        <activity android:name=".view.floatwindow.FloatWindowActivity"/>
+        <service android:name=".view.floatwindow.FloatWindowService"/>
+
+        <activity android:name=".view.liuliang.phonemanager.LiuLiangActivity"/>
+        <service android:name=".view.liuliang.phonemanager.ManagerService"></service>
+        <receiver android:name=".view.liuliang.phonemanager.ManagerReceiver" >
+            <intent-filter android:priority="2147483647" > <!-- 优先级加最高 -->
+                <!-- 系统启动完成后会调用 -->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- 解锁完成后会调用 -->
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <!-- 监听情景切换 -->
+                <action android:name="android.media.RINGER_MODE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
