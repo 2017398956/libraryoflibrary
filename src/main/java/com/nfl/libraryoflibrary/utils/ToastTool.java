@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.MessageQueue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,10 +78,21 @@ public class ToastTool {
             }
         }
 
-        public ToastCreater(int toastLength, String info) {
-            this();
-            toast = Toast.makeText(ApplicationContext.applicationContext, info, toastLength);
-            executeAndQuit();
+        public ToastCreater( int toastLength, String info) {
+//            this();
+            LogTool.i("Thread") ;
+            if (null == Looper.myLooper()) {
+                LooperThread looperThread = new LooperThread(toastLength , info) ;
+                looperThread.run();
+//                looperThread.start();
+                LogTool.i("TheadisAlive:" + looperThread.isAlive() + ",handler:" + looperThread.mHandler) ;
+//                looperThread.mHandler.sendEmptyMessage(1) ;
+            } else {
+                toast = Toast.makeText(ApplicationContext.applicationContext, info, toastLength);
+                executeAndQuit();
+            }
+
+
         }
 
         public ToastCreater(int toastLength, int resId) {
@@ -137,20 +147,20 @@ public class ToastTool {
         }
 
         private void executeAndQuit() {
-//            toast.show();
-            Handler handler = new Handler(myLooper, new Handler.Callback() {
-                @Override
-                public boolean handleMessage(Message msg) {
-                    if(msg.what == 1){
-                        toast.show();
-                    }
-                    return false;
-                }
-            });
-            handler.sendEmptyMessage(1) ;
+            toast.show();
+//            Handler handler = new Handler(myLooper, new Handler.Callback() {
+//                @Override
+//                public boolean handleMessage(Message msg) {
+//                    if (msg.what == 1) {
+//                        toast.show();
+//                    }
+//                    return false;
+//                }
+//            });
+//            handler.sendEmptyMessage(1);
 //            myLooper.getQueue().addIdleHandler(null);
             if (!hasMyLooperBefore && null != myLooper) {
-                Looper.loop();
+//                Looper.loop();
                 // 注意：写在Looper.loop()之后的代码不会被执行，
                 // 这个函数内部应该是一个循环，当调用mHandler.getLooper().quit()后，
                 // loop才会中止，其后的代码才能得以运行。
@@ -274,6 +284,33 @@ public class ToastTool {
 
         public void setmNextView(View mNextView) {
             this.mNextView = mNextView;
+        }
+    }
+
+    private static class LooperThread extends Thread {
+        public Handler mHandler;
+        private int toastCreater ;
+        private String info ;
+
+        public LooperThread(int toastLength, String info){
+            this.toastCreater = toastLength  ;
+            this.info = info ;
+        }
+
+        public void run() {
+            Looper.prepare();//给线程创建一个消息循环
+
+            mHandler = new Handler() {
+                public void handleMessage(Message msg) {
+                    if(msg.what == -1){
+                        mHandler.getLooper().quit();
+                    }
+                    // process incoming messages here
+                }
+            };
+            LogTool.i("LooperThread：" + this) ;
+            new ToastCreater(toastCreater , info) ;
+            Looper.loop();//使消息循环起作用，从消息队列里取消息，处理消息
         }
     }
 }
