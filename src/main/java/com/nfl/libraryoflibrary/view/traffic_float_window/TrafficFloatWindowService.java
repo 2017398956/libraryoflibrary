@@ -4,7 +4,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
@@ -20,7 +23,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nfl.libraryoflibrary.R;
+import com.nfl.libraryoflibrary.utils.LogTool;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -42,6 +47,23 @@ public class TrafficFloatWindowService extends Service {
 
     private Timer timer ;
     private TimerTask timerTask ;
+    private Handler handler = new Handler(){
+        @Override
+        public String getMessageName(Message message) {
+            LogTool.i("getMessageName") ;
+            if(message.what == 1){
+                if(null != mFloatView){
+                    mFloatView.setText((100 + new Random().nextInt(50)) + "kb/s");
+                    LogTool.i("3431324132") ;
+                }
+                if(null != mWindowManager && null != mFloatLayout && null != wmParams){
+                    LogTool.i("lkjasdf") ;
+                    mWindowManager.updateViewLayout(mFloatLayout , wmParams);
+                }
+            }
+            return super.getMessageName(message);
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -50,15 +72,21 @@ public class TrafficFloatWindowService extends Service {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-
+                LogTool.i("timerTask") ;
+                handler.sendEmptyMessage(1) ;
             }
         } ;
         timer = new Timer() ;
-//        timer.
+        timer.schedule(timerTask , 0 , 1000);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        LogTool.i("onStartCommand") ;
+        if(null == mFloatLayout){
+            createFloatView();
+        }
         return START_STICKY_COMPATIBILITY;
     }
 
@@ -66,6 +94,7 @@ public class TrafficFloatWindowService extends Service {
      * 创建流量悬浮窗
      */
     private void createFloatView() {
+        LogTool.i("createFloatView") ;
         destroyTrafficFloatWindow();
         initTrafficFloatWindowParams() ;
         initTrafficFloatWindowView() ;
@@ -97,6 +126,7 @@ public class TrafficFloatWindowService extends Service {
     private void destroyTrafficFloatWindow(){
         if (mFloatLayout != null && mWindowManager != null) {
             mWindowManager.removeView(mFloatLayout) ;
+            mFloatLayout = null ;
         }
     }
 
