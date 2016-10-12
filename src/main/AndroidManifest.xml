@@ -65,6 +65,8 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <!-- 监听情景切换 -->
                 <action android:name="android.media.RINGER_MODE_CHANGED" />
+                <!-- 监听网络类型 -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
     </application>

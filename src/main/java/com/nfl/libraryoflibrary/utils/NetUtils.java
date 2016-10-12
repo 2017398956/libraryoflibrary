@@ -52,12 +52,18 @@ public class NetUtils {
      * 判断是否是wifi连接
      */
     public static boolean isWifi(Context context) {
+        boolean isWifi = false;
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if (cm == null)
-            return false;
-        return cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
+        if (cm == null) {
+            isWifi = false;
+        } else {
+            try {
+                isWifi = cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
+            } catch (Exception e) {
+            }
+        }
+        return isWifi;
 
     }
 

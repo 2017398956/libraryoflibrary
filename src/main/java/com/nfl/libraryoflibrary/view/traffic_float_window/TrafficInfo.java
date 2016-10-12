@@ -149,6 +149,31 @@ public class TrafficInfo {
     }
 
     /**
+     * 获取当前网速带单位
+     * @return
+     */
+    public static String getNetSpeed2String() {
+        long curRxBytes = getNetworkRxBytes();
+        if (preRxBytes == 0)
+            preRxBytes = curRxBytes;
+        long bytes = curRxBytes - preRxBytes;
+        preRxBytes = curRxBytes;
+        String postfix = "b/s" ;
+        double showTrafficNumber = 0d ;
+        if(bytes < 1000){
+            showTrafficNumber = (double) bytes ;
+        }else if(bytes > 1000 && bytes < 1000 * 1000){
+            showTrafficNumber = (double) bytes / 1024 ;
+            postfix = "kb/s" ;
+        }else if(bytes > 1000 * 1000){
+            showTrafficNumber = (double) bytes / ( 1024 * 1024) ;
+            postfix = "mb/s" ;
+        }
+        BigDecimal bd = new BigDecimal(showTrafficNumber);
+        return bd.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue() + postfix ;
+    }
+
+    /**
      * 获取当前应用uid
      *
      * @return

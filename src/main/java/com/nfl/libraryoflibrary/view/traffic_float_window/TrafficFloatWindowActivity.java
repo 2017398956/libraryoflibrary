@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
 import com.nfl.libraryoflibrary.R;
-import com.nfl.libraryoflibrary.utils.LogTool;
 
 import java.util.List;
 
@@ -22,11 +21,7 @@ public class TrafficFloatWindowActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_liuliang);
-//		mActivityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-//		mTextView = (TextView) findViewById(R.id.tv);
-		LogTool.i("开启流量悬浮窗前");
 		startService(new Intent(this , TrafficFloatWindowService.class)) ;
-		LogTool.i("开启流量悬浮窗后");
 	}
 	
 	private void updateProcessInfo() {
