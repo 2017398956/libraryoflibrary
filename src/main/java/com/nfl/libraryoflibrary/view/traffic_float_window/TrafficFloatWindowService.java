@@ -162,7 +162,7 @@ public class TrafficFloatWindowService extends Service {
         rl_delete = (RelativeLayout) mFloatLayout.findViewById(R.id.rl_delete);
         iv_traffic_type = (ImageView) mFloatLayout.findViewById(R.id.iv_traffic_type);
         mFloatView = (TextView) mFloatLayout.findViewById(R.id.speed);
-        mFloatLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//        mFloatLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         // 设置监听浮动窗口的触摸移动
         mFloatLayout.setOnTouchListener(new OnTouchListener() {
 
