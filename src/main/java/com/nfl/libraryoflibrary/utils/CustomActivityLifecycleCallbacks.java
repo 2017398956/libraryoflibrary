@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.LayoutInflaterCompat;
@@ -15,6 +17,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,17 +42,20 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        Resources.Theme theme = activity.getTheme() ;
+        theme.applyStyle( R.style.testTheme , true);
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
-
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
 //        alertListener(activity) ;
+//        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes() ;
     }
+
 
     @Override
     public void onActivityPaused(Activity activity) {
