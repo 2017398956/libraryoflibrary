@@ -9,11 +9,20 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="windowAnimation" parent="@android:style/Animation">
+        <!--窗体进入动画-->
+        <item name="android:windowEnterAnimation">@anim/in_from_left</item>
+        <!--窗体退出动画-->
+        <item name="android:windowExitAnimation">@anim/out_to_right</item>
+    </style>
+
     <style name="customAnimationActivity" mce_bogus="1" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/in_from_right</item>
         <item name="android:activityOpenExitAnimation">@anim/out_to_left</item>
         <item name="android:activityCloseEnterAnimation">@anim/in_from_left</item>
         <item name="android:activityCloseExitAnimation">@anim/out_to_right</item>
+        <!-- toolbar（actionbar）颜色 -->
+        <item name="colorPrimary">#ff3747</item>
     </style>
 
     <style name="customNoTitleBarFullScreen" parent="@android:style/Theme.NoTitleBar.Fullscreen">
