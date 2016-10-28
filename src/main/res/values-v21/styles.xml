@@ -6,5 +6,6 @@
         <item name="colorPrimaryDark">#591686</item>
         <item name="colorAccent">#39f10b</item>
         <item name="android:navigationBarColor">#0659ac</item>
+        <item name="windowActionBar">true</item>
     </style>
 </resources>
