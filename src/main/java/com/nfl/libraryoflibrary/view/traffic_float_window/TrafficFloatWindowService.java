@@ -188,6 +188,12 @@ public class TrafficFloatWindowService extends Service {
             @Override
             public void onClick(View arg0) {
                 rl_delete.setVisibility(rl_delete.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                rl_delete.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rl_delete.setVisibility(View.GONE);
+                    }
+                } , 3000) ;
             }
         });
         rl_delete.setOnClickListener(new OnClickListener() {

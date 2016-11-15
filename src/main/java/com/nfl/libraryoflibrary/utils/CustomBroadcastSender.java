@@ -10,7 +10,7 @@ import android.os.Build;
 public class CustomBroadcastSender {
 
     // app 启动广播
-    private static final String INTENT_ACTION_APP_START="cn.bill.app.gw.startapp";
+    public static final String INTENT_ACTION_APP_START="cn.bill.app.gw.startapp";
     // 计步器开始计步广播
     private static final String INTENT_ACTION_PEDOMETER_START = "cn.bill.app.gw.pedometer.start" ;
     // 打开计步器界面广播
