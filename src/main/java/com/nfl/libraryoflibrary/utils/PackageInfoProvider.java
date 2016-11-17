@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public class PackageInfoProvider {
-    private static final String tag = "GetappinfoActivity";
+
     private Context context;
     private List<AppInfo> appInfos;
     private List<String> filterInfos ;
@@ -27,7 +27,7 @@ public class PackageInfoProvider {
     public PackageInfoProvider(Context context) {
         this() ;
         this.context = context;
-        LogTool.i("该设备是否被Root：" + isRooted()) ;
+//        LogTool.i("该设备是否被Root：" + isRooted()) ;
     }
 
     /**
@@ -78,6 +78,10 @@ public class PackageInfoProvider {
      * @return
      */
     public boolean isRooted(){
+        if(context == null){
+            // app被销毁返回false
+            return false ;
+        }
         PackageManager pm = context.getPackageManager();
         List<PackageInfo> pakageinfos = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
         for (PackageInfo packageInfo : pakageinfos) {
