@@ -1,0 +1,13 @@
+root
+com.qihoo.permmgr
+co.lvdou.superuser
+com.mgyun.shua
+com.shuame.mobile
+cn.com.opda.android.update
+com.wangzhuo.onekeyrom
+pj.ishuaji
+com.zdqyjrwnyszq.model
+com.zainanmeimei.loslajcj
+cn.jingdiangongchang.rpcpjxsn
+org.rgmkpijg.hjjtks.pqvk
+com.huohua.sanxingshjirt.test
