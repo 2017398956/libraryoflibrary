@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/dataBasePath"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入数据库路径"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#8470FF"
+        android:onClick="search"
+        android:text="查询"
+        android:textColor="#fff"
+        android:textSize="16sp" />
+
+    <ListView
+        android:id="@+id/dbList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
+
+</LinearLayout>

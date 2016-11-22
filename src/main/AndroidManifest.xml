@@ -79,15 +79,27 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".utils.runbackgroundpersistently.PersistentActivity"
+        <activity
+            android:name=".utils.runbackgroundpersistently.PersistentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:excludeFromRecents="true"
             android:exported="false"
             android:finishOnTaskLaunch="false"
             android:launchMode="singleInstance"
             android:process=":persistent"
-            android:theme="@style/persistent"
-            ></activity>
+            android:theme="@style/persistent" />
+
+        <service
+            android:name=".view.db_insight.DBInsightService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".view.db_insight.DBInsightActivity"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity android:name=".view.db_insight.ShowTableActivity" />
+        <activity android:name=".view.db_insight.ShowDBTableActivity" />
     </application>
 
 </manifest>
