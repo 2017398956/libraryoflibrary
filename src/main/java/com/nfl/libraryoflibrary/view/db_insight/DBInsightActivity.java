@@ -146,12 +146,12 @@ public class DBInsightActivity extends Activity {
         HashMap<String, String> map;
         for (int i = 0; i < files.length; i++) {
             if (files[i].isDirectory()) {
-                LogTool.i(i + " | " + files[i].getAbsolutePath());
+                // LogTool.i(i + " | " + files[i].getAbsolutePath());
                 getDataBaseList(files[i].getAbsolutePath());
             } else {
                 String fileName = files[i].getName();
                 String filePath = files[i].getAbsolutePath();
-                LogTool.i("file[" + i + "]:" + filePath);
+                // LogTool.i("file[" + i + "]:" + filePath);
                 String endString = ".db" ;
                 endString = "" ;
                 if (fileName.endsWith(endString)) {
