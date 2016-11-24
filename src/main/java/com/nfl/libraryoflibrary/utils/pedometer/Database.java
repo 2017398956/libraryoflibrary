@@ -160,7 +160,7 @@ public class Database extends SQLiteOpenHelper {
 
             }
             getWritableDatabase().execSQL(
-                    "UPDATE " + DB_NAME_ENCRYPT + " SET steps = " + DesTool.encrypt((steps + correctSensorSteps) + "") + " WHERE date = " + date);
+                    "UPDATE " + DB_NAME_ENCRYPT + " SET steps = \"" + DesTool.encrypt((steps + correctSensorSteps) + "") + "\" WHERE date = " + date);
         }
         c.close();
     }
@@ -226,7 +226,7 @@ public class Database extends SQLiteOpenHelper {
             insertNewDayEncrypt(date, 0, correctSensorSteps, 0);
         } else {
             getWritableDatabase().execSQL(
-                    "UPDATE " + DB_NAME_ENCRYPT + " SET sensor = " + DesTool.encrypt(correctSensorSteps + "") + " WHERE date = " + date);
+                    "UPDATE " + DB_NAME_ENCRYPT + " SET sensor = \"" + DesTool.encrypt(correctSensorSteps + "") + "\" WHERE date = " + date);
         }
         c.close();
     }
