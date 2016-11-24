@@ -18,8 +18,9 @@ import com.nfl.libraryoflibrary.utils.LogTool;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class SensorListener extends Service implements SensorEventListener {
 
-    private Database db ;
-    public static int steps = 0 ;
+    public static boolean isShutdowning = false;
+    private Database db;
+    public static int steps = 0;
     private final static int MICROSECONDS_IN_ONE_MINUTE = 60000000;
 
     @Override
@@ -28,6 +29,10 @@ public class SensorListener extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(final SensorEvent event) {
+        // 关机时和没有进行数据库迁移都不往下执行
+        if (isShutdowning) {
+            return;
+        }
         Sensor sensor = event.sensor;
         if (sensor.getType() != Sensor.TYPE_STEP_COUNTER) {
             LogTool.i("is not TYPE_STEP_COUNTER=======================");
@@ -42,23 +47,23 @@ public class SensorListener extends Service implements SensorEventListener {
         }
         steps = (int) event.values[0];
         // PedometerConstant.stepsFromSensor = steps ;
-        db = Database.getInstance(this) ;
-        long today = Util4Pedometer.getToday() ;
-        long yesterDay = today - 24 * 60 * 60 * 1000 ;
-        int correctSensorSteps ;
-        int off = db.getOffStatus(yesterDay) ;
-        if( off == 0) {
+        db = Database.getInstance(this);
+        long today = Util4Pedometer.getToday();
+        long yesterDay = today - 24 * 60 * 60 * 1000;
+        int correctSensorSteps;
+        int off = db.getOffStatus(yesterDay);
+        if (off == 0) {
             // 说明昨天没有关机
-            correctSensorSteps = steps - db.getSensorSteps(yesterDay) ;
-            db.updateSensorSteps(today , correctSensorSteps);
-        }else if(off == 1){
+            correctSensorSteps = steps - db.getSensorSteps(yesterDay);
+            db.updateSensorSteps(today, correctSensorSteps);
+        } else if (off == 1) {
             // 说明昨天关机
-            correctSensorSteps = steps ;
-            db.updateSensorSteps(today , correctSensorSteps);
-        }else{
-            LogTool.i("计步器异常") ;
+            correctSensorSteps = steps;
+            db.updateSensorSteps(today, correctSensorSteps);
+        } else {
+            LogTool.i("计步器异常");
         }
-        StepsCountTool.getTodaySteps() ;
+        StepsCountTool.getTodaySteps();
     }
 
     @Override
@@ -68,8 +73,11 @@ public class SensorListener extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
+        if (isShutdowning) {
+            return START_STICKY;
+        }
         db = Database.getInstance(this);
-        db.updateOffStatus(Util4Pedometer.getToday() , 0);
+        db.updateOffStatus(Util4Pedometer.getToday(), 0);
         // restart service every hour to get the current step count
         ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE))
                 .set(AlarmManager.RTC, System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR,
@@ -97,7 +105,7 @@ public class SensorListener extends Service implements SensorEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(null != db){
+        if (null != db) {
             db.close();
         }
         try {
