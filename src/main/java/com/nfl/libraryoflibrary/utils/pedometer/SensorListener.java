@@ -13,12 +13,13 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 
+import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.utils.LogTool;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class SensorListener extends Service implements SensorEventListener {
 
-    public static boolean isShutdowning = false;
+    public static boolean isShutdowning = false;// 只有关机时才触发
     private Database db;
     public static int steps = 0;
     private final static int MICROSECONDS_IN_ONE_MINUTE = 60000000;
@@ -30,9 +31,13 @@ public class SensorListener extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(final SensorEvent event) {
         // 关机时和没有进行数据库迁移都不往下执行
-        if (isShutdowning) {
+        if (isShutdowning || !ApplicationContext.applicationContext
+                .getSharedPreferences("pedometer", Context.MODE_MULTI_PROCESS)
+                .getBoolean("hasRead", false)
+                ) {
             return;
         }
+        LogTool.i("================is not TYPE_STEP_COUNTER?=======================");
         Sensor sensor = event.sensor;
         if (sensor.getType() != Sensor.TYPE_STEP_COUNTER) {
             LogTool.i("is not TYPE_STEP_COUNTER=======================");
@@ -55,7 +60,19 @@ public class SensorListener extends Service implements SensorEventListener {
         if (off == 0) {
             // 说明昨天没有关机
             correctSensorSteps = steps - db.getSensorSteps(yesterDay);
+            if (correctSensorSteps < 0) {
+                // 说明手机异常关机：扣电池或使用脚本关机导致关机广播没有发出
+                db.updateOffStatus(yesterDay, 1);
+                db.updateSensorSteps(today, steps);
+                LogTool.i("手机异常关机") ;
+            } else {
+                if(db.getSensorSteps(today) <= 0){
+                    db.updateSteps(today , - correctSensorSteps);
+                    LogTool.i("这里应该只更新一次Sensor" + correctSensorSteps) ;
+                }
             db.updateSensorSteps(today, correctSensorSteps);
+
+            }
         } else if (off == 1) {
             // 说明昨天关机
             correctSensorSteps = steps;
@@ -114,6 +131,7 @@ public class SensorListener extends Service implements SensorEventListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        reRegisterSensor();
     }
 
     @TargetApi(19)
@@ -122,10 +140,20 @@ public class SensorListener extends Service implements SensorEventListener {
             return;
         }
         SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+        if(null == sm){
+            LogTool.i("无法获得传感器管理组件") ;
+        }else{
+            LogTool.i("获得传感器管理组件") ;
+        }
         try {
             sm.unregisterListener(this);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if(null == sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)){
+            LogTool.i("没有计步器") ;
+        }else{
+            LogTool.i("有计步器") ;
         }
         sm.registerListener(this, sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER),
                 SensorManager.SENSOR_DELAY_NORMAL, 5 * MICROSECONDS_IN_ONE_MINUTE);

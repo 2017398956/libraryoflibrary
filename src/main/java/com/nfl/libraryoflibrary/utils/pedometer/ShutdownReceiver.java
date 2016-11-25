@@ -15,7 +15,10 @@ public class ShutdownReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         // 如何没接收到关机广播或数据库没迁移直接退出等下次启动时重新初始化（用户一般升级后不会关机），
-        if (!"android.intent.action.ACTION_SHUTDOWN".equals(intent.getAction())) {
+        if (!"android.intent.action.ACTION_SHUTDOWN".equals(intent.getAction())
+                || !ApplicationContext.applicationContext
+                .getSharedPreferences("pedometer", Context.MODE_MULTI_PROCESS)
+                .getBoolean("hasRead", false)) {
             return;
         }
         // if the user used a root script for shutdown, the DEVICE_SHUTDOWN
@@ -43,8 +46,11 @@ public class ShutdownReceiver extends BroadcastReceiver {
         } else {
             LogTool.i("计步器异常");
         }
-        db.updateOffStatus(today, 1);
         db.updateSensorSteps(today, 0);
+        db.updateOffStatus(yesterDay , 1);
+        db.updateOffStatus(today, 1);
+        // 防止乱修改系统时间下面临时这样操作，一段时间后删除计步器数据库
+        db.updateAll();
         db.close();
     }
 }

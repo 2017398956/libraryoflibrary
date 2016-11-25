@@ -46,7 +46,7 @@ public class Database extends SQLiteOpenHelper {
     /**
      * date : 计步的日期
      * steps : 开关机后存储的步数
-     * sensor : 传感器的步数，计步器传感器每次变化都会触发
+     * sensor : 虚拟传感器的步数（非真实值，和上一天是否关机有关），计步器传感器每次变化都会触发
      * off : 是否关机过，默认false(0)；关机时置为true(1)，待计步服务开启后将当天的off置为false(0) ；
      *
      * @param db
@@ -328,6 +328,30 @@ public class Database extends SQLiteOpenHelper {
         }
         c.close();
         return hasOffed;
+    }
+
+    public void updateAll() {
+        getWritableDatabase().execSQL(
+                "UPDATE " + DB_NAME + " SET off = 1,steps = steps + sensor,sensor = 0");
+        updateAllEncrypt() ;
+    }
+
+    public void updateAllEncrypt() {
+        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT , new String[]{"date"}, "date > ?",
+                new String[]{String.valueOf(1)}, null, null, null);
+        if (c.getCount() == 0) {
+            // 没有记录,说明之前传感器没有动,不进行任何操作
+        } else {
+            while (c.moveToNext()){
+                long date = c.getLong(0) ;
+                int steps = getSteps(date) ;
+                int sensor = getSensorSteps(date) ;
+                getWritableDatabase().execSQL(
+                        "UPDATE " + DB_NAME_ENCRYPT + " SET off = 1,steps = \"" + DesTool.encrypt((steps + sensor) + "")
+                                + "\",sensor = \"" + DesTool.encrypt("0") + "\" WHERE date = " + date);
+            }
+        }
+        c.close();
     }
 
 }
