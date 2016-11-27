@@ -27,17 +27,22 @@ public class DBInsightService extends Service {
     public TextView mFloatView;
     float preX = 0f, preY = 0f;// 触摸悬浮窗的位置
     int pX = 0, pY = 0;// 悬浮窗相对于屏幕的位置
+    public static boolean canShowDBInsight = false ;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        createFloatView();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (null == mFloatLayout) {
-            createFloatView();
+            if(canShowDBInsight){
+                createFloatView();
+            }else {
+                destroyFloatWindow();
+            }
+
         }
         return START_STICKY_COMPATIBILITY;
     }
@@ -46,7 +51,7 @@ public class DBInsightService extends Service {
      * 创建流量悬浮窗
      */
     private void createFloatView() {
-        destroyFloatWindow();
+        // destroyFloatWindow();
         initFloatWindowParams();
         initFloatWindowView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -95,14 +100,17 @@ public class DBInsightService extends Service {
         wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         // 设置x、y初始值，相对于gravity
-        wmParams.x = 0;
-        wmParams.y = 0;
+        wmParams.x += 0;
+        wmParams.y += 0;
     }
 
     /**
      * 初始化流量悬浮窗视图
      */
     private void initFloatWindowView() {
+        if(null != mFloatLayout){
+            return;
+        }
         // 获取浮动窗口视图所在布局
         mFloatLayout = (RelativeLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.dbinsight_layout, null);
         mFloatView = (TextView) mFloatLayout.findViewById(R.id.speed);

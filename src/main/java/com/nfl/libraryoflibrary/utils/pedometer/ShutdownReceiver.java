@@ -15,10 +15,7 @@ public class ShutdownReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         // 如何没接收到关机广播或数据库没迁移直接退出等下次启动时重新初始化（用户一般升级后不会关机），
-        if (!"android.intent.action.ACTION_SHUTDOWN".equals(intent.getAction())
-                || !ApplicationContext.applicationContext
-                .getSharedPreferences("pedometer", Context.MODE_MULTI_PROCESS)
-                .getBoolean("hasRead", false)) {
+        if (!"android.intent.action.ACTION_SHUTDOWN".equals(intent.getAction())) {
             return;
         }
         // if the user used a root script for shutdown, the DEVICE_SHUTDOWN

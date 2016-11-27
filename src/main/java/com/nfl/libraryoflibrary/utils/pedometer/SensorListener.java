@@ -31,12 +31,11 @@ public class SensorListener extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(final SensorEvent event) {
         // 关机时和没有进行数据库迁移都不往下执行
-        if (isShutdowning || !ApplicationContext.applicationContext
-                .getSharedPreferences("pedometer", Context.MODE_MULTI_PROCESS)
-                .getBoolean("hasRead", false)
-                ) {
+        if (isShutdowning) {
             return;
         }
+		// 若步数异常(用户随意调整时间后，开关机)，修复步数
+        StepsCountTool.getTodaySteps();
         LogTool.i("================is not TYPE_STEP_COUNTER?=======================");
         Sensor sensor = event.sensor;
         if (sensor.getType() != Sensor.TYPE_STEP_COUNTER) {
@@ -63,6 +62,9 @@ public class SensorListener extends Service implements SensorEventListener {
             if (correctSensorSteps < 0) {
                 // 说明手机异常关机：扣电池或使用脚本关机导致关机广播没有发出
                 db.updateOffStatus(yesterDay, 1);
+				// 异常关机后重启先保存关机前的数据
+                db.updateSteps(today , db.getSensorSteps(today));
+                // 再重新计算步数，这样能最大可能的接近真实值
                 db.updateSensorSteps(today, steps);
                 LogTool.i("手机异常关机") ;
             } else {
@@ -80,7 +82,6 @@ public class SensorListener extends Service implements SensorEventListener {
         } else {
             LogTool.i("计步器异常");
         }
-        StepsCountTool.getTodaySteps();
     }
 
     @Override
