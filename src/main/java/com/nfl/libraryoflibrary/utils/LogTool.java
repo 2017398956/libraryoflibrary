@@ -19,4 +19,7 @@ public class LogTool {
     public static void d(String tag , String info){
         Log.i(tag , info) ;
     }
+    public static void e(String tag , String info){
+        Log.i(tag , info) ;
+    }
 }
