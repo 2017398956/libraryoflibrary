@@ -45,6 +45,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         Resources.Theme theme = activity.getTheme() ;
         theme.applyStyle( R.style.testTheme , true);
+        LogTool.i("ActivityName:" + activityName + " created");
     }
 
     @Override
