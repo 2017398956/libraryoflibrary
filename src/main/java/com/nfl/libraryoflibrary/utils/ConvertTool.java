@@ -16,7 +16,11 @@ public class ConvertTool {
     }
 
     public static int dp2px(int dp) {
+        if(ApplicationContext.applicationContext != null){
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, ApplicationContext.applicationContext.getResources().getDisplayMetrics());
+        }else {
+            return 0 ;
+        }
     }
 
     /**

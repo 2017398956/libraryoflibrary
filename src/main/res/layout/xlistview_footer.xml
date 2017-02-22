@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/xlistview_footer_content"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:padding="10dp" >
 
         <ImageView
             android:id="@+id/xlistview_footer_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/xlistview_footer_hint_textview"
+            android:layout_toLeftOf="@+id/xlistview_footer_hint_textview"
+            android:layout_marginRight="5dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="-35dp"
             android:src="@drawable/xlistview_arrow_up" />
-
         <ProgressBar
             android:id="@+id/xlistview_footer_progressbar"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="-40dp"
-            android:layout_alignLeft="@+id/xlistview_footer_hint_textview"
-            android:layout_centerVertical="true"
-            android:visibility="visible" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/xlistview_footer_hint_textview"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/xlistview_footer_hint_textview"

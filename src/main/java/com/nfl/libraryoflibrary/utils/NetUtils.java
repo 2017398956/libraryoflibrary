@@ -8,7 +8,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 
-//跟网络相关的工具类
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * 网络相关的工具类
+ */
+
 public class NetUtils {
     private NetUtils() {
         /* cannot be instantiated */
@@ -29,23 +35,46 @@ public class NetUtils {
     }
 
     /**
-     * 判断网络是否连接
-     *
-     * @param context
+     * 当前网络是否可用
+     * @param ctx
      * @return
      */
-    public static boolean isConnected(Context context) {
-        ConnectivityManager connectivity = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (null != connectivity) {
-            NetworkInfo info = connectivity.getActiveNetworkInfo();
-            if (null != info && info.isConnected()) {
-                if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
+    public static boolean isNetworkAvaliable(Context ctx) {
+        if (ctx == null) {
+            return false;
                 }
+
+        ConnectivityManager connMgr = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connMgr.getActiveNetworkInfo();
+        if (info == null) {
+            return false;
             }
+        return info.isConnected();
         }
+
+    /**
+     * URL检查<br>
+     * @param url     要检查的字符串<br>
+     * @return boolean   返回检查结果<br>
+     */
+    public static boolean isLegalUrl(String url) {
+        if(url == null){
         return false;
+        }
+
+        // String regex = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?";
+
+        String regEx = "^(http|https|ftp)//://([a-zA-Z0-9//.//-]+(//:[a-zA-"
+                + "Z0-9//.&%//$//-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{"
+                + "2}|[1-9]{1}[0-9]{1}|[1-9])//.(25[0-5]|2[0-4][0-9]|[0-1]{1}"
+                + "[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)//.(25[0-5]|2[0-4][0-9]|"
+                + "[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)//.(25[0-5]|2[0-"
+                + "4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0"
+                + "-9//-]+//.)*[a-zA-Z0-9//-]+//.[a-zA-Z]{2,4})(//:[0-9]+)?(/"
+                + "[^/][a-zA-Z0-9//.//,//?//'///////+&%//$//=~_//-@]*)*$";
+        Pattern p = Pattern.compile(regEx);
+        Matcher matcher = p.matcher(url);
+        return matcher.matches();
     }
 
     /**

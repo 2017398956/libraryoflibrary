@@ -46,6 +46,17 @@ public class DateTool {
 	}
 
 	/**
+	 * 获得可用作文件名的时间戳
+	 * @return
+     */
+	public static String getTimeStamp() {
+		Date currentTime = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss",
+				Locale.CHINA);
+		return formatter.format(currentTime);
+	}
+
+	/**
 	 * 默认格式为方法内注释
 	 * @param dateString
 	 * @return

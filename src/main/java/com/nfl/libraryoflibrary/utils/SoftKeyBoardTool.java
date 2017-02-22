@@ -21,7 +21,6 @@ public class SoftKeyBoardTool {
     /**
      * This may unavailable , please use ' android:windowSoftInputMode="adjustUnspecified|stateHidden" '
      * in this activity's statement of AndroidManifest.xml .
-     *
      * @param activity
      */
     public static void hideSoftKeyBoard(Activity activity) {
@@ -29,6 +28,8 @@ public class SoftKeyBoardTool {
             return;
         }
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(imm.isActive()){
         imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
     }
 }

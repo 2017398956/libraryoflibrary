@@ -2,6 +2,10 @@
     <string name="app_name">LibraryOfLibrary</string>
     <string name="server_return_exception">状态异常</string>
     <string name="internet_exception">网络异常</string>
+    <string name="url_error">网络地址错误</string>
+    <string name="no_web_service">无法连接到服务器，请检查您的网络连接</string>
+    <string name="no_data">暂无数据</string>
+    <string name="data_exception">数据异常</string>
     <string name="xlistview_header_hint_normal">下拉刷新</string>
     <string name="xlistview_header_hint_ready">松开刷新数据</string>
     <string name="xlistview_header_hint_loading">正在加载...</string>

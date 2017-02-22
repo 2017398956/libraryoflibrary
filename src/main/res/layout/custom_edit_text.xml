@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_search_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/et_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/search_edittext_shape"
+        android:drawableLeft="@drawable/iv_search_icon"
+        android:drawablePadding="5dp"
+        android:hint=""
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/iv_search_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/et_search"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/iv_delete_bg"
+        android:visibility="gone" />
+</RelativeLayout>

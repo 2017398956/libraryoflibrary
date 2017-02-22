@@ -1,10 +1,11 @@
-package com.nfl.libraryoflibrary.utils;
+﻿package com.nfl.libraryoflibrary.utils;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,6 +125,15 @@ public class StringUtil {
             Log.i("ctrl+c", "将文本复制到剪贴板失败！");
             e.printStackTrace();
         }
+    }
+    /**
+     * 对于List有时需要获得像其他Object一样的字符串,
+     * 特别是调试adapter时
+     * @param list
+     * @return
+     */
+    public static String toString4List(List list){
+        return list.getClass().getName() + "@" + Integer.toHexString(list.hashCode()) ;
     }
 }
 

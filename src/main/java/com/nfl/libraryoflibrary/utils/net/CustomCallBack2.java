@@ -35,8 +35,15 @@ public abstract class CustomCallBack2<T> implements CustomCallBackInterface2<T> 
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        success(new Gson().fromJson(response.body().string() , clz));
         CustomProgressBarDialog.dimissProgressBarDialog();
+        if(response.isSuccessful()) {
+            String resultTemp = response.body().string() ;
+            if(null == resultTemp || "".equals(resultTemp)){
+                return;
+            }
+        success(new Gson().fromJson(response.body().string() , clz));
+        }else {
+        }
     }
 
 }
