@@ -57,8 +57,10 @@ public class CustomProgressBarDialog extends Dialog{
 
     public static void showProgressBarDialog(Context context){
         dimissProgressBarDialog();
-        customProgressBarDialog =  new CustomProgressBarDialog(context) ;
-        customProgressBarDialog.show();
+        if(null != context){
+            customProgressBarDialog =  new CustomProgressBarDialog(context) ;
+            customProgressBarDialog.show();
+        }
     }
 
     public static void dimissProgressBarDialog(){
