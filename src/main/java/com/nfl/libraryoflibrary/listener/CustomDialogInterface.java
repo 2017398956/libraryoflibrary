@@ -12,6 +12,9 @@ public abstract class CustomDialogInterface implements DialogInterface {
 
     public static abstract class OnClickListener implements DialogInterface.OnClickListener{
 
+        protected final int SUBMIT = DialogInterface.BUTTON_POSITIVE ;
+        protected final int CANCLE = DialogInterface.BUTTON_NEGATIVE ;
+
         public OnClickListener(){
 
         }

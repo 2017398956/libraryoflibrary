@@ -45,3 +45,7 @@
 ##42.添加水印工具WaterMark
 ##43.添加自定义搜索框
 ##44.添加增量升级工具
+##45.添加讯飞语音合成 1.1113版 
+##46.添加 sun.misc.BASE64Decoder.jar
+##46.添加类属性值复制工具 BeanTools.java
+##47.添加数据库操作工具 DataBaseTool.java

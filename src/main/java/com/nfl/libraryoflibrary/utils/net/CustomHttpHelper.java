@@ -3,6 +3,7 @@ package com.nfl.libraryoflibrary.utils.net;
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.constant.Constants;
+import com.nfl.libraryoflibrary.utils.ExceptionTool;
 import com.nfl.libraryoflibrary.utils.LogTool;
 import com.nfl.libraryoflibrary.utils.NetUtils;
 import com.nfl.libraryoflibrary.utils.ToastTool;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +41,7 @@ public class CustomHttpHelper {
                 if (null == okHttpClient) {
                     okHttpClient = new OkHttpClient.Builder()
                             .connectTimeout(3000, TimeUnit.MILLISECONDS)
+                            .writeTimeout(15, TimeUnit.SECONDS)
                             .build();
                 }
             }
@@ -53,14 +56,14 @@ public class CustomHttpHelper {
      */
     public static void getDataFromServer(String url, Map<String, String> keyValuePairs, CustomCallBackInterface customCallBack) {
         showNetExceptionInfo();
-        if(!NetUtils.isLegalUrl(url)){
-            if(null != customCallBack){
-                customCallBack.failure();
-            }
-            CustomProgressBarDialog.dimissProgressBarDialog();
-            LogTool.i(R.string.url_error);
-            return;
-        }
+//        if(!NetUtils.isLegalUrl(url)){
+//            if(null != customCallBack){
+//                customCallBack.failure();
+//            }
+//            CustomProgressBarDialog.dimissProgressBarDialog();
+//            LogTool.i(R.string.url_error);
+//            return;
+//        }
         boolean hasUserInfo = false ;// 用于标示访问参数中是否含有用户信息
         getInstance();
         FormBody.Builder builder = new FormBody.Builder();
@@ -115,6 +118,7 @@ public class CustomHttpHelper {
                 JSONObject jsonObject = null ;
                 try {
                     jsonObject = new JSONObject(response.body().string()) ;
+                    LogTool.i("图片上传返回信息：" + jsonObject.toString()) ;
                 }catch (Exception e){
                     LogTool.i("图片上传失败") ;
                 }
@@ -140,14 +144,14 @@ public class CustomHttpHelper {
         try {
             //补全请求地址
             String requestUrl = String.format("%s/%s", "upload_head ", actionUrl);
-            if(!NetUtils.isLegalUrl(requestUrl)){
-                if(null != customCallBack){
-                    customCallBack.failure();
-                }
-                CustomProgressBarDialog.dimissProgressBarDialog();
-                LogTool.i(R.string.url_error);
-                return;
-    }
+//            if(!NetUtils.isLegalUrl(requestUrl)){
+//                if(null != customCallBack){
+//                    customCallBack.failure();
+//                }
+//                CustomProgressBarDialog.dimissProgressBarDialog();
+//                LogTool.i(R.string.url_error);
+//                return;
+//            }
             getInstance();
             boolean hasUserInfo = false ;// 用于标示访问参数中是否含有用户信息
             MultipartBody.Builder builder = new MultipartBody.Builder();
@@ -183,6 +187,81 @@ public class CustomHttpHelper {
             okHttpClient.newCall(request).enqueue((Callback) customCallBack);
         } catch (Exception e) {
         }
+    }
+
+    /**
+     * 多文件上传
+     */
+    private void uploadMultiFile(String uploadUrl , String... filePaths) {
+        showNetExceptionInfo();
+        getInstance();
+        File file = new File("fileDir", "test.jpg");
+        RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", "test.jpg", fileBody)
+                .build();
+        Request request = new Request.Builder()
+                .url(uploadUrl)
+                .post(requestBody)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogTool.i("uploadMultiFile() " + ExceptionTool.getExceptionTraceString(e)) ;
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                LogTool.i("uploadMultiFile() response=" + response.body().string());
+            }
+        });
+    }
+
+    /**
+     * 上传多张图片及参数
+     * @param reqUrl URL地址
+     * @param params 参数
+     * @param pic_key 上传图片的关键字
+     * @param files  文件
+     */
+    public void sendMultipart(String reqUrl,Map<String, String> params,String pic_key, List<File> files){
+        showNetExceptionInfo();
+        getInstance();
+
+        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
+        multipartBodyBuilder.setType(MultipartBody.FORM);
+        //遍历map中所有参数到builder
+        if (params != null){
+            for (String key : params.keySet()) {
+                multipartBodyBuilder.addFormDataPart(key, params.get(key));
+            }
+        }
+        //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
+        if (files != null){
+            for (File file : files) {
+                multipartBodyBuilder.addFormDataPart(pic_key, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+            }
+        }
+        //构建请求体
+        RequestBody requestBody = multipartBodyBuilder.build();
+
+        Request.Builder RequestBuilder = new Request.Builder();
+        RequestBuilder.url(reqUrl);// 添加URL地址
+        RequestBuilder.post(requestBody);
+        Request request = RequestBuilder.build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                call.cancel();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String str = response.body().string();
+                call.cancel();
+            }
+        });
     }
 
     /**

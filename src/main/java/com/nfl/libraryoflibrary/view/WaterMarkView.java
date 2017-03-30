@@ -7,12 +7,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.utils.ConvertTool;
+import com.nfl.libraryoflibrary.utils.DateTool;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,8 +33,8 @@ public class WaterMarkView extends View {
     private double waterMarkBitmapHeight;// waterMarkBitmap 的高
     private Path path;
     private Paint paint;
-    private int waterMarkAlpha = 252;// 水印的透明度
-    private int waterMarkColor = Color.GRAY;// 水印的颜色
+    private int waterMarkAlpha = 100;// 水印的透明度
+    private int waterMarkColor = Color.argb(waterMarkAlpha, 220, 220, 220);// 水印的颜色
     private float waterMarkTextSize = ConvertTool.sp2px(24);// 水印字体的大小
     private Rect rect;
     private List<String> strs;
@@ -40,7 +44,7 @@ public class WaterMarkView extends View {
     private List<Integer> textLenghts;
     private int screenWidth, screenHeight;
     private int gap = ConvertTool.dp2px(12);// 每条水印间每行的间距（一条水印可能有多行）
-    private int waterMarkSpace = 0;// 水印间的间隔，设置好间隔后计算出水印的条数，若屏幕还有多余空间自动增大水印间隔 , 由于水印是旋转的2个水印间会有段距离
+    private int waterMarkSpace = 150;// 水印间的间隔，设置好间隔后计算出水印的条数，若屏幕还有多余空间自动增大水印间隔 , 由于水印是旋转的2个水印间会有段距离
     private int waterMarkNumber;// 水印的总条数，应该根据屏幕来自动生成不应该设置
     private float startX = 0f, startY = 0f;// 第一条水印 waterMarkBitmap 初始y坐标 , 由于水印是旋转的，waterMarkBitmap一定会离顶部有段距离
     private int degrees = -20; // 将角度转换为弧度,默认水印倾斜20度 , 顺时针为正，逆时针为负; 旋转角度应该通过xml文件配置
@@ -60,12 +64,14 @@ public class WaterMarkView extends View {
         sinDegrees = Math.sin(Math.toRadians(Math.abs(degrees)));
         cosDegrees = Math.cos(Math.toRadians(Math.abs(degrees)));
         strs = new ArrayList<>();
-        strs.add("牛付利快钱股份公司2017.02.16");
-        strs.add("牛付利");
-        strs.add("快钱股份公司");
-        strs.add("2017.02.16");
+        strs.add("快钱");
+        strs.add(TextUtils.isEmpty(ApplicationContext.USERNAMECH)|| "null".equals(ApplicationContext.USERNAMECH) ? ApplicationContext.USERNAME :
+                ApplicationContext.USERNAMECH + "(" + ApplicationContext.USERNAME + ")");
+        strs.add(DateTool.getDateString(new Date()));
         this.paint = new Paint();
-        this.paint.setAlpha(waterMarkAlpha);
+//        this.paint.setAlpha(waterMarkAlpha);
+        this.paint.setARGB(waterMarkAlpha, 220, 220, 220);
+//        setARGB
         this.paint.setColor(waterMarkColor);
         this.paint.setTextSize(waterMarkTextSize);
         this.paint.setAntiAlias(true);
@@ -130,4 +136,11 @@ public class WaterMarkView extends View {
         }
     }
 
+    public List<String> getStrs() {
+        return strs;
+    }
+
+    public void setStrs(List<String> strs) {
+        this.strs = strs;
+    }
 }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.nfl.libraryoflibrary.R;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by fuli.niu on 2016/8/5.
@@ -70,6 +71,48 @@ public class PictureSelector {
     }
 
     /**
+     * 多选模式
+     *
+     * @param activity
+     * @param photoPath
+     * @param intent    将要被打开的Activity
+     */
+    public static void showDialog4MultiSelect(final Activity activity, final String photoPath, final Intent intent, final int requestCode) {
+        View view = LayoutInflater.from(activity).inflate(R.layout.dialog_picture_selector, null);
+        TextView tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
+        TextView tv_take_photo = (TextView) view.findViewById(R.id.tv_take_photo);
+        TextView tv_select_picture = (TextView) view.findViewById(R.id.tv_select_picture);
+
+        DialogTool.getInstance().displayDialog(activity, view, Gravity.BOTTOM);
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                DialogTool.getInstance().dismissDialog();
+            }
+        });
+        tv_take_photo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                DialogTool.getInstance().dismissDialog();
+                // 拍照
+                goTakePhoto(activity, photoPath, requestCode);
+            }
+        });
+        tv_select_picture.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                DialogTool.getInstance().dismissDialog();
+                if (null != intent) {
+                    activity.startActivityForResult(intent, requestCode);
+                }
+            }
+        });
+    }
+
+    /**
      * 从相册中选择图片
      */
     private static void goPhotoPick(Activity activity) {
@@ -101,19 +144,47 @@ public class PictureSelector {
     /**
      * 使用照相机拍摄图片
      */
-    private static void goTakePhoto(Activity activity, String photoPath) {
+    private static Intent goTakePhotoCommon(Activity activity, String photoPath) {
         if (!FileTool.isSDCardMounted()) {
             ToastTool.showShortToast("SD卡未准备");
         } else if (FileTool.getSDFreeSize() < 2) {
             ToastTool.showShortToast("SD卡空间不足");
         } else {
+            LogTool.i("拍照路径：" + photoPath);
             File imageFile = new File(photoPath);
+            if (!imageFile.getParentFile().exists()) {
+                imageFile.getParentFile().mkdirs();
+            }
+            if (!imageFile.exists()) {
+                try {
+                    imageFile.createNewFile();
+                } catch (IOException e) {
+                    LogTool.i("PictureSelector拍照失败");
+                    e.printStackTrace();
+                }
+            }
             Uri imageFileUri = Uri.fromFile(imageFile);
 
             Intent intent = new Intent(
                     android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageFileUri);
+            return intent;
+        }
+        return null;
+    }
+
+    private static void goTakePhoto(Activity activity, String photoPath) {
+        Intent intent = goTakePhotoCommon(activity, photoPath);
+        if (null != intent) {
             activity.startActivityForResult(intent, REQUESTCODE_TAKE_PHOTO_SUCCESS);
+        }
+    }
+
+    private static void goTakePhoto(Activity activity, String photoPath, int requestCode) {
+        Intent intent = goTakePhotoCommon(activity, photoPath);
+        if (null != intent) {
+            // intent.putExtra("imagePath" , photoPath) ;
+            activity.startActivityForResult(intent, requestCode * 10);
         }
     }
 
@@ -143,8 +214,7 @@ public class PictureSelector {
             cropIntent.putExtra("outputX", PhoneInfoTool.getScreenWidth(activity) * 2 / 3);
             cropIntent.putExtra("outputY", PhoneInfoTool.getScreenHeight(activity) * 2 / 3);
 //            cropIntent.putExtra("outputX", mScreenWidth);
-//            cropIntent.putExtra("outputY",
-//                    (int) (9.0F * (mScreenWidth / 16.0F)));
+            // cropIntent.putExtra("outputY", (int) (9.0F * (mScreenWidth / 16.0F)));
             cropIntent.putExtra("scale", true);
             /**
              * 此方法返回的图片只能是小图片（传递true时。sumsang测试为高宽160px的图片）
@@ -154,8 +224,7 @@ public class PictureSelector {
             cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(photoPath)));
             // 不建议用路径的方式，路径方式需要加“file://"
             // cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoPath);
-            cropIntent.putExtra("outputFormat",
-                    Bitmap.CompressFormat.JPEG.toString());
+            cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
             activity.startActivityForResult(cropIntent, REQUESTCODE_CROP_IMAGE_SUCCESS);
         } catch (ActivityNotFoundException anfe) {
             LogTool.i("不支持裁剪");

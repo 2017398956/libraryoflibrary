@@ -13,10 +13,7 @@ import java.util.Map;
 
 public class GsonTool {
 
-    static Gson gson;
-    static {
-        gson = new Gson();
-    }
+    private static Gson gson = new Gson();
 
     //1、对象转string
     public static String object2String(Object o){

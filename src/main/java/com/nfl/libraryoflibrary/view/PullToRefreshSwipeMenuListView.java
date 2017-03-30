@@ -285,8 +285,8 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
             case MotionEvent.ACTION_UP:
                 mLastY = -1; // reset
                 if (mEnablePullLoad && mFooterView.getHeight() > 0 && mFooterView.getBottomMargin() > PULL_LOAD_MORE_DELTA) {
-                    startLoadMore();
-                    resetFooterHeight();
+//                    startLoadMore();
+//                    resetFooterHeight();
                     new ResetHeaderHeightTask().execute();
                 } else if (getFirstVisiblePosition() == 0) {
                     // invoke refresh
@@ -481,9 +481,9 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
         if (mEnablePullLoad && !mPullLoading) {
             if (height > PULL_LOAD_MORE_DELTA) { // height enough to invoke load
                 // more.
-                if(mFooterView.getState() == PullToRefreshListFooter.STATE_NORMAL){
+//                if(mFooterView.getState() == PullToRefreshListFooter.STATE_NORMAL){
                     mFooterView.setState(PullToRefreshListFooter.STATE_READY);
-                }
+//                }
             } else {
                 mFooterView.setState(PullToRefreshListFooter.STATE_NORMAL);
             }
@@ -539,6 +539,12 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
         if (mScrollListener != null) {
             mScrollListener.onScrollStateChanged(view, scrollState);
         }
+        if (scrollState == SCROLL_STATE_IDLE &&
+                mEnablePullLoad && mFooterView.getHeight() > 0 &&
+                mFooterView.getBottomMargin() > PULL_LOAD_MORE_DELTA) {
+            startLoadMore();
+            resetFooterHeight();
+        }
     }
 
     @Override
@@ -553,7 +559,7 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
     public void setXListViewListener(IXListViewListener l) {
         mListViewListener = l;
     }
-//    原方法
+//    原方�?
 //    public void setXListViewListener(Activity l) {
 //        mListViewListener = l;
 //    }

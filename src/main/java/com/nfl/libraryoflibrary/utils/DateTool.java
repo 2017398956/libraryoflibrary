@@ -37,6 +37,31 @@ public class DateTool {
 	}
 
 	/**
+	 * 获得指定日期的前几天或者后几天的日期
+	 * @param appointDate 指定的日期
+	 * @param beforeOrAfterDays 正：后几天；负：前几天
+     * @return 日期格式 yyyy-MM-dd
+     */
+	public static String getDateSimpleFromACertainDate(Date appointDate , int beforeOrAfterDays){
+		appointDate.setTime(appointDate.getTime() + beforeOrAfterDays * 24 * 60 * 60 * 1000);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
+				Locale.CHINA);
+		return formatter.format(appointDate);
+	}
+
+	public static String getDateSimpleFromACertainDate(String appointDateString , int beforeOrAfterDays){
+		Date appointDate = turnString2Date(appointDateString) ;
+		if(null != appointDate){
+			appointDate.setTime(appointDate.getTime() + beforeOrAfterDays * 24 * 60 * 60 * 1000);
+		}else {
+			return null ;
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
+				Locale.CHINA);
+		return formatter.format(appointDate);
+	}
+
+	/**
 	 * 获得当前年月日
 	 */
 	public static String getDateSimpleString(Date date) {

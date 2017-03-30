@@ -12,6 +12,11 @@ import java.util.List;
 public class ApplicationContext {
 
     public static Context applicationContext = null ;
+	// 非主界面都可以使用下面的用户信息
+    public static String USERNAME = "" ;
+    public static int USERID = 0 ;
+    public static String DEVID = "" ;
+    public static String USERNAMECH = "" ;
 
     /**
      * 判断当前应用程序处于前台还是后台
