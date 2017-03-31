@@ -55,7 +55,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     }
 
     public boolean dismissProgressDialog(){
-        // TODO ¸Ä±ä×Ô¶¨Òå ProgressDialog ÊÇ·ñ×Ô¶¯ÏûÊ§£¬Ä¬ÈÏ×Ô¶¯ÏûÊ§
+        // TODO æ”¹å˜è‡ªå®šä¹‰ ProgressDialog æ˜¯å¦è‡ªåŠ¨æ¶ˆå¤±ï¼Œé»˜è®¤è‡ªåŠ¨æ¶ˆå¤±
         return true ;
     }
 
@@ -104,7 +104,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
                 Gson gson = new Gson();
                 T t = null ;
                 try{
-                    // gson ×ª»»¿ÉÄÜ»á·¢ÉúÒì³£
+                    // gson è½¬æ¢å¯èƒ½ä¼šå‘ç”Ÿå¼‚å¸¸
                     t = gson.fromJson(resultTemp, clz);
                 } catch (Exception e){
                     LogTool.i(ExceptionTool.getExceptionTraceString(e));
@@ -123,7 +123,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             }
             canRunOnMainThread = false;
         }else {
-//            success("·ÃÎÊ·şÎñÆ÷Ê§°Ü-->com.nfl.libraryoflibrary.utils.net.CustomCallBack");
+            // success("è®¿é—®æœåŠ¡å™¨å¤±è´¥-->com.nfl.libraryoflibrary.utils.net.CustomCallBack");
         }
     }
 }

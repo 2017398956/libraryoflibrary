@@ -559,7 +559,7 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
     public void setXListViewListener(IXListViewListener l) {
         mListViewListener = l;
     }
-//    原方�?
+
 //    public void setXListViewListener(Activity l) {
 //        mListViewListener = l;
 //    }
