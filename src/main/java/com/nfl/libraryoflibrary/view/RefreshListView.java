@@ -1,8 +1,6 @@
 package com.nfl.libraryoflibrary.view;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -267,7 +265,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
         isLoadingMore = false;
     }
 
-    public boolean isLoadingMore(){
-        return isLoadingMore ;
+    public boolean isLoadingMore() {
+        return isLoadingMore;
     }
 }
