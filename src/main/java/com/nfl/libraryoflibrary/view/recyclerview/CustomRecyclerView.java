@@ -1,4 +1,5 @@
-package com.nfl.libraryoflibrary.view.recyclerview;/**
+package com.nfl.libraryoflibrary.view.recyclerview;
+/**
  * Created by fuli.niu on 2016/8/22.
  */
 
@@ -22,7 +23,7 @@ public class CustomRecyclerView extends RecyclerView {
 
     private Context context;
     private CustomRecyclerViewDivider customRecyclerViewDivider;
-    private OnItemClickListener onItemClickListener;
+    private CustomRecyclerView.OnItemClickListener onItemClickListener;
 
     public CustomRecyclerView(Context context) {
         this(context, null);
@@ -57,25 +58,18 @@ public class CustomRecyclerView extends RecyclerView {
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
-
-        if (null != onItemClickListener) {
-            for (int position = 0; position < getChildCount(); position++) {
-                getChildAt(position).setOnClickListener(new CustomOnClickListener<Integer>(position) {
-                    @Override
-                    public void onClick(View view, Integer position) {
-                        super.onClick(view, position);
-                        onItemClickListener.onClick(view, position);
-                    }
-                });
-            }
-        }
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListenerAdded) {
-        onItemClickListener = onItemClickListenerAdded;
+        this.onItemClickListener = onItemClickListenerAdded;
+    }
+
+    public CustomRecyclerView.OnItemClickListener getOnItemClickListener() {
+        return onItemClickListener;
     }
 
     public static abstract class OnItemClickListener {
+
         public void onClick(View view, int position) {
             TraceKeeper.addTrace(view);
         }
