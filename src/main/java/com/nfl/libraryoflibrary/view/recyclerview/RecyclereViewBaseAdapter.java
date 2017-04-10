@@ -16,12 +16,14 @@ public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapte
     private CustomRecyclerView customRecyclerView;
 
     @Override
-    public T onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(null == parent){
-            customRecyclerView = (CustomRecyclerView) parent ;
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (null == parent) {
+            customRecyclerView = (CustomRecyclerView) parent;
         }
-        return null;
+        return (BaseViewHolder) onCreateViewHolder2(parent, viewType);
     }
+
+    public abstract T onCreateViewHolder2(ViewGroup parent, int viewType);
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
@@ -37,10 +39,10 @@ public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapte
                 }
             });
         }
-        onBindViewHolder2((T) holder , position);
+        onBindViewHolder2((T) holder, position);
     }
 
-    public abstract void onBindViewHolder2(T holder, int position) ;
+    public abstract void onBindViewHolder2(T holder, int position);
 
     public class BaseViewHolder extends RecyclerView.ViewHolder {
 
