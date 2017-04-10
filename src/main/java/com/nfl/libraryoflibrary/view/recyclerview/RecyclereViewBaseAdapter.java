@@ -6,54 +6,58 @@ import android.view.ViewGroup;
 
 import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
 
+import java.util.List;
+
 /**
  * Created by fuli.niu on 2017/4/7.
  */
 
 public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapter.BaseViewHolder>
-        extends RecyclerView.Adapter<RecyclereViewBaseAdapter.BaseViewHolder> {
+        extends RecyclerView.Adapter<T> {
 
     private CustomRecyclerView customRecyclerView;
+    private List<CustomRecyclerView.OnItemClickListener> onItemClickListenerList;
 
     @Override
     public T onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(null == parent){
-            customRecyclerView = (CustomRecyclerView) parent ;
+        if (null != parent) {
+            // 初始化
+            customRecyclerView = (CustomRecyclerView) parent;
+            onItemClickListenerList = customRecyclerView.getOnItemClickListenerList();
         }
         return null;
     }
 
     @Override
-    public void onBindViewHolder(BaseViewHolder holder, int position) {
-        if (null != holder && null != holder.getItemView()) {
-            holder.getItemView().setOnClickListener(null);
-            holder.getItemView().setOnClickListener(new CustomOnClickListener<Integer>(position) {
-                @Override
-                public void onClick(View view, Integer integer) {
-                    super.onClick(view, integer);
-                    if (null != customRecyclerView.getOnItemClickListener()) {
-                        customRecyclerView.getOnItemClickListener().onClick(view, integer);
-                    }
-                }
-            });
-        }
-        onBindViewHolder2((T) holder , position);
+    public void onBindViewHolder(T holder, int position) {
+        holder.getCustomOnClickListener().setT(position);
     }
-
-    public abstract void onBindViewHolder2(T holder, int position) ;
 
     public class BaseViewHolder extends RecyclerView.ViewHolder {
 
         private View itemView;
+        private CustomOnClickListener customOnClickListener = new CustomOnClickListener<Integer>(0) {
+            @Override
+            public void onClick(View view, Integer integer) {
+                super.onClick(view, integer);
+                if (null != onItemClickListenerList && onItemClickListenerList.size() > 0) {
+                    for (CustomRecyclerView.OnItemClickListener onItemClickListener : onItemClickListenerList) {
+                        onItemClickListener.onClick(view, integer);
+                    }
+                }
+            }
+        };
 
         public BaseViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
+            this.itemView.setOnClickListener(customOnClickListener);
         }
 
-        public View getItemView() {
-            return itemView;
+        public CustomOnClickListener getCustomOnClickListener() {
+            return customOnClickListener;
         }
+
     }
 
 }

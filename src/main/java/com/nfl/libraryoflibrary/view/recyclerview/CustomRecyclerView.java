@@ -12,9 +12,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
 import com.nfl.libraryoflibrary.utils.ConvertTool;
 import com.nfl.libraryoflibrary.utils.TraceKeeper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by fuli.niu 2016/8/22
@@ -23,7 +25,8 @@ public class CustomRecyclerView extends RecyclerView {
 
     private Context context;
     private CustomRecyclerViewDivider customRecyclerViewDivider;
-    private CustomRecyclerView.OnItemClickListener onItemClickListener;
+
+    private List<OnItemClickListener> onItemClickListenerList;
 
     public CustomRecyclerView(Context context) {
         this(context, null);
@@ -40,11 +43,13 @@ public class CustomRecyclerView extends RecyclerView {
 
     /**
      * 如果没有其他操作，默认添加水平分割线，竖直分布
+     * 仿 ListView
      *
      * @param context
      */
     private void init(Context context) {
         this.context = context;
+        onItemClickListenerList = new ArrayList<>();
         LinearLayoutManager manager = new LinearLayoutManager(context);
         setHasFixedSize(true);
         customRecyclerViewDivider = new CustomRecyclerViewDivider(new ColorDrawable(0xeeeeeeee), OrientationHelper.VERTICAL);
@@ -60,12 +65,18 @@ public class CustomRecyclerView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListenerAdded) {
-        this.onItemClickListener = onItemClickListenerAdded;
+    /**
+     * 清空所有 onItemClickListener
+     * @param onItemClickListener
+     */
+    public void addOnItemClickListener(OnItemClickListener onItemClickListener) {
+        if (null != onItemClickListener) {
+            onItemClickListenerList.add(onItemClickListener);
+        }
     }
 
-    public CustomRecyclerView.OnItemClickListener getOnItemClickListener() {
-        return onItemClickListener;
+    public void clearAllOnItemClickListeners() {
+        onItemClickListenerList.clear();
     }
 
     public static abstract class OnItemClickListener {
@@ -73,6 +84,10 @@ public class CustomRecyclerView extends RecyclerView {
         public void onClick(View view, int position) {
             TraceKeeper.addTrace(view);
         }
+    }
+
+    public List<OnItemClickListener> getOnItemClickListenerList() {
+        return onItemClickListenerList;
     }
 
 }
