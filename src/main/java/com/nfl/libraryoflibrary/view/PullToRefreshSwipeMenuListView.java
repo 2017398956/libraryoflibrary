@@ -1,6 +1,5 @@
 package com.nfl.libraryoflibrary.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
@@ -110,7 +109,7 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
 
     private final static float OFFSET_RADIO = 1.8f;
 
-    public boolean canLoadMore = true ;
+    public boolean canLoadMore = true;
 
     public PullToRefreshSwipeMenuListView(Context context) {
         super(context);
@@ -392,7 +391,7 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
         } else {
             mFooterView.setVisibility(View.GONE);
             mPullLoading = false;
-            canLoadMore = false ;
+            canLoadMore = false;
             mFooterView.hide();
             mFooterView.setState(PullToRefreshListFooter.STATE_NORMAL);
             // both "pull up" and "click" will invoke load more.
@@ -482,7 +481,7 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
             if (height > PULL_LOAD_MORE_DELTA) { // height enough to invoke load
                 // more.
 //                if(mFooterView.getState() == PullToRefreshListFooter.STATE_NORMAL){
-                    mFooterView.setState(PullToRefreshListFooter.STATE_READY);
+                mFooterView.setState(PullToRefreshListFooter.STATE_READY);
 //                }
             } else {
                 mFooterView.setState(PullToRefreshListFooter.STATE_NORMAL);
@@ -503,9 +502,9 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
     }
 
     private void startLoadMore() {
-        if(mPullRefreshing){
+        if (mPullRefreshing) {
             // 刷新状态不加载更多
-            return ;
+            return;
         }
         mPullLoading = true;
         setFooterViewDisplayedState(View.VISIBLE);
@@ -564,8 +563,8 @@ public class PullToRefreshSwipeMenuListView extends ListView implements OnScroll
 //        mListViewListener = l;
 //    }
 
-    public void setFooterViewDisplayedState(int state){
-        if(null != mFooterView){
+    public void setFooterViewDisplayedState(int state) {
+        if (null != mFooterView) {
             mFooterView.setVisibility(state);
         }
     }

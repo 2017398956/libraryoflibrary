@@ -24,6 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nfl.libraryoflibrary.R;
+import com.nfl.libraryoflibrary.utils.ExceptionTool;
+import com.nfl.libraryoflibrary.utils.LogTool;
+import com.nfl.libraryoflibrary.utils.ToastTool;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -115,7 +118,13 @@ public class TrafficFloatWindowService extends Service {
             }
         } else {
             //Android6.0以下，不用动态声明权限
-            mWindowManager.addView(mFloatLayout, wmParams);// 添加mFloatLayout
+            try{
+                mWindowManager.addView(mFloatLayout, wmParams);// 添加mFloatLayout
+            }catch (Exception e){
+                LogTool.i(ExceptionTool.getExceptionTraceString(e)) ;
+                ToastTool.showShortToast("没有悬浮窗权限");
+            }
+
         }
     }
 
