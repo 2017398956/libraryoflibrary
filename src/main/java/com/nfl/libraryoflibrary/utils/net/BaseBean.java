@@ -10,4 +10,7 @@ public abstract class BaseBean implements BeanInterface{
     public String getJSONString() {
         return new Gson().toJson(this);
     }
+    public String getJSONString(Object object){
+        return new Gson().toJson(object) ;
+    }
 }

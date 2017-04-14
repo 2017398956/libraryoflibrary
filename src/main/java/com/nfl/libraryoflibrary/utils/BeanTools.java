@@ -56,13 +56,13 @@ public class BeanTools {
                     getName = "get" + str + fieldName.substring(1);
                     setName = "set" + str + fieldName.substring(1);
                     // 获取get、set方法
-                    getMethod = classTo.getMethod(getName, new Class[]{});
-                    setMethod = classFrom.getMethod(setName, new Class[]{field.getType()});
+                    getMethod = classFrom.getMethod(getName, new Class[]{});
+                    setMethod = classTo.getMethod(setName, new Class[]{field.getType()});
                     //获取属性值
-                    Object o = getMethod.invoke(to, new Object[]{});
+                    Object o = getMethod.invoke(from , new Object[]{});
                     //将属性值放入另一个对象中对应的属性
                     if (null != o) {
-                        setMethod.invoke(from, new Object[]{o});
+                        setMethod.invoke(to , new Object[]{o});
                     }
                 }
             }
