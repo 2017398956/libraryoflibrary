@@ -76,7 +76,7 @@ public class DateTool {
      */
 	public static String getTimeStamp() {
 		Date currentTime = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss",
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmssSS",
 				Locale.CHINA);
 		return formatter.format(currentTime);
 	}
