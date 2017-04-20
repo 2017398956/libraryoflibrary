@@ -6,6 +6,7 @@ package com.nfl.libraryoflibrary.utils.net;
 public interface CustomCallBackInterface<T> {
 
      void failure() ;
+     void failureOnMainThread() ;
      void success(String result) ;
      void successOnMainThread(String result) ;
      void runOnMainThread(T t) ;

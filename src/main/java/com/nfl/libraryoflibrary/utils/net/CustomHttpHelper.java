@@ -34,6 +34,10 @@ public class CustomHttpHelper {
 
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*");
     private static OkHttpClient okHttpClient;
+    private static OkHttpClient okHttpClient2;// 上传时用
+    private static boolean isUpload = false;// 是否是上传
+    private static final int defaultTimeout = 15 ;// 一般网络访问的超时
+    private static final int uploadTimeout = 60 * 10;// 上传 Base64 文件时的默认超时
 
     private static void getInstance() {
         if (null == okHttpClient) {
@@ -41,7 +45,21 @@ public class CustomHttpHelper {
                 if (null == okHttpClient) {
                     okHttpClient = new OkHttpClient.Builder()
                             .connectTimeout(3000, TimeUnit.MILLISECONDS)
-                            .writeTimeout(15, TimeUnit.SECONDS)
+                            .writeTimeout(defaultTimeout, TimeUnit.SECONDS)
+                            .build();
+                }
+            }
+        }
+    }
+
+    private static void getInstance2() {
+        if (null == okHttpClient2) {
+            synchronized (CustomHttpHelper.class) {
+                if (null == okHttpClient2) {
+                    okHttpClient2 = new OkHttpClient.Builder()
+                            .connectTimeout(3000, TimeUnit.MILLISECONDS)
+                            .readTimeout(uploadTimeout , TimeUnit.SECONDS)
+                            .writeTimeout(uploadTimeout, TimeUnit.SECONDS)
                             .build();
                 }
             }
@@ -50,6 +68,7 @@ public class CustomHttpHelper {
 
     /**
      * 当服务网返回状态码非2xx、3xx时不会调用{@link CustomCallBackInterface}
+     *
      * @param url
      * @param keyValuePairs
      * @param customCallBack
@@ -67,7 +86,7 @@ public class CustomHttpHelper {
         boolean hasUserInfo = false ;// 用于标示访问参数中是否含有用户信息
         getInstance();
         FormBody.Builder builder = new FormBody.Builder();
-
+        String valueTemp;
         if (null != keyValuePairs && keyValuePairs.size() > 0) {
             for(String key : keyValuePairs.keySet()){
                 if(!hasUserInfo){
@@ -75,7 +94,8 @@ public class CustomHttpHelper {
                         hasUserInfo = true ;
                     }
                 }
-                builder.add(key , keyValuePairs.get(key));
+                valueTemp = keyValuePairs.get(key);
+                builder.add(key, null == valueTemp ? "" : valueTemp);
             }
             }
         if(!hasUserInfo){
@@ -89,7 +109,20 @@ public class CustomHttpHelper {
         builder.add("appversion", Constants.APPVERSION);// app版本
         FormBody formBody = builder.build();
         Request request = new Request.Builder().url(url).post(formBody).build();
+        if (isUpload) {
+            okHttpClient2.newCall(request).enqueue((Callback) customCallBack);
+            LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis()) ;
+            isUpload = false;
+        } else {
         okHttpClient.newCall(request).enqueue((Callback) customCallBack);
+    }
+
+    }
+
+    public static void uploadBase64File(String url, Map<String, String> keyValuePairs, CustomCallBackInterface customCallBack) {
+        getInstance2();
+        isUpload = true;
+        getDataFromServer(url, keyValuePairs, customCallBack);
     }
 
     public static void uploadImg(String imagePath , String url) {
@@ -135,6 +168,7 @@ public class CustomHttpHelper {
 
     /**
      * 上传文件
+     *
      * @param actionUrl 接口地址
      * @param paramsMap 参数
      * @param customCallBack 回调
@@ -220,6 +254,7 @@ public class CustomHttpHelper {
 
     /**
      * 上传多张图片及参数
+     *
      * @param reqUrl URL地址
      * @param params 参数
      * @param pic_key 上传图片的关键字

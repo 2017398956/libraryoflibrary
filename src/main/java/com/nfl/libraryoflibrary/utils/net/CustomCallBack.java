@@ -1,6 +1,8 @@
 package com.nfl.libraryoflibrary.utils.net;
 
+import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.UiThread;
 
@@ -24,15 +26,29 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     private Class<T> clz;
     private final int RUN_ON_MAIN_THREAD = 1;
     private final int SUCCESS_ON_MAIN_THREAD = 2;
+    private final int FAILURE_ON_MAIN_THREAD = 3 ;
+    private Looper myLooper ;
 
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == RUN_ON_MAIN_THREAD) {
+                LogTool.i("runOnMainThread start") ;
                 runOnMainThread((T) msg.obj);
             } else if (msg.what == SUCCESS_ON_MAIN_THREAD) {
+                LogTool.i("successOnMainThread start") ;
                 successOnMainThread((String) msg.obj);
+            } else if (msg.what == FAILURE_ON_MAIN_THREAD){
+                LogTool.i("failureOnMainThread start") ;
+                failureOnMainThread();
+            }
+            if(null != myLooper && myLooper != Looper.getMainLooper()){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    myLooper.quitSafely();
+                }else {
+                    myLooper.quit();
+                }
             }
         }
     };
@@ -63,16 +79,18 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     public abstract void failure();
 
     @Override
+    public void failureOnMainThread() {
+    }
+
+    @Override
     public abstract void success(String result);
 
-    @UiThread
     @Override
     public void successOnMainThread(String result) {
 
     }
 
     @Override
-    @UiThread
     public void runOnMainThread(T t) {
     }
 
@@ -84,6 +102,15 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     @Override
     public void onFailure(Call call, IOException e) {
         failure();
+        if(null == myLooper){
+            Looper.prepare();
+            myLooper = Looper.myLooper() ;
+        }
+        Message msg = new Message();
+        msg.what = FAILURE_ON_MAIN_THREAD;
+        handler.sendMessage(msg);
+        Looper.loop();
+        LogTool.i("跳出 CustomCallBack Looper 3") ;
     }
 
     @Override
@@ -99,7 +126,6 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
         }
             CustomProgressBarDialog.dimissProgressBarDialog();
         success(resultTemp);
-            Message msg = new Message();
             if (clz != null) {
                 Gson gson = new Gson();
                 T t = null ;
@@ -111,15 +137,27 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
                 }
                 runOnSelfThread(t);
                 if (canRunOnMainThread) {
+                    Looper.prepare();
+                    Message msg = new Message();
+                    myLooper = Looper.myLooper() ;
                     msg.what = RUN_ON_MAIN_THREAD;
                     msg.obj = t;
                     handler.sendMessage(msg);
+                    Looper.loop();
+                    LogTool.i("跳出 CustomCallBack Looper 1") ;
                 }
             }
             if (canRunOnMainThread) {
+                if(null == myLooper){
+                    Looper.prepare();
+                    myLooper = Looper.myLooper() ;
+                }
+                Message msg = new Message();
                 msg.what = SUCCESS_ON_MAIN_THREAD;
                 msg.obj = resultTemp;
                 handler.sendMessage(msg);
+                Looper.loop();
+                LogTool.i("跳出 CustomCallBack Looper 2") ;
             }
             canRunOnMainThread = false;
         }else {

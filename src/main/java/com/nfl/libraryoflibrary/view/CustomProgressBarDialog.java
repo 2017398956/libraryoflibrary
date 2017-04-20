@@ -30,6 +30,11 @@ public class CustomProgressBarDialog extends Dialog{
         setMessage(0);
     }
 
+    private CustomProgressBarDialog(Context context , String info) {
+        this(context);
+        mLoadingTextView.setText(info);
+    }
+
     public void setMessage(int id) {
         if (0 == id) {
             mLoadingTextView.setText("数据加载中,请稍等...");
@@ -59,6 +64,14 @@ public class CustomProgressBarDialog extends Dialog{
         dimissProgressBarDialog();
         if(null != context){
             customProgressBarDialog =  new CustomProgressBarDialog(context) ;
+            customProgressBarDialog.show();
+        }
+    }
+
+    public static void showProgressBarDialog(Context context , String info){
+        dimissProgressBarDialog();
+        if(null != context){
+            customProgressBarDialog =  new CustomProgressBarDialog(context , info) ;
             customProgressBarDialog.show();
         }
     }
