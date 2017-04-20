@@ -137,9 +137,11 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
                 }
                 runOnSelfThread(t);
                 if (canRunOnMainThread) {
-                    Looper.prepare();
+                    if(null == myLooper){
+                        Looper.prepare();
+                        myLooper = Looper.myLooper() ;
+                    }
                     Message msg = new Message();
-                    myLooper = Looper.myLooper() ;
                     msg.what = RUN_ON_MAIN_THREAD;
                     msg.obj = t;
                     handler.sendMessage(msg);
