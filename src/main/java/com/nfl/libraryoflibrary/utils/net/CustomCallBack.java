@@ -129,11 +129,12 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
         }
         if(response.isSuccessful()) {
         String resultTemp = response.body().string() ;
+		CustomProgressBarDialog.dimissProgressBarDialog();
+        success(resultTemp);
         if(null == resultTemp || "".equals(resultTemp)){
             return;
         }
-            CustomProgressBarDialog.dimissProgressBarDialog();
-        success(resultTemp);
+            
             if (clz != null) {
                 Gson gson = new Gson();
                 T t = null ;
