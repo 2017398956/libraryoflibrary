@@ -1,5 +1,6 @@
 package com.nfl.libraryoflibrary.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -275,7 +276,7 @@ public class ImageTools {
      *
      * @return
      */
-    public static Bitmap compress(Context ctx, String imagePath) {
+    public static Bitmap compress(Activity ctx, String imagePath) {
         if (ctx == null || imagePath == null) {
             return null;
         }
@@ -289,7 +290,7 @@ public class ImageTools {
             int h = opts.outHeight;
 
             // 现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-            DisplayMetrics displayMetrics = PhoneInfoTool.getMetrics();
+            DisplayMetrics displayMetrics = PhoneInfoTool.getMetrics(ctx);
             float ww = displayMetrics.widthPixels;// 这里设置宽度为480f
             float hh = displayMetrics.heightPixels;// 这里设置高度为800f;
 
