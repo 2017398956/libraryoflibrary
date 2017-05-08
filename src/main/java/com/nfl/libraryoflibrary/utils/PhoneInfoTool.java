@@ -154,4 +154,10 @@ public class PhoneInfoTool {
         nm.notify(ID_LED, notification);
 //        nm.cancel(ID_LED);
     }
+
+    public static DisplayMetrics getMetrics(Activity activity) {
+        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(localDisplayMetrics);
+        return  localDisplayMetrics ;
+    }
 }

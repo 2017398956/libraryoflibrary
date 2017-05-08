@@ -201,11 +201,10 @@ public class FileTool {
             return null == buffer ? "" : Base64.encodeToString(buffer, Base64.NO_WRAP | Base64.NO_PADDING);
         }
     }
-}
-
 
     /**
      * 在SD卡上创建文件
+     *
      * @throws IOException
      */
     public static File creatSDFile(String saveFileName) throws IOException {
@@ -216,6 +215,7 @@ public class FileTool {
 
     /**
      * 删除文件
+     *
      * @param path2
      */
     public static void DeleteFileName(String path2) {
@@ -227,6 +227,7 @@ public class FileTool {
 
     /**
      * 删除文件
+     *
      * @param file
      */
     private static void deleteFile(File file) {
@@ -252,6 +253,7 @@ public class FileTool {
 
     /**
      * 在SD卡上创建目录
+     *
      * @param dirName
      */
     public static File creatSDDir(String dirName) {
