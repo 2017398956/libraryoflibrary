@@ -4,21 +4,17 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.LayoutInflaterFactory;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,6 +25,8 @@ import com.nfl.libraryoflibrary.R;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by fuli.niu on 2016/8/30.
@@ -40,12 +38,29 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
     private int viewLevel = 2;// 默认为2
     private ViewGroup rootView;// DecorView
     private Context context;
+    private List<String> filteredActivities;// 不受同一主题设置的 Activity
+
+    public CustomActivityLifecycleCallbacks() {
+        this.filteredActivities = new ArrayList<>();
+        this.filteredActivities.add("DialogActivity");
+        this.filteredActivities.add("NormalActivity");
+        this.filteredActivities.add("TransparentActivity");
+    }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        Resources.Theme theme = activity.getTheme() ;
-        theme.applyStyle( R.style.testTheme , true);
-        LogTool.i("ActivityName:" + activityName + " created");
+        LogTool.i("ActivityName:" + activity.getClass().getSimpleName() + " created");
+        boolean canResetActivityTheme = true;
+        for (String activityName : filteredActivities) {
+            if (null != activityName && activityName.equals(activity.getClass().getSimpleName())) {
+                canResetActivityTheme = false;
+                break;
+            }
+        }
+        if (canResetActivityTheme) {
+            Resources.Theme theme = activity.getTheme();
+            theme.applyStyle(R.style.testTheme, true);
+        }
     }
 
     @Override
@@ -290,6 +305,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     /**
      * 更改字体,只能操作AppCompatActivity
+     *
      * @param activity
      */
     private void changeFont(final AppCompatActivity activity) {
@@ -323,7 +339,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 //                }else {
 //                    return null ;
 //                }
-                return view ;
+                return view;
             }
         });
     }
