@@ -24,7 +24,7 @@ public class CustomRecyclerViewDivider extends RecyclerView.ItemDecoration {
         setOrientation(orientation);
     }
 
-    private void setDivider(Drawable divider) {
+    public void setDivider(Drawable divider) {
         this.mDivider = divider;
         if (mDivider == null) {
             mDivider = new ColorDrawable(0x808080);

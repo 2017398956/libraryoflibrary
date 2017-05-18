@@ -90,4 +90,7 @@ public class CustomRecyclerView extends RecyclerView {
         return onItemClickListenerList;
     }
 
+    public CustomRecyclerViewDivider getCustomRecyclerViewDivider() {
+        return customRecyclerViewDivider;
+    }
 }
