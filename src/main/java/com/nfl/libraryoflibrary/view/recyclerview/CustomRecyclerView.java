@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by fuli.niu 2016/8/22
  */
-public class CustomRecyclerView extends RecyclerView {
+public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends RecyclerView {
 
     private Context context;
     private CustomRecyclerViewDivider customRecyclerViewDivider;

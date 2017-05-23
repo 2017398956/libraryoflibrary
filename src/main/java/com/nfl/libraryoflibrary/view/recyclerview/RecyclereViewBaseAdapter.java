@@ -15,14 +15,14 @@ import java.util.List;
 public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapter.BaseViewHolder>
         extends RecyclerView.Adapter<T> {
 
-    private CustomRecyclerView customRecyclerView;
+    private CustomRecyclerView<RecyclerView.ViewHolder> customRecyclerView;
     private List<CustomRecyclerView.OnItemClickListener> onItemClickListenerList;
 
     @Override
     public T onCreateViewHolder(ViewGroup parent, int viewType) {
         if (null != parent) {
             // 初始化
-            customRecyclerView = (CustomRecyclerView) parent;
+            customRecyclerView = (CustomRecyclerView<RecyclerView.ViewHolder>) parent;
             onItemClickListenerList = customRecyclerView.getOnItemClickListenerList();
         }
         return null;

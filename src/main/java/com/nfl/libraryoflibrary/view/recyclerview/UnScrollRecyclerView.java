@@ -2,13 +2,14 @@ package com.nfl.libraryoflibrary.view.recyclerview;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 /**
  * Created by fuli.niu on 2017/4/12.
  */
 
-public class UnScrollRecyclerView extends CustomRecyclerView {
+public class UnScrollRecyclerView extends CustomRecyclerView<RecyclerView.ViewHolder> {
     public UnScrollRecyclerView(Context context) {
         super(context);
     }
