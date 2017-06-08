@@ -37,6 +37,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
     private CustomRecyclerViewDivider customRecyclerViewDivider;
 
     private List<OnItemClickListener> onItemClickListenerList;
+    private OnPushListener onPushListener ;
 
     private boolean hasStartAnim = false ;
     private LoadMoreState loadMoreState = LoadMoreState.PREPARE;
@@ -196,7 +197,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                         if (null != footerView) {
                             layoutParams = footerView.getLayoutParams();
                             if (null != layoutParams && null != adapter ) {
-                                if(layoutParams.height < maxHeight){
+                                if(layoutParams.height < 1.5 * maxHeight){
                                     // 拖拽距离不够不加载更多
                                     finishLoadMore() ;
                                 }else {
@@ -204,14 +205,16 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                                     layoutParams.height = adapter.footerViewMeasureHeight > 0 ? adapter.footerViewMeasureHeight : maxHeight ;
                                     footerView.setLayoutParams(layoutParams);
                                     adapter.refreshFooterViewLoading();
-                                    startLoadMore();
+                                    if(null != onPushListener){
+                                        onPushListener.onLoadMore();
+                                    }
                                     // 模拟加载更多成功
-                                    postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finishLoadMore();
-                                        }
-                                    } , 4000) ;
+//                                    postDelayed(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            finishLoadMore();
+//                                        }
+//                                    } , 4000) ;
                                 }
                                 layoutParams = null;
                             } else {
@@ -239,7 +242,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                                 if (null != layoutParams) {
                                     layoutParams.height += heigtTemp;
                                     // 当 footerView 的高度高于设置的最大高度并且还没有刷新状态时更新 footerView 显示
-                                    if(layoutParams.height > maxHeight && !hasStartAnim){
+                                    if(layoutParams.height > 1.5 * maxHeight && !hasStartAnim){
                                         adapter.refreshFooterViewStarting();
                                         hasStartAnim = true ;
                                     }
@@ -260,11 +263,12 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
         }
     };
 
-    /**
-     * 开始加载更多，网络请求等在这里处理
-     */
-    public void startLoadMore() {
+    public OnPushListener getOnPushListener() {
+        return onPushListener;
+    }
 
+    public void setOnPushListener(OnPushListener onPushListener) {
+        this.onPushListener = onPushListener;
     }
 
     /**
