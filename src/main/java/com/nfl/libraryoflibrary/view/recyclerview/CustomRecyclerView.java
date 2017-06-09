@@ -78,7 +78,8 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
         onItemClickListenerList = new ArrayList<>();
         LinearLayoutManager manager = new LinearLayoutManager(context);
         setHasFixedSize(true);
-        customRecyclerViewDivider = new CustomRecyclerViewDivider(new ColorDrawable(0xeeeeeeee), OrientationHelper.VERTICAL);
+//        0xeeeeeeee
+        customRecyclerViewDivider = new CustomRecyclerViewDivider(new ColorDrawable(0x21334323), OrientationHelper.VERTICAL);
         //单位:px
         customRecyclerViewDivider.setMargin(0, 0, 0, 0);
         customRecyclerViewDivider.setHeight(ConvertTool.dp2px(1));
