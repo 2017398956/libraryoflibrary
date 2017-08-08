@@ -35,7 +35,7 @@ import java.util.List;
 public class CustomActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
     private String activityName;
-    private int viewLevel = 2;// 默认为2
+    private int viewLevel = 0;// 默认为0 ,表示 DecorView
     private ViewGroup rootView;// DecorView
     private Context context;
     private List<String> filteredActivities;// 不受同一主题设置的 Activity
@@ -50,6 +50,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         LogTool.i("ActivityName:" + activity.getClass().getSimpleName() + " created");
+        activityName = activity.getComponentName().getClassName();
         boolean canResetActivityTheme = true;
         for (String activityName : filteredActivities) {
             if (null != activityName && activityName.equals(activity.getClass().getSimpleName())) {
@@ -69,7 +70,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     @Override
     public void onActivityResumed(Activity activity) {
-//        alertListener(activity) ;
+        alertListener(activity);
 //        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes() ;
     }
 
@@ -106,8 +107,6 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
      */
     private void alertListener(Activity activity) {
         context = activity;
-        activityName = activity.getComponentName().getClassName();
-        LogTool.i("ActivityName:" + activityName);
         rootView = (ViewGroup) activity.getWindow().getDecorView();
 
 //        view.setOnTouchListener(new View.OnTouchListener() {
@@ -120,7 +119,6 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 //        });
         if (null != rootView) {
             logViewsInfo(rootView);
-            viewLevel = 2;// logViewsInfo(View view)会改变viewLevel的值，这里恢复默认值
         } else {
             LogTool.i(activityName + "'s DecorView is null.");
         }
@@ -152,16 +150,21 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
      * @param viewGroup
      */
     private void logViewsInfo(ViewGroup viewGroup) {
-        if (2 == viewLevel) {
-            viewGroup.setTag(R.id.id_view_level_tag_key, 2);
-            viewGroup.setTag(R.id.id_view_position_tag_key, 0);
-            LogTool.i("|-DecorView:" + rootView.getClass());
+        int position = 0  ;
+        try {
+            position = (int) viewGroup.getTag(R.id.id_view_position_tag_key);
+        }catch (Exception e){
+
         }
+        viewGroup.setTag(R.id.id_view_level_tag_key, viewLevel);
+        viewGroup.setTag(R.id.id_view_position_tag_key, position);
+        LogTool.i("viewLevel" + viewLevel + ": " + rootView.getClass());
+        viewLevel++;
         int count = viewGroup.getChildCount();
         if (count > 0) {
             for (int i = 0; i < count; i++) {
                 View view = viewGroup.getChildAt(i);
-                view.setTag(R.id.id_view_level_tag_key, (Integer) viewGroup.getTag(R.id.id_view_level_tag_key) + 1);
+                view.setTag(R.id.id_view_level_tag_key, viewLevel);
                 view.setTag(R.id.id_view_position_tag_key, i);
                 String logHead = viewGroup.getTag(R.id.id_view_position_tag_key) + "|" + i;
                 for (int l = 0; l < (Integer) view.getTag(R.id.id_view_level_tag_key); l++) {
