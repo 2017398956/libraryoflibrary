@@ -119,15 +119,9 @@ dependencies {
     compile "id.zelory:compressor:$COMPRESSOR"
     compile "com.google.code.gson:gson:$GSON"
     compile("com.github.bumptech.glide:glide:$GLIDE") {
-<<<<<<< HEAD
-//        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    // annotationProcessor "com.github.bumptech.glide:compiler:$GLIDE"
-=======
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     annotationProcessor "com.github.bumptech.glide:compiler:$GLIDE"
->>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
     compile "com.nostra13.universalimageloader:universal-image-loader:$UNIVERSAL_IMAGE_LOADER"
     compile "org.xutils:xutils:$XUTILS_VERSION"
     // https://github.com/smuyyh/ImageSelector

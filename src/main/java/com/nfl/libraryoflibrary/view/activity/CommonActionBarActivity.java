@@ -22,8 +22,6 @@ import com.nfl.libraryoflibrary.utils.Voice2CharacterTool;
 import com.nfl.libraryoflibrary.utils.net.CustomHttpHelper;
 import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 
-import okhttp3.OkHttpClient;
-
 /**
  * Created by fuli.niu on 2017/2/23.
  * 继承自该类的 activity 不需要处理 ActionBar
@@ -34,12 +32,8 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     protected Context context;
     private ImageView iv_back;
     private TextView tv_title;
-<<<<<<< HEAD
-    private TextView title_conference_search_button;
-=======
     protected ImageView iv_alternate;
-    private TextView title_conference_search_button ;
->>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
+    private TextView title_conference_search_button;
     protected LinearLayout ll_pad_container;
     protected LinearLayout ll_data_binding;
 
@@ -65,7 +59,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     public void setContentView(int layoutResID) {
         super.setContentView(R.layout.activity_common);
         initActionBarAndViewStub();
-        View view = LayoutInflater.from(CommonActionBarActivity.this).inflate(layoutResID, null);
+        View view = LayoutInflater.from(CommonActionBarActivity.this).inflate(layoutResID , ll_data_binding , false) ;
         if (null != view) {
             ll_pad_container.addView(view);
         } else {
@@ -136,12 +130,8 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     }
 
     private void initActionBarAndViewStub() {
-<<<<<<< HEAD
-        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button);
-=======
         iv_alternate = (ImageView) findViewById(R.id.iv_alternate);
-        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button) ;
->>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
+        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button);
         ll_pad_container = (LinearLayout) findViewById(R.id.ll_pad_container);
         ll_data_binding = (LinearLayout) findViewById(R.id.ll_data_binding);
         iv_back = (ImageView) findViewById(R.id.iv_back);
@@ -175,18 +165,14 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         tv_title.setText(getText(strId));
     }
 
-<<<<<<< HEAD
-    protected void setMenuText(String str, CustomOnClickListener onClickListener) {
-=======
     public String getActionBarTitle() {
-        if(null == tv_title){
-            return "" ;
+        if (null == tv_title) {
+            return "";
         }
         return tv_title.getText().toString();
     }
 
-    protected void setMenuText(String str , CustomOnClickListener onClickListener){
->>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
+    protected void setMenuText(String str, CustomOnClickListener onClickListener) {
         title_conference_search_button.setVisibility(View.VISIBLE);
         title_conference_search_button.setText(str);
         title_conference_search_button.setOnClickListener(onClickListener);
