@@ -22,7 +22,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     protected Context context;
     private ImageView iv_back;
     private TextView tv_title;
-    private TextView title_conference_search_button ;
+    private TextView title_conference_search_button;
     protected LinearLayout ll_pad_container;
     protected LinearLayout ll_data_binding;
 
@@ -58,7 +58,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     }
 
     private void initActionBarAndViewStub() {
-        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button) ;
+        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button);
         ll_pad_container = (LinearLayout) findViewById(R.id.ll_pad_container);
         ll_data_binding = (LinearLayout) findViewById(R.id.ll_data_binding);
         iv_back = (ImageView) findViewById(R.id.iv_back);
@@ -91,13 +91,17 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         tv_title.setText(getText(strId));
     }
 
-    protected void setMenuText(String str , CustomOnClickListener onClickListener){
+    protected void setMenuText(String str, CustomOnClickListener onClickListener) {
         title_conference_search_button.setVisibility(View.VISIBLE);
         title_conference_search_button.setText(str);
         title_conference_search_button.setOnClickListener(onClickListener);
     }
 
-    protected void setMenuText(int strId , CustomOnClickListener onClickListener){
-        this.setMenuText(getResources().getString(strId) , onClickListener);
+    protected void setMenuText(int strId, CustomOnClickListener onClickListener) {
+        this.setMenuText(getResources().getString(strId), onClickListener);
+    }
+
+    protected void hiddenBackIcon() {
+        iv_back.setVisibility(View.GONE);
     }
 }
