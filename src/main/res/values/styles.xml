@@ -46,6 +46,12 @@
         <item name="android:windowExitAnimation">@anim/picture_selector_dialog_out</item>
     </style>
 
+    <declare-styleable name="line_chart">
+        <attr name="title" format="string" />
+        <attr name="unit" format="string" />
+        <attr name="base_mount" format="integer" />
+    </declare-styleable>
+
     <style name="persistent">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowFrame">@null</item>

@@ -3,14 +3,26 @@ package com.nfl.libraryoflibrary.view.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
+import com.nfl.libraryoflibrary.utils.DialogTool;
+import com.nfl.libraryoflibrary.utils.LogTool;
+import com.nfl.libraryoflibrary.utils.SoftKeyBoardTool;
+import com.nfl.libraryoflibrary.utils.ToastTool;
+import com.nfl.libraryoflibrary.utils.Voice2CharacterTool;
+import com.nfl.libraryoflibrary.utils.net.CustomHttpHelper;
+import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Created by fuli.niu on 2017/2/23.
@@ -22,7 +34,12 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     protected Context context;
     private ImageView iv_back;
     private TextView tv_title;
+<<<<<<< HEAD
     private TextView title_conference_search_button;
+=======
+    protected ImageView iv_alternate;
+    private TextView title_conference_search_button ;
+>>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
     protected LinearLayout ll_pad_container;
     protected LinearLayout ll_data_binding;
 
@@ -31,6 +48,13 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
+    }
+
+    @Override
+    protected void onPause() {
+        CustomHttpHelper.cancelAll();
+        CustomProgressBarDialog.dimissProgressBarDialog();
+        super.onPause();
     }
 
     /**
@@ -57,8 +81,67 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         }
     }
 
+    /**
+     * call after {@link #setContentView(int)} or {@link #setContentView(View)}
+     *
+     * @param viewGroup
+     */
+    public void openVoice2Charactor(final ViewGroup viewGroup) {
+        iv_alternate.setVisibility(View.VISIBLE);
+        iv_alternate.setOnClickListener(new CustomOnClickListener() {
+            @Override
+            public void onClick(View v) {
+                super.onClick(v);
+                final View focusView = viewGroup.findFocus();
+                if (null == focusView) {
+                    DialogTool.displayAlertDialogOneButton(CommonActionBarActivity.this, "请先点击要输入的字段");
+                } else if (focusView instanceof EditText) {
+                    LogTool.i("焦点 View ：" + focusView);
+                    // 启动讯飞语音识别
+                    Voice2CharacterTool voice2CharacterTool = new Voice2CharacterTool(CommonActionBarActivity.this);
+                    voice2CharacterTool.setVoice2CharacterListener(
+                            new Voice2CharacterTool.Voice2CharacterListener() {
+                                @Override
+                                public void onEndOfSpeechWithoutPunctuation(String resultString) {
+                                    super.onEndOfSpeech(resultString);
+                                    EditText etFocusView = (EditText) focusView;
+                                    String etString = etFocusView.getText().toString();
+                                    if (!TextUtils.isEmpty(resultString)) {
+                                        if (TextUtils.isEmpty(etString)) {
+                                            etFocusView.setText(resultString);
+                                        } else {
+                                            etFocusView.setText(etString + resultString);
+                                        }
+                                        // 移动光标到末尾
+                                        etFocusView.setSelection(etFocusView.getText().length());
+                                    } else {
+                                        // 语音内容为空时不需要处理
+                                    }
+                                    ToastTool.showLongToast("识别结果：" + resultString);
+                                }
+
+                                @Override
+                                public void onFailure() {
+                                    super.onFailure();
+                                    ToastTool.showLongToast("识别不成功");
+                                }
+                            }
+                    );
+                    voice2CharacterTool.start();
+                } else {
+                    LogTool.i("没有获得焦点 View");
+                }
+            }
+        });
+    }
+
     private void initActionBarAndViewStub() {
+<<<<<<< HEAD
         title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button);
+=======
+        iv_alternate = (ImageView) findViewById(R.id.iv_alternate);
+        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button) ;
+>>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
         ll_pad_container = (LinearLayout) findViewById(R.id.ll_pad_container);
         ll_data_binding = (LinearLayout) findViewById(R.id.ll_data_binding);
         iv_back = (ImageView) findViewById(R.id.iv_back);
@@ -66,6 +149,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
             @Override
             public void onClick(View v) {
                 super.onClick(v);
+                SoftKeyBoardTool.hideSoftKeyBoard(CommonActionBarActivity.this);
                 CommonActionBarActivity.this.finish();
             }
         });
@@ -91,7 +175,18 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         tv_title.setText(getText(strId));
     }
 
+<<<<<<< HEAD
     protected void setMenuText(String str, CustomOnClickListener onClickListener) {
+=======
+    public String getActionBarTitle() {
+        if(null == tv_title){
+            return "" ;
+        }
+        return tv_title.getText().toString();
+    }
+
+    protected void setMenuText(String str , CustomOnClickListener onClickListener){
+>>>>>>> 10dde569d6a4367c2bb9e4dfa3b9b717772f5648
         title_conference_search_button.setVisibility(View.VISIBLE);
         title_conference_search_button.setText(str);
         title_conference_search_button.setOnClickListener(onClickListener);

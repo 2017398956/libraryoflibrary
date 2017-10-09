@@ -1,5 +1,7 @@
 package com.nfl.libraryoflibrary.utils.net;
 
+import android.os.Build;
+
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.constant.Constants;
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,32 +23,52 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
+import okio.ForwardingSource;
+import okio.Okio;
+import okio.Source;
 
 /**
  * Created by fuli.niu on 2016/7/8.
  */
 public class CustomHttpHelper {
 
+    private static List<CustomCallBackInterface> customCallBackList = new ArrayList<>();
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*");
     private static OkHttpClient okHttpClient;
     private static OkHttpClient okHttpClient2;// 上传时用
     private static boolean isUpload = false;// 是否是上传
-    private static final int defaultTimeout = 15 ;// 一般网络访问的超时
-    private static final int uploadTimeout = 60 * 10;// 上传 Base64 文件时的默认超时
+    private static final int connectTimeout = 10;// 连接超时时间,单位：秒
+    private static final int writeTimeout = 60;// 单位：秒
+    private static final int readTimeout = 60;// 单位：秒
+    private static ProgressListener progressListener;
 
     private static void getInstance() {
         if (null == okHttpClient) {
             synchronized (CustomHttpHelper.class) {
                 if (null == okHttpClient) {
                     okHttpClient = new OkHttpClient.Builder()
-                            .connectTimeout(3000, TimeUnit.MILLISECONDS)
-                            .writeTimeout(defaultTimeout, TimeUnit.SECONDS)
+                            .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                            .readTimeout(readTimeout, TimeUnit.SECONDS)
+                            .addNetworkInterceptor(new Interceptor() {
+                                @Override
+                                public Response intercept(Chain chain) throws IOException {
+                                    Response originalResponse = chain.proceed(chain.request());
+                                    return originalResponse.newBuilder()
+                                            .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                                            .build();
+                                }
+                            })
                             .build();
                 }
             }
@@ -57,9 +80,9 @@ public class CustomHttpHelper {
             synchronized (CustomHttpHelper.class) {
                 if (null == okHttpClient2) {
                     okHttpClient2 = new OkHttpClient.Builder()
-                            .connectTimeout(3000, TimeUnit.MILLISECONDS)
-                            .readTimeout(uploadTimeout , TimeUnit.SECONDS)
-                            .writeTimeout(uploadTimeout, TimeUnit.SECONDS)
+                            .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                            .readTimeout(readTimeout, TimeUnit.SECONDS)
+                            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                             .build();
                 }
             }
@@ -73,8 +96,10 @@ public class CustomHttpHelper {
      * @param keyValuePairs
      * @param customCallBack
      */
-    public static void getDataFromServer(String url, Map<String, String> keyValuePairs, CustomCallBackInterface customCallBack) {
-        showNetExceptionInfo();
+    public static void getDataFromServer(String url, Map<String, String> keyValuePairs, final CustomCallBackInterface customCallBack) {
+        if (showNetExceptionInfo() && null != customCallBack) {
+            customCallBack.finallyOnMainThread();
+        }
 //        if(!NetUtils.isLegalUrl(url)){
 //            if(null != customCallBack){
 //                customCallBack.failure();
@@ -107,6 +132,9 @@ public class CustomHttpHelper {
 
         builder.add("devtype", "Android");// 设备类型（区分安卓和IOS）
         builder.add("appversion", Constants.APPVERSION);// app版本
+        builder.add("sysversion", Build.VERSION.RELEASE);
+        builder.add("systype", "Android");
+        builder.add("phonemodel", Build.BRAND + " - " + Build.MODEL);
         FormBody formBody = builder.build();
         Request request = new Request.Builder().url(url).post(formBody).build();
         if (isUpload) {
@@ -114,9 +142,31 @@ public class CustomHttpHelper {
             LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis()) ;
             isUpload = false;
         } else {
+            customCallBackList.add(customCallBack);
         okHttpClient.newCall(request).enqueue((Callback) customCallBack);
     }
+    }
 
+    public static void download(String url, CustomCallBack4Download mCustomCallBack, final ProgressListener mProgressListener) {
+        if (showNetExceptionInfo() && null != mCustomCallBack) {
+            mCustomCallBack.finallyOnMainThread();
+        }
+        OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Response originalResponse = chain.proceed(chain.request());
+                        return originalResponse.newBuilder()
+                                .body(new ProgressResponseBody(originalResponse.body(), mProgressListener))
+                                .build();
+                    }
+                })
+                .build();
+        Request request = new Request.Builder().url(url).get().build();
+        mOkHttpClient.newCall(request).enqueue(mCustomCallBack);
     }
 
     public static void uploadBase64File(String url, Map<String, String> keyValuePairs, CustomCallBackInterface customCallBack) {
@@ -301,14 +351,82 @@ public class CustomHttpHelper {
 
     /**
      * 没有网络时显示提示信息
+     *
+     * @return false : 有网络 ；true : 没有网络
      */
-    private static void showNetExceptionInfo(){
+    private static boolean showNetExceptionInfo() {
         if (!NetUtils.isNetworkAvaliable(ApplicationContext.applicationContext)) {
+            CustomProgressBarDialog.dimissProgressBarDialog();
             ToastTool.showShortToast(R.string.no_web_service);
-            return;
+            return true;
+        }
+        return false;
+    }
+
+    public static void setProgressListener(ProgressListener progressListener) {
+        CustomHttpHelper.progressListener = progressListener;
+    }
+
+    /**
+     * 网络进度监听接口
+     */
+    public interface ProgressListener {
+        void update(long bytesRead, long contentLength, boolean done);
+        }
+
+    private static class ProgressResponseBody extends ResponseBody {
+
+        private final ResponseBody responseBody;
+        private final ProgressListener progressListener;
+        private BufferedSource bufferedSource;
+
+        ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
+            this.responseBody = responseBody;
+            this.progressListener = progressListener;
+    }
+
+        @Override
+        public MediaType contentType() {
+            return responseBody.contentType();
+        }
+
+        @Override
+        public long contentLength() {
+            return responseBody.contentLength();
+        }
+
+        @Override
+        public BufferedSource source() {
+            if (bufferedSource == null) {
+                bufferedSource = Okio.buffer(source(responseBody.source()));
+            }
+            return bufferedSource;
+        }
+
+        private Source source(Source source) {
+            return new ForwardingSource(source) {
+                long totalBytesRead = 0L;
+
+                @Override
+                public long read(Buffer sink, long byteCount) throws IOException {
+                    long bytesRead = super.read(sink, byteCount);
+                    // read() returns the number of bytes read, or -1 if this source is exhausted.
+                    totalBytesRead += bytesRead != -1 ? bytesRead : 0;
+                    if (null != progressListener) {
+                        progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                    }
+                    return bytesRead;
+                }
+            };
         }
     }
 
-
-
+    public static void cancelAll() {
+        for (CustomCallBackInterface customCallBack : customCallBackList) {
+            if (null != customCallBack) {
+                customCallBack.cancel();
+            }
+        }
+        customCallBackList.clear();
+    }
 }

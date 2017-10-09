@@ -5,11 +5,14 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
@@ -25,6 +28,8 @@ public class CustomSearchBar extends RelativeLayout {
     private EditText et_search;
     private ImageView iv_search_delete;
     private CustomTextWatcher customTextWatcher;
+    private OnCleanListener onCleanListener;
+    private OnSearchButtonClickListener onSearchButtonClickListener;
 
     public CustomSearchBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -47,6 +52,7 @@ public class CustomSearchBar extends RelativeLayout {
     private void initView() {
         et_search = (EditText) relativeLayout.findViewById(R.id.et_search);
         et_search.addTextChangedListener(textWatcher);
+        et_search.setOnEditorActionListener(onEditorActionListener);
         iv_search_delete = (ImageView) findViewById(R.id.iv_search_delete);
         iv_search_delete.setOnClickListener(onClickListener);
     }
@@ -58,6 +64,9 @@ public class CustomSearchBar extends RelativeLayout {
             int viewId = v.getId();
             if (viewId == R.id.iv_search_delete) {
                 et_search.setText(null);
+                if (null != onCleanListener) {
+                    onCleanListener.onClick();
+                }
             }
         }
     };
@@ -86,12 +95,35 @@ public class CustomSearchBar extends RelativeLayout {
         }
     };
 
+    private TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            //当actionId == XX_SEND 或者 XX_DONE时都触发
+            //或者event.getKeyCode == ENTER 且 event.getAction == ACTION_DOWN时也触发
+            //注意，这是一定要判断event != null。因为在某些输入法上会返回null。
+            if (actionId == EditorInfo.IME_ACTION_SEND
+                    || actionId == EditorInfo.IME_ACTION_DONE
+                    || (event != null && KeyEvent.KEYCODE_ENTER == event.getKeyCode() && KeyEvent.ACTION_DOWN == event.getAction())) {
+                //处理事件
+                if (null != onSearchButtonClickListener) {
+                    onSearchButtonClickListener.onSearchButtonClick();
+                }
+            }
+            return false;
+        }
+    };
+
     public void setHint(String str) {
         et_search.setHint(str);
     }
 
     public void setHint(int resid) {
         et_search.setHint(resid);
+    }
+
+    public void clearSearchContent() {
+        et_search.setText("");
     }
 
     /**
@@ -103,6 +135,7 @@ public class CustomSearchBar extends RelativeLayout {
 
     /**
      * 设置自定义TextWatcher
+     *
      * @param customTextWatcher
      */
     public void setCustomTextWatcher(CustomTextWatcher customTextWatcher) {
@@ -120,5 +153,19 @@ public class CustomSearchBar extends RelativeLayout {
         void afterTextChanged(Editable s);
     }
 
+    public interface OnCleanListener {
+        void onClick();
+    }
 
+    public interface OnSearchButtonClickListener {
+        void onSearchButtonClick();
+    }
+
+    public void setOnCleanListener(OnCleanListener onCleanListener) {
+        this.onCleanListener = onCleanListener;
+    }
+
+    public void setOnSearchButtonClickListener(OnSearchButtonClickListener onSearchButtonClickListener) {
+        this.onSearchButtonClickListener = onSearchButtonClickListener;
+    }
 }

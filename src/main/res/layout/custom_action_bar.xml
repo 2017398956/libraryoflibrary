@@ -64,8 +64,21 @@
                 android:id="@+id/iv_alternate"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
+                android:layout_marginLeft="10dp"
                 android:layout_gravity="center"
                 android:src="@drawable/lol_icon_microphone_drawable"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_menu"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:padding="10dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_lol_plus_sign"
                 android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>

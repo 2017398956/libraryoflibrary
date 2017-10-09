@@ -45,8 +45,4 @@ public class CustomCircleTransform extends CustomBitmapTransformation {
         return result;
     }
 
-    @Override
-    public String getId() {
-        return getClass().getName();
-    }
 }

@@ -20,10 +20,10 @@ import java.util.List;
  * Created by fuli.niu on 2017/4/7.
  */
 
-public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapter.BaseViewHolder>
+public abstract class RecyclerViewBaseAdapter<T extends RecyclerViewBaseAdapter.BaseViewHolder>
         extends RecyclerView.Adapter<T> {
 
-    private CustomRecyclerView<RecyclerView.ViewHolder> customRecyclerView;
+    private CustomRecyclerView customRecyclerView;
     private List<CustomRecyclerView.OnItemClickListener> onItemClickListenerList;
     protected View footerView;
     private ProgressBar progressbar;
@@ -39,6 +39,15 @@ public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapte
 
     @Override
     public int getItemViewType(int position) {
+//        if(data.size() == 0){
+//            return VIEW_TYPE_FOOTER ;
+//        }else {
+//            if(position == data.size()){
+//                return VIEW_TYPE_FOOTER ;
+//            }else {
+//                return VIEW_TYPE_ITEM ;
+//            }
+//        }
         return super.getItemViewType(position);
     }
 
@@ -60,10 +69,10 @@ public abstract class RecyclereViewBaseAdapter<T extends RecyclereViewBaseAdapte
 
         if (null != parent) {
             // 初始化
-            customRecyclerView = (CustomRecyclerView<RecyclerView.ViewHolder>) parent;
+            customRecyclerView = (CustomRecyclerView) parent;
             onItemClickListenerList = customRecyclerView.getOnItemClickListenerList();
         }
-        if (null != customRecyclerView && footerView == null) {
+        if (viewType == VIEW_TYPE_FOOTER && null != customRecyclerView && footerView == null) {
             footerView = LayoutInflater.from(customRecyclerView.getContext()).inflate(R.layout.view_recycler_view_footer, customRecyclerView, false);
             footerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             progressbar = (ProgressBar) footerView.findViewById(R.id.progressbar);

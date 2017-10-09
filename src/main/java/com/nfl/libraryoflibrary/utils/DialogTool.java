@@ -6,14 +6,23 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
+//import com.bigkoo.pickerview.OptionsPickerView;
+//import com.bigkoo.pickerview.TimePickerView;
+//import com.bigkoo.pickerview.listener.OnDismissListener;
 import com.nfl.libraryoflibrary.R;
+import com.nfl.libraryoflibrary.beans.OptionPickerViewBaseBeanInterface;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +49,25 @@ public class DialogTool {
             mInstance = new DialogTool();
         }
         return mInstance;
+    }
+
+    /**
+     * 显示一个"确定"按钮的警告框
+     */
+    public static void displayAlertDialogOneButton(Context context, String message) {
+        hideSoftKeyboard(context);
+        AlertDialog alertDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle("提示")
+                .setMessage(message).setCancelable(true)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 
     public void displayDialogWithData(Context context, View view,
@@ -78,6 +106,7 @@ public class DialogTool {
     // 需要传递集合的弹出框 监听系统返回键清楚 集合
     public void displayDialogWithData(Context context, View view, int gravity,
                                       int backGround, final List<String> dataList) {
+        hideSoftKeyboard2(context);
         if (context instanceof Activity && ((Activity) context).isFinishing()) {
             return;
         }
@@ -108,6 +137,7 @@ public class DialogTool {
 
     public void displayDialog(Context context, View view, int gravity,
                               int backGround) {
+        hideSoftKeyboard2(context);
         if (context instanceof Activity && ((Activity) context).isFinishing()) {
             return;
         }
@@ -131,6 +161,7 @@ public class DialogTool {
 
     public void displayDialogNoneAnim(Context context, View view, int gravity,
                                       int backGround) {
+        hideSoftKeyboard2(context);
         if (context instanceof Activity && ((Activity) context).isFinishing()) {
             return;
         }
@@ -153,6 +184,7 @@ public class DialogTool {
 
     public void displayDialogFill(Context context, View view, int gravity,
                                   int backGround) {
+        hideSoftKeyboard2(context);
         if (context instanceof Activity && ((Activity) context).isFinishing()) {
             return;
         }
@@ -177,6 +209,7 @@ public class DialogTool {
 
     public void downLoadDialog(Context context, View view, int gravity,
                                int backGround) {
+        hideSoftKeyboard2(context);
         if (context instanceof Activity && ((Activity) context).isFinishing()) {
             return;
         }
@@ -214,23 +247,183 @@ public class DialogTool {
     }
 
     // 隐藏弹出框
-    public void hideDiaLog() {
+    public void hideDialog() {
         if (mDialog != null) {
             mDialog.hide();
         }
     }
 
-    // 显示弹出框
-    public void showDiaLog() {
-        if (mDialog != null) {
-            mDialog.show();
+    /**
+     * 显示时间控件(年月日)
+     * 仿IOS时间滚轮
+     *
+     * @param view
+     */
+    public static void showDatePickerDialog(Context context, TextView view) {
+//        showDatePickerDialog(context, view, "-");
+    }
+
+//    public static void showDatePickerDialog(Context context, final TextView view, final String splitChar) {
+//        hideSoftKeyboard(context);
+//        final String splitCharTemp = null == splitChar ? "-" : splitChar;
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.YEAR_MONTH_DAY);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//                sb.append(calendar.get(Calendar.YEAR));
+//                sb.append(splitCharTemp);
+//                int month = calendar.get(Calendar.MONTH) + 1;
+//                sb.append(month > 9 ? month : ("0" + month));
+//                sb.append(splitCharTemp);
+//                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+//                sb.append(dayOfMonth > 9 ? dayOfMonth : ("0" + dayOfMonth));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
+//    }
+
+    /**
+     * 显示时间控件（时分）
+     * 仿IOS时间滚轮
+     *
+     * @param view
+     */
+    public static void showTimePickerDialog(Context context, TextView view) {
+        showTimePickerDialog(context, view, ":");
+    }
+
+    public static void showTimePickerDialog(Context context, TextView view, Date date) {
+        showTimePickerDialog(context, view, ":", date);
+    }
+
+    public static void showTimePickerDialog(Context context, final TextView view, String splitChar) {
+//        hideSoftKeyboard(context);
+//        final String splitCharTemp = null == splitChar ? ":" : splitChar;
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.HOURS_MINS);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+//                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
+//                sb.append(splitCharTemp);
+//                int minute = calendar.get(Calendar.MINUTE);
+//                sb.append(minute > 9 ? minute : ("0" + minute));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
+    }
+
+    public static void showTimePickerDialog(Context context, final TextView view, String splitChar, Date date) {
+//        hideSoftKeyboard(context);
+//        final String splitCharTemp = null == splitChar ? ":" : splitChar;
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.HOURS_MINS);
+//        timerPickerView.setTime(date);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+//                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
+//                sb.append(splitCharTemp);
+//                int minute = calendar.get(Calendar.MINUTE);
+//                sb.append(minute > 9 ? minute : ("0" + minute));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
+    }
+
+    public static void showFullTimePickerDialog(Context context, final TextView view) {
+        showFullTimePickerDialog(context, view, "-");
+    }
+
+    public static void showFullTimePickerDialog(Context context, final TextView view, String dateSplit) {
+//        hideSoftKeyboard(context);
+//        final String dateSplitChar = (null == dateSplit ? "-" : dateSplit);
+//        final String timeSplitChar = ":";
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.ALL);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//
+//                sb.append(calendar.get(Calendar.YEAR));
+//                sb.append(dateSplitChar);
+//                int month = calendar.get(Calendar.MONTH) + 1;
+//                sb.append(month > 9 ? month : ("0" + month));
+//                sb.append(dateSplitChar);
+//                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+//                sb.append(dayOfMonth > 9 ? dayOfMonth : ("0" + dayOfMonth));
+//                sb.append(" ");
+//                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+//                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
+//                sb.append(timeSplitChar);
+//                int minute = calendar.get(Calendar.MINUTE);
+//                sb.append(minute > 9 ? minute : ("0" + minute));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
+    }
+
+//    public static void showOptionsPickerViewDialog(TextView view, ArrayList<? extends OptionPickerViewBaseBeanInterface> options) {
+//        showOptionsPickerViewDialog(view, options, null);
+//    }
+
+//    public static void showOptionsPickerViewDialog(final TextView view, final ArrayList<? extends OptionPickerViewBaseBeanInterface> options, OnDismissListener onDismissListener) {
+//        if (view != null) {
+//            hideSoftKeyboard(view.getContext());
+//        }
+//        if (null == options || options.size() < 1) {
+//            return;
+//        }
+//        OptionsPickerView<OptionPickerViewBaseBeanInterface> optionsPickerView = new OptionsPickerView<>(
+//                view.getContext());
+//        optionsPickerView.setPicker((ArrayList<OptionPickerViewBaseBeanInterface>) options);
+//        optionsPickerView.setCyclic(false);
+//        optionsPickerView.setCancelable(true);
+//        // 监听确定选择按钮
+//        optionsPickerView.setSelectOptions(1);
+//        optionsPickerView.setOnoptionsSelectListener(
+//                new OptionsPickerView.OnOptionsSelectListener() {
+//                    @Override
+//                    public void onOptionsSelect(int options1, int option2, int options3) {
+//                        view.setText(options.get(options1).getPickerViewText());
+//                    }
+//                });
+//        optionsPickerView.setOnDismissListener(onDismissListener);
+//        optionsPickerView.show();
+//    }
+
+    private static void hideSoftKeyboard(Context context) {
+        if (null != context && context instanceof Activity) {
+            SoftKeyBoardTool.hideSoftKeyBoard((Activity) context);
         }
     }
 
-    public boolean isNullDiaLog() {
-        if (mDialog != null) {
-            return true;
+    private void hideSoftKeyboard2(Context context) {
+        if (null != context && context instanceof Activity) {
+            SoftKeyBoardTool.hideSoftKeyBoard((Activity) context);
         }
-        return false;
+        }
+
+    public Dialog getDialog() {
+        return mDialog;
     }
 }

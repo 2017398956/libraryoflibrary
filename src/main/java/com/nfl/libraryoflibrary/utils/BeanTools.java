@@ -18,8 +18,10 @@ public class BeanTools {
      * @param from 被复制的类
      */
     public static void copyProperties(Object to, Object from){
+        if (null == from || null == to) {
+            return;
+        }
         List commonFields = new ArrayList(); // 用于保存 to 和 from 中共有的属性
-        try {
             Class classTo = to.getClass();
             Class classFrom = from.getClass();
             Field[] fieldsTo = classTo.getDeclaredFields();
@@ -55,7 +57,8 @@ public class BeanTools {
                     // 拼凑getXXX和setXXX方法名
                     getName = "get" + str + fieldName.substring(1);
                     setName = "set" + str + fieldName.substring(1);
-                    // 获取get、set方法
+                // 获取get、set方法,有的属性没有 set 、 get 方法，这里要 try 一下，避免影响其它的属性复制
+                try {
                     getMethod = classFrom.getMethod(getName, new Class[]{});
                     setMethod = classTo.getMethod(setName, new Class[]{field.getType()});
                     //获取属性值
@@ -64,23 +67,17 @@ public class BeanTools {
                     if (null != o) {
                         setMethod.invoke(to , new Object[]{o});
                     }
-                }
-            }
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            LogTool.i(ExceptionTool.getExceptionTraceString(e));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             LogTool.i(ExceptionTool.getExceptionTraceString(e));
-        } catch (IllegalArgumentException e) {
+                } catch (InvocationTargetException e) {
             e.printStackTrace();
             LogTool.i(ExceptionTool.getExceptionTraceString(e));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             LogTool.i(ExceptionTool.getExceptionTraceString(e));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            LogTool.i(ExceptionTool.getExceptionTraceString(e));
+                }
+            }
         }
     }
 
