@@ -1,6 +1,5 @@
 package com.nfl.libraryoflibrary.utils.net;
 
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,6 +10,7 @@ import com.nfl.libraryoflibrary.utils.LogTool;
 import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -21,14 +21,13 @@ import okhttp3.Response;
  */
 public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, Callback {
 
-    private boolean canRunOnMainThread = false;
     private Class<T> clz;
     private final int RUN_ON_MAIN_THREAD = 1;
     private final int SUCCESS_ON_MAIN_THREAD = 2;
     private final int FAILURE_ON_MAIN_THREAD = 3 ;
-    private Looper myLooper ;
-
-    private Handler handler = new Handler() {
+    private final int FINALLY_ON_MAIN_THREAD = 4;
+    private final int AUXILIARY_METHOD_ON_MAIN_THREAD = 5;
+    private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -41,33 +40,39 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             } else if (msg.what == FAILURE_ON_MAIN_THREAD){
                 LogTool.i("failureOnMainThread start") ;
                 failureOnMainThread();
-            }
-            if(null != myLooper && myLooper != Looper.getMainLooper()){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    // myLooper.quitSafely();
-                    myLooper.quit();
-                }else {
-                    myLooper.quit();
-                }
-                // myLooper = null ;
+            } else if (msg.what == FINALLY_ON_MAIN_THREAD) {
+                LogTool.i("finallyOnMainThread start");
+                finallyOnMainThread();
+            } else if (msg.what == AUXILIARY_METHOD_ON_MAIN_THREAD) {
+                LogTool.i("auxiliaryMethodOnMainThread start");
+                auxiliaryMethodOnMainThread();
             }
         }
     };
 
     public CustomCallBack() {
-        canRunOnMainThread = false;
     }
 
+    /**
+     * @param canRunOnMainThread
+     * @Deprecated replaced by {@link CustomCallBack#CustomCallBack()}
+     */
+    @Deprecated
     public CustomCallBack(boolean canRunOnMainThread) {
-        this.canRunOnMainThread = canRunOnMainThread;
+
     }
 
     public CustomCallBack(Class<T> clz) {
         this(true, clz);
     }
 
+    /**
+     * @param canRunOnMainThread
+     * @param clz
+     * @Deprecated replaced by {@link CustomCallBack#CustomCallBack(Class)}
+     */
+    @Deprecated
     public CustomCallBack(boolean canRunOnMainThread, Class<T> clz) {
-        this.canRunOnMainThread = canRunOnMainThread;
         this.clz = clz;
     }
 
@@ -83,8 +88,26 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     public void failureOnMainThread() {
     }
 
+    public final void executeAuxiliaryMethodOnMainThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            handler.sendEmptyMessage(AUXILIARY_METHOD_ON_MAIN_THREAD);
+            return;
+        }
+    }
+
+    /**
+     * 该方法不参与网络访问周期，不能直接被调用，必须通过 {@link #executeAuxiliaryMethodOnMainThread()} 触发。
+     */
+    public void auxiliaryMethodOnMainThread() {
+        // do nothing
+    }
+
     @Override
     public abstract void success(String result);
+
+    public void success(InputStream inputStream) {
+
+    }
 
     @Override
     public void successOnMainThread(String result) {
@@ -103,39 +126,30 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     @Override
     public void onFailure(Call call, IOException e) {
         failure();
-        if (null == Looper.myLooper() || Looper.myLooper() != Looper.getMainLooper()) {
-            LogTool.i("onFailure 方法在非 UI 线程");
-            looperPrepare();
+        /**
+         * 发送消息调用 {@link #failureOnMainThread()}
+         * */
             Message msg3 = new Message();
             msg3.what = FAILURE_ON_MAIN_THREAD;
             handler.sendMessage(msg3);
-        Looper.loop();
-        LogTool.i("跳出 CustomCallBack Looper 3") ;
-        } else if (Looper.myLooper() == Looper.getMainLooper()) {
-            LogTool.i("onFailure 方法在 UI 线程");
-            failureOnMainThread();
         }
+
+    @Override
+    public void finallyOnMainThread() {
     }
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        if (null == Looper.myLooper() || Looper.myLooper() != Looper.getMainLooper()) {
-            LogTool.i("onResponse 方法在非 UI 线程");
-        } else if (Looper.myLooper() == Looper.getMainLooper()) {
-            LogTool.i("onResponse 方法在 UI 线程");
-        }
         if(dismissProgressDialog()){
         CustomProgressBarDialog.dimissProgressBarDialog();
         }
         if(response.isSuccessful()) {
         String resultTemp = response.body().string() ;
-		CustomProgressBarDialog.dimissProgressBarDialog();
         success(resultTemp);
-        if(null == resultTemp || "".equals(resultTemp)){
+            if (null == resultTemp || "".equals(resultTemp) || clz == null) {
             return;
         }
-            
-            if (clz != null) {
+            // 以下都是转换成 Bean 的操作
                 Gson gson = new Gson();
                 T t = null ;
                 try{
@@ -144,46 +158,42 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
                 } catch (Exception e){
                     LogTool.i(ExceptionTool.getExceptionTraceString(e));
                 }
+            if (null == t) {
+                LogTool.i("CustomCallBack:没有使用有参构造方法或 GSON 转换异常");
+            }
                 runOnSelfThread(t);
-                if (canRunOnMainThread) {
-                    looperPrepare();
+            /**
+             * 发送消息调用 {@link #runOnMainThread(Object)}
+             * */
                     Message msg1 = new Message();
                     msg1.what = RUN_ON_MAIN_THREAD;
                     msg1.obj = t;
                     handler.sendMessage(msg1);
-                    Looper.loop();
-                    LogTool.i("跳出 CustomCallBack Looper 1") ;
-                }
-            }
-            if (canRunOnMainThread) {
-                looperPrepare();
+            /**
+             * 发送消息调用 {@link #successOnMainThread(String)}
+             * */
                 Message msg2 = new Message();
                 msg2.what = SUCCESS_ON_MAIN_THREAD;
                 msg2.obj = resultTemp;
                 handler.sendMessage(msg2);
-                Looper.loop();
-                LogTool.i("跳出 CustomCallBack Looper 2") ;
-            }
-            canRunOnMainThread = false;
         }else {
+            LogTool.i("访问服务器失败 " + response.code());
             // success("访问服务器失败-->com.nfl.libraryoflibrary.utils.net.CustomCallBack");
         }
+        /**
+         * 发送消息调用 {@link #finallyOnMainThread()} (String)}
+         * */
+        handler.sendEmptyMessage(FINALLY_ON_MAIN_THREAD);
     }
 
-    /**
-     * 有时 myLooper 为 null 但 ，已经执行过 Looper.prepare() ;
-     * TODO 找出造成这种现象的原因
-     */
-    private void looperPrepare() {
-        try {
-            if(null == myLooper){
-                Looper.prepare();
-                myLooper = Looper.myLooper();
-            }
-        } catch (Exception e) {
-            LogTool.i("Looper 初始化异常:" + ExceptionTool.getExceptionTraceString(e));
-        } finally {
-            myLooper = Looper.myLooper();
+    @Override
+    public void cancel() {
+        if (null != handler) {
+            handler.removeMessages(RUN_ON_MAIN_THREAD);
+            handler.removeMessages(SUCCESS_ON_MAIN_THREAD);
+            handler.removeMessages(FAILURE_ON_MAIN_THREAD);
+            handler.removeMessages(FINALLY_ON_MAIN_THREAD);
+            handler.removeMessages(AUXILIARY_METHOD_ON_MAIN_THREAD);
         }
     }
 }

@@ -6,16 +6,13 @@ package com.nfl.libraryoflibrary.view.recyclerview;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.nfl.libraryoflibrary.utils.ConvertTool;
 import com.nfl.libraryoflibrary.utils.LogTool;
@@ -27,20 +24,18 @@ import java.util.List;
 /**
  * Created by fuli.niu 2016/8/22
  */
-public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends RecyclerView {
+public class CustomRecyclerView extends RecyclerView {
 
     private Context context;
     private boolean canLoadMore = false;// 是否开启加载更多功能
-    private ViewParent parentView;
-    private RecyclereViewBaseAdapter adapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerViewBaseAdapter adapter;
     private CustomRecyclerViewDivider customRecyclerViewDivider;
 
     private List<OnItemClickListener> onItemClickListenerList;
-    private OnPushListener onPushListener ;
 
     private boolean hasStartAnim = false ;
     private LoadMoreState loadMoreState = LoadMoreState.PREPARE;
+    private PullToLoadMoreListener pullToLoadMoreListener;
 
     public enum LoadMoreState {
         STARTING, // 正在准备加载更多，此时还在拖拽状态
@@ -62,11 +57,6 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
         setListeners();
     }
 
-    @Override
-    protected void onMeasure(int widthSpec, int heightSpec) {
-        super.onMeasure(widthSpec, heightSpec);
-    }
-
     /**
      * 如果没有其他操作，默认添加水平分割线，竖直分布
      * 仿 ListView
@@ -76,10 +66,9 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
     private void init(Context context) {
         this.context = context;
         onItemClickListenerList = new ArrayList<>();
-        LinearLayoutManager manager = new LinearLayoutManager(context);
+        LinearLayoutManager manager = new LinearLayoutManager(this.context);
         setHasFixedSize(true);
-//        0xeeeeeeee
-        customRecyclerViewDivider = new CustomRecyclerViewDivider(new ColorDrawable(0x21334323), OrientationHelper.VERTICAL);
+        customRecyclerViewDivider = new CustomRecyclerViewDivider(new ColorDrawable(0xeeeeeeee), OrientationHelper.VERTICAL);
         //单位:px
         customRecyclerViewDivider.setMargin(0, 0, 0, 0);
         customRecyclerViewDivider.setHeight(ConvertTool.dp2px(1));
@@ -94,7 +83,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
-        this.adapter = (RecyclereViewBaseAdapter) adapter;
+        this.adapter = (RecyclerViewBaseAdapter) adapter;
     }
 
     /**
@@ -136,12 +125,6 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
         return customRecyclerViewDivider;
     }
 
-    public void setSwipeRefreshLayoutRefreshing(boolean isRefreshing) {
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.setRefreshing(isRefreshing);
-        }
-    }
-
     private OnScrollListener onScrollListener = new OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -150,8 +133,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                 if (CustomRecyclerView.this.computeVerticalScrollOffset() > 0 && !canScrollVertically(1)) {
                     // 说明滑到了底部
                     if (null != adapter) {
-                        setOnDragListener(onDragListener);
-                        setOnTouchListener(onTouchListener);
+                        setOnTouchListener(canLoadMore ? onTouchListener : null);
                     }
                 }
             }
@@ -160,14 +142,6 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-        }
-    };
-
-    private OnDragListener onDragListener = new OnDragListener() {
-
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-            return false;
         }
     };
 
@@ -198,7 +172,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                         if (null != footerView) {
                             layoutParams = footerView.getLayoutParams();
                             if (null != layoutParams && null != adapter ) {
-                                if(layoutParams.height < 1.5 * maxHeight){
+                                if (layoutParams.height < maxHeight) {
                                     // 拖拽距离不够不加载更多
                                     finishLoadMore() ;
                                 }else {
@@ -206,16 +180,9 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                                     layoutParams.height = adapter.footerViewMeasureHeight > 0 ? adapter.footerViewMeasureHeight : maxHeight ;
                                     footerView.setLayoutParams(layoutParams);
                                     adapter.refreshFooterViewLoading();
-                                    if(null != onPushListener){
-                                        onPushListener.onLoadMore();
+                                    if (null != pullToLoadMoreListener) {
+                                        pullToLoadMoreListener.startLoadMore();
                                     }
-                                    // 模拟加载更多成功
-//                                    postDelayed(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            finishLoadMore();
-//                                        }
-//                                    } , 4000) ;
                                 }
                                 layoutParams = null;
                             } else {
@@ -243,7 +210,7 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
                                 if (null != layoutParams) {
                                     layoutParams.height += heigtTemp;
                                     // 当 footerView 的高度高于设置的最大高度并且还没有刷新状态时更新 footerView 显示
-                                    if(layoutParams.height > 1.5 * maxHeight && !hasStartAnim){
+                                    if (layoutParams.height > maxHeight && !hasStartAnim) {
                                         adapter.refreshFooterViewStarting();
                                         hasStartAnim = true ;
                                     }
@@ -263,14 +230,6 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
             return false;
         }
     };
-
-    public OnPushListener getOnPushListener() {
-        return onPushListener;
-    }
-
-    public void setOnPushListener(OnPushListener onPushListener) {
-        this.onPushListener = onPushListener;
-    }
 
     /**
      * 加载更多 成功或失败后关闭 footerView
@@ -300,5 +259,9 @@ public class CustomRecyclerView<V extends RecyclerView.ViewHolder> extends Recyc
 
     public void setLoadMoreState(LoadMoreState loadMoreState) {
         this.loadMoreState = loadMoreState;
+    }
+
+    public void setPullToLoadMoreListener(PullToLoadMoreListener pullToLoadMoreListener) {
+        this.pullToLoadMoreListener = pullToLoadMoreListener;
     }
 }

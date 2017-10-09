@@ -1,6 +1,5 @@
 package com.nfl.libraryoflibrary.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,11 +20,14 @@ import android.util.DisplayMetrics;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.constant.Constants;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.SoftReference;
 
 import Decoder.BASE64Decoder;
 import id.zelory.compressor.Compressor;
@@ -128,7 +130,22 @@ public class ImageTools {
                     b[i] += 256;
                 }
             }
-            return BitmapFactory.decodeByteArray(b, 0, b.length);
+
+            InputStream input = null;
+            Bitmap bitmap = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 16;
+            input = new ByteArrayInputStream(b);
+            SoftReference softRef = new SoftReference(BitmapFactory.decodeStream(input, null, null));
+            bitmap = (Bitmap) softRef.get();
+            if (b != null) {
+                b = null;
+            }
+            if (input != null) {
+                input.close();
+            }
+            return bitmap;
+            // return BitmapFactory.decodeByteArray(b, 0, b.length);
         } catch (Exception e) {
             LogTool.i("Base64 转文件失败");
             LogTool.i(ExceptionTool.getExceptionTraceString(e));
@@ -276,7 +293,7 @@ public class ImageTools {
      *
      * @return
      */
-    public static Bitmap compress(Activity ctx, String imagePath) {
+    public static Bitmap compress(Context ctx, String imagePath) {
         if (ctx == null || imagePath == null) {
             return null;
         }
@@ -290,7 +307,7 @@ public class ImageTools {
             int h = opts.outHeight;
 
             // 现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-            DisplayMetrics displayMetrics = PhoneInfoTool.getMetrics(ctx);
+            DisplayMetrics displayMetrics = PhoneInfoTool.getMetrics();
             float ww = displayMetrics.widthPixels;// 这里设置宽度为480f
             float hh = displayMetrics.heightPixels;// 这里设置高度为800f;
 

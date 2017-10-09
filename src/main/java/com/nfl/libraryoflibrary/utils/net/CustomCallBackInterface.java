@@ -11,4 +11,6 @@ public interface CustomCallBackInterface<T> {
      void successOnMainThread(String result) ;
      void runOnMainThread(T t) ;
      void runOnSelfThread(T t) ;
+     void finallyOnMainThread() ;// 不管成功或失败只要相应就调用该方法
+     void cancel() ;
 }

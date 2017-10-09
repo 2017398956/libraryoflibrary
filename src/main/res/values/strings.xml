@@ -13,7 +13,7 @@
     <string name="xlistview_footer_hint_normal">查看更多</string>
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
 	<string name="number_letter_pattern">0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ</string>
-
+	<string name="telephone_number_pattern">1234567890-();, </string>
 
     <!-- 微信部分 -->
     <string name="hello_world">Hello world!</string>
