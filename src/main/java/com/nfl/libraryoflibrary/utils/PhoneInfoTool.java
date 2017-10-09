@@ -3,6 +3,7 @@ package com.nfl.libraryoflibrary.utils;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.graphics.Rect;
 import android.os.BatteryManager;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
 
@@ -156,8 +158,13 @@ public class PhoneInfoTool {
     }
 
     public static DisplayMetrics getMetrics(Activity activity) {
-        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(localDisplayMetrics);
-        return  localDisplayMetrics ;
+        return getMetrics() ;
+    }
+
+    public static DisplayMetrics getMetrics() {
+        WindowManager winMgr = (WindowManager) ApplicationContext.applicationContext.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics metric = new DisplayMetrics();
+        winMgr.getDefaultDisplay().getMetrics(metric);
+        return metric;
     }
 }

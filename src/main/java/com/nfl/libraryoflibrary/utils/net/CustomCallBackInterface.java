@@ -11,6 +11,6 @@ public interface CustomCallBackInterface<T> {
      void successOnMainThread(String result) ;
      void runOnMainThread(T t) ;
      void runOnSelfThread(T t) ;
-     void finallyOnMainThread() ;// ²»¹Ü³É¹¦»òÊ§°ÜÖ»ÒªÏàÓ¦¾Íµ÷ÓÃ¸Ã·½·¨
+     void finallyOnMainThread() ;// ä¸ç®¡æˆåŠŸæˆ–å¤±è´¥åªè¦ç›¸åº”å°±è°ƒç”¨è¯¥æ–¹æ³•
      void cancel() ;
 }

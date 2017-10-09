@@ -19,14 +19,14 @@ public abstract class CustomDialogInterface implements DialogInterface {
     public static abstract class OnClickListener extends CustomOnClickListener implements DialogInterface.OnClickListener {
 
         private DialogInterface dialog;
-        protected final int SUBMIT = DialogInterface.BUTTON_POSITIVE ;
-        protected final int CANCLE = DialogInterface.BUTTON_NEGATIVE ;
+        protected final int SUBMIT = DialogInterface.BUTTON_POSITIVE;
+        protected final int CANCLE = DialogInterface.BUTTON_NEGATIVE;
 
-        public OnClickListener(){
+        public OnClickListener() {
         }
 
         /**
-         * ¸Ã¹¹Ôì·½·¨ÓÃÓÚµã»÷ È·¶¨ °´Å¥ £¬µ¯¿ò²»ÏûÊ§µÄĞèÇó£¬Ò»°ãÊ¹ÓÃÉÏÃæÎŞ²Î¹¹Ôì·½·¨¼´¿É
+         * è¯¥æ„é€ æ–¹æ³•ç”¨äºç‚¹å‡» ç¡®å®š æŒ‰é’® ï¼Œå¼¹æ¡†ä¸æ¶ˆå¤±çš„éœ€æ±‚ï¼Œä¸€èˆ¬ä½¿ç”¨ä¸Šé¢æ— å‚æ„é€ æ–¹æ³•å³å¯
          *
          * @param dialog
          */
@@ -45,11 +45,11 @@ public abstract class CustomDialogInterface implements DialogInterface {
                 } else if (v == ((AlertDialog) dialog).getButton(BUTTON_NEUTRAL)) {
                     onClick(dialog, BUTTON_NEUTRAL);
                 } else {
-                    LogTool.i("¸Ã alertdialog µÄµã»÷Î»ÖÃ²»ÊÇÈı´ó°´Å¥");
+                    LogTool.i("è¯¥ alertdialog çš„ç‚¹å‡»ä½ç½®ä¸æ˜¯ä¸‰å¤§æŒ‰é’®");
                 }
             } else {
-                LogTool.i("Ã»ÓĞµ÷ÓÃ setDialog »ò ¸Ã dialog ²»ÊÇ alertdialog ²»ÄÜÍ¨¹ıÒ»°ã View µÄ setOnclickListener À´´úÌæ DialogInterface.OnClickListener");
-        }
+                LogTool.i("æ²¡æœ‰è°ƒç”¨ setDialog æˆ– è¯¥ dialog ä¸æ˜¯ alertdialog ä¸èƒ½é€šè¿‡ä¸€èˆ¬ View çš„ setOnclickListener æ¥ä»£æ›¿ DialogInterface.OnClickListener");
+            }
         }
 
         /**
@@ -58,7 +58,7 @@ public abstract class CustomDialogInterface implements DialogInterface {
          */
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            // TraceKeeper.addTrace(v);
+//             TraceKeeper.addTrace(v);
 
         }
 
@@ -70,6 +70,7 @@ public abstract class CustomDialogInterface implements DialogInterface {
             this.dialog = dialog;
         }
     }
+
     @Override
     public void cancel() {
 

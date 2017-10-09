@@ -33,7 +33,7 @@ public class CustomRecyclerView extends RecyclerView {
 
     private List<OnItemClickListener> onItemClickListenerList;
 
-    private boolean hasStartAnim = false ;
+    private boolean hasStartAnim = false;
     private LoadMoreState loadMoreState = LoadMoreState.PREPARE;
     private PullToLoadMoreListener pullToLoadMoreListener;
 
@@ -111,7 +111,6 @@ public class CustomRecyclerView extends RecyclerView {
     }
 
     public static abstract class OnItemClickListener {
-
         public void onClick(View view, int position) {
             TraceKeeper.addTrace(view);
         }
@@ -147,7 +146,6 @@ public class CustomRecyclerView extends RecyclerView {
 
     private OnTouchListener onTouchListener = new OnTouchListener() {
 
-
         View footerView;
         ViewGroup.LayoutParams layoutParams;
         float downPointY = 0;
@@ -164,20 +162,20 @@ public class CustomRecyclerView extends RecyclerView {
                     break;
                 case MotionEvent.ACTION_UP:
                     downPointY = 0;
-                    hasStartAnim = false ;
+                    hasStartAnim = false;
                     // 如果展示了 加载更多
                     if (loadMoreState == LoadMoreState.STARTING) {
                         loadMoreState = LoadMoreState.LOADING;
                         footerView = getChildAt(getChildCount() - 1);
                         if (null != footerView) {
                             layoutParams = footerView.getLayoutParams();
-                            if (null != layoutParams && null != adapter ) {
+                            if (null != layoutParams && null != adapter) {
                                 if (layoutParams.height < maxHeight) {
                                     // 拖拽距离不够不加载更多
-                                    finishLoadMore() ;
-                                }else {
+                                    finishLoadMore();
+                                } else {
                                     // 拖拽距离够，加载更多
-                                    layoutParams.height = adapter.footerViewMeasureHeight > 0 ? adapter.footerViewMeasureHeight : maxHeight ;
+                                    layoutParams.height = adapter.footerViewMeasureHeight > 0 ? adapter.footerViewMeasureHeight : maxHeight;
                                     footerView.setLayoutParams(layoutParams);
                                     adapter.refreshFooterViewLoading();
                                     if (null != pullToLoadMoreListener) {
@@ -202,7 +200,7 @@ public class CustomRecyclerView extends RecyclerView {
                         if (loadMoreState == LoadMoreState.PREPARE) {
                             // 添加 footerView
                             adapter.addFooterView();
-                            loadMoreState = LoadMoreState.STARTING ;
+                            loadMoreState = LoadMoreState.STARTING;
                         } else if (loadMoreState == LoadMoreState.STARTING) {
                             footerView = getChildAt(getChildCount() - 1);
                             if (null != footerView) {
@@ -212,7 +210,7 @@ public class CustomRecyclerView extends RecyclerView {
                                     // 当 footerView 的高度高于设置的最大高度并且还没有刷新状态时更新 footerView 显示
                                     if (layoutParams.height > maxHeight && !hasStartAnim) {
                                         adapter.refreshFooterViewStarting();
-                                        hasStartAnim = true ;
+                                        hasStartAnim = true;
                                     }
                                     // 当 footerView 的高度超过 3 倍最大高度时，限制 footerView 的高度
                                     if (layoutParams.height > 3 * maxHeight) {
@@ -235,8 +233,8 @@ public class CustomRecyclerView extends RecyclerView {
      * 加载更多 成功或失败后关闭 footerView
      */
     public void finishLoadMore() {
-        loadMoreState = LoadMoreState.PREPARE ;
-        if(null != adapter){
+        loadMoreState = LoadMoreState.PREPARE;
+        if (null != adapter) {
             adapter.closeFooterView();
         }
     }
