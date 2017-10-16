@@ -18,8 +18,10 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.nfl.libraryoflibrary.R;
+import com.nfl.libraryoflibrary.utils.LogTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,7 +208,7 @@ public class LineChart extends View {
         bottomPaint.setAntiAlias(true); //去锯齿
         bottomPaint.setTextSize(bottomTextSize);
         bottomPaintRect = new Rect();
-        bottomPaint.getTextBounds("月", 0, 1, bottomPaintRect);
+        bottomPaint.getTextBounds("11", 0, 1, bottomPaintRect);
         bottomPaintHeight = bottomPaintRect.height() + line03Height + spaceV;
     }
 
@@ -290,9 +292,11 @@ public class LineChart extends View {
         /**
          * 修改弹出文字的绘制位置和大小
          */
-        popupX = xValues.get(clickPosition);
-        popupY = line03Height - yValues.get(clickPosition) * contentHeight / maxYValue;
-        startValueAnimator();
+        if (clickPosition < xValues.size() && clickPosition > -1) {
+            popupX = xValues.get(clickPosition);
+            popupY = line03Height - yValues.get(clickPosition) * contentHeight / maxYValue;
+            startValueAnimator();
+        }
         return super.onTouchEvent(event);
     }
 
@@ -344,7 +348,7 @@ public class LineChart extends View {
                 }
                 maxYValue = ((int) maxYValue / 10 + 1) * 10;
             }
-            baseMount = (int) maxYValue / 2 ;
+            baseMount = (int) maxYValue / 2;
         }
         return (int) (line03Height - baseMount * contentHeight / maxYValue);
     }
@@ -379,5 +383,24 @@ public class LineChart extends View {
         this.yAxis.clear();
         this.yAxis.addAll(yAxis);
         invalidateView();
+    }
+
+    public void onlyDrawHeader(final boolean drawHeader) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                ViewGroup.LayoutParams layoutParams = getLayoutParams();
+                LogTool.i("layoutParams is null ? " + (null == layoutParams));
+                if (null != layoutParams) {
+                    if (drawHeader) {
+                        layoutParams.height = line01Height;
+                    } else {
+                        layoutParams.height = pedometerViewHeight;
+                    }
+                    setLayoutParams(layoutParams);
+                    invalidateView();
+                }
+            }
+        });
     }
 }
