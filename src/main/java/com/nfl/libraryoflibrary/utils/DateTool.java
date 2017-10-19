@@ -2,8 +2,6 @@ package com.nfl.libraryoflibrary.utils;
 
 import android.text.TextUtils;
 
-import com.iflytek.cloud.thirdparty.Y;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,6 +45,10 @@ public class DateTool {
         return getDateString("yyyy-MM") + "-01";
     }
 
+    public static String getFirstDayOfMonth(String dateString) {
+        return getDateString(turnString2Date(dateString), "yyyy-MM") + "-01";
+    }
+
     public static String getFirstDayOfPreviousMonth(String date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(turnString2Date(date));
@@ -68,10 +70,10 @@ public class DateTool {
             month = 12;
             --year;
         }
-        calendar.set(Calendar.DAY_OF_MONTH , 1);
-        calendar.set(Calendar.YEAR , year);
-        calendar.set(Calendar.MONTH, -- month);
-        month++ ;
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, --month);
+        month++;
         return year + "-" + (month > 9 ? month : "0" + month) + "-" + calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
@@ -81,11 +83,19 @@ public class DateTool {
         int month = calendar.get(Calendar.MONTH) + 2;
         int year = calendar.get(Calendar.YEAR) + month / 12;
         month = month % 12;
-        if(month == 0){
-            month = 12 ;
-            year-- ;
+        if (month == 0) {
+            month = 12;
+            year--;
         }
         return year + "-" + (month > 9 ? month : "0" + month) + "-01";
+    }
+
+    public static String getLastDayOfMonth(String date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(turnString2Date(date));
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+        return year + "-" + (month > 9 ? month : "0" + month) + "-" + calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
     public static String getLastDayOfNextMonth(String date) {
@@ -94,14 +104,14 @@ public class DateTool {
         int month = calendar.get(Calendar.MONTH) + 2;
         int year = calendar.get(Calendar.YEAR) + month / 12;
         month = month % 12;
-        if(month == 0){
-            month = 12 ;
-            year-- ;
+        if (month == 0) {
+            month = 12;
+            year--;
         }
-        calendar.set(Calendar.DAY_OF_MONTH , 1);
-        calendar.set(Calendar.YEAR , year);
-        calendar.set(Calendar.MONTH , --month);
-        month++ ;
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, --month);
+        month++;
         return year + "-" + (month > 9 ? month : "0" + month) + "-" + calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
@@ -206,7 +216,7 @@ public class DateTool {
         try {
             return simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
-            LogTool.i("错误的时间格式：" + dateString) ;
+            LogTool.i("错误的时间格式：" + dateString);
             e.printStackTrace();
         }
         return null;

@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nfl.libraryoflibrary.R;
+import com.nfl.libraryoflibrary.utils.ConvertTool;
 import com.nfl.libraryoflibrary.utils.LogTool;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class LineChart extends View {
     private float headerTextSize;// 头部字体大小
     private float bottomTextSize;// 底部日期字体大小
     private final int spaceV = 30; // 垂直方向的间隔
+    private int spaceH = 20;// 图表左右的 padding , 单位 dp
     private int line01Height;// 第一条线的高度
     private int line02Height;// 第二条线的高度
     private int line03Height; // 第三条线的高度
@@ -82,10 +84,9 @@ public class LineChart extends View {
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
         contentHeight = (int) (contentHeight * (dm.density / 3.5));
         clickPosition = -1;
-        headerTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 26,
-                getResources().getDisplayMetrics());
-        bottomTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12,
-                getResources().getDisplayMetrics());
+        headerTextSize = ConvertTool.sp2px(26);
+        bottomTextSize = ConvertTool.sp2px(12);
+        spaceH = ConvertTool.dp2px(spaceH);
         titleDescription = " ";
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.line_chart);
@@ -126,9 +127,9 @@ public class LineChart extends View {
             return;
         }
         xValues.clear();
-        xAxisGap = ((float) pedometerViewWidth - 2 * 40) / (xAxis.size() - 1);
+        xAxisGap = ((float) pedometerViewWidth - 2 * spaceH) / (xAxis.size() - 1);
         for (int i = 0; i < xAxis.size(); i++) {
-            xValues.add(i * xAxisGap + 40);
+            xValues.add(i * xAxisGap + spaceH);
         }
     }
 
@@ -172,13 +173,13 @@ public class LineChart extends View {
         headerPaint.setAntiAlias(true); //去锯齿
         headerPaint.setTextSize(headerTextSize);
         headerPaint.setColor(Color.WHITE);
-        canvas.drawText(title, 40, line01Height - spaceV, headerPaint);
+        canvas.drawText(title, spaceH, line01Height - spaceV, headerPaint);
         headerPaint.getTextBounds(titleDescription, 0, titleDescription.length(), headerPaintRect);
         titleDescriptionPaint.getTextBounds(titleDescription, 0, titleDescription.length(), headerPaintRect);
-        canvas.drawText(titleDescription, pedometerViewWidth - headerPaintRect.width() - 40,
+        canvas.drawText(titleDescription, pedometerViewWidth - headerPaintRect.width() - spaceH,
                 line01Height - spaceV, titleDescriptionPaint);
 
-        canvas.drawLine(40, line01Height, pedometerViewWidth - 40, line01Height, headerPaint);// 画第一条线
+        canvas.drawLine(spaceH, line01Height, pedometerViewWidth - spaceH, line01Height, headerPaint);// 画第一条线
         // 下面为画虚线和“1w”
 
         headerPaint.setTextSize(bottomTextSize);
@@ -186,13 +187,13 @@ public class LineChart extends View {
 
         Rect rect = new Rect();
         middleTextPaint.getTextBounds(baseMount + unit, 0, (baseMount + unit).length(), rect);
-        canvas.drawText(baseMount + unit, pedometerViewWidth - 40 - rect.width(), line02Height + rect.height() / 2, middleTextPaint);
+        canvas.drawText(baseMount + unit, pedometerViewWidth - spaceH - rect.width(), line02Height + rect.height() / 2, middleTextPaint);
 
-        canvas.drawLine(40, line03Height, pedometerViewWidth - 40, line03Height, headerPaint);// 画的第三条线
+        canvas.drawLine(spaceH, line03Height, pedometerViewWidth - spaceH, line03Height, headerPaint);// 画的第三条线
 
         Path path = new Path();
-        path.moveTo(40, line02Height);
-        path.lineTo(pedometerViewWidth - 40 - rect.width(), line02Height);
+        path.moveTo(spaceH, line02Height);
+        path.lineTo(pedometerViewWidth - spaceH - rect.width(), line02Height);
         path.close();
         PathEffect pathEffect = new DashPathEffect(new float[]{5, 5, 5, 5}, 1);
         headerPaint.setPathEffect(pathEffect);
@@ -222,9 +223,11 @@ public class LineChart extends View {
         if (null == xAxis || xAxis.size() == 0) {
             return;
         }
+        Rect rectTemp = new Rect();
         for (int i = 0; i < xAxis.size(); i++) {
             bottomPaint.setColor(clickPosition == i ? Color.WHITE : Color.parseColor("#55D5D8"));
-            canvas.drawText(xAxis.get(i), xValues.get(i) - xAxis.get(i).length() * bottomPaintRect.width() / 2, bottomPaintHeight - spaceV / 2, bottomPaint);
+            bottomPaint.getTextBounds(xAxis.get(i) , 0, xAxis.get(i).length() , rectTemp);
+            canvas.drawText(xAxis.get(i), xValues.get(i) - rectTemp.width() / 2, bottomPaintHeight - spaceV / 2, bottomPaint);
         }
     }
 

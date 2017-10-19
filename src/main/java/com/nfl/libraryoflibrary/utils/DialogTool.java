@@ -277,10 +277,18 @@ public class DialogTool {
         showDatePickerDialog(context , view , splitChar , null) ;
     }
 
-    public static void showDatePickerDialog(Context context, final TextView view, final String splitChar, final TimeSelectedListener timeSelectedListener) {
+    public static void showDatePickerDialog(Context context, TextView view, final String splitChar, final TimeSelectedListener timeSelectedListener) {
+        showDatePickerDialog(context , view , 0 , splitChar , timeSelectedListener);
+    }
+
+    public static void showDatePickerDialog(Context context, final TextView view, int typeInt , final String splitChar, final TimeSelectedListener timeSelectedListener){
         hideSoftKeyboard(context);
         final String splitCharTemp = null == splitChar ? "-" : splitChar;
-        final TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.YEAR_MONTH_DAY);
+        TimePickerView.Type type = TimePickerView.Type.YEAR_MONTH_DAY ;
+        if (typeInt == 1){
+            type = TimePickerView.Type.YEAR_MONTH ;
+        }
+        final TimePickerView timerPickerView = new TimePickerView(context, type);
         timerPickerView.setCancelable(true);
         timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
             @Override
@@ -303,7 +311,6 @@ public class DialogTool {
         });
         timerPickerView.show();
     }
-
     /**
      * 显示时间控件（时分）
      * 仿IOS时间滚轮
