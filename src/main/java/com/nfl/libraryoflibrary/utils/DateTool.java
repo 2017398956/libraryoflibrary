@@ -14,6 +14,34 @@ public class DateTool {
 //        public static final String str = "yyyy-MM-dd" ;
 //    }
 
+    public static String getDayOfWeekName(String dateString) {
+        if (TextUtils.isEmpty(dateString)) {
+            return "";
+        }
+        Date date = turnString2Date(dateString);
+        if (null != date) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            switch (calendar.get(Calendar.DAY_OF_WEEK)) {
+                case 1:
+                    return "周日";
+                case 2:
+                    return "周一";
+                case 3:
+                    return "周二";
+                case 4:
+                    return "周三";
+                case 5:
+                    return "周四";
+                case 6:
+                    return "周五";
+                case 7:
+                    return "周六";
+            }
+        }
+        return "";
+    }
+
     private static String getDateString(Date date, String pattern) {
         SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.CHINA);
         return formatter.format(date);
