@@ -1,6 +1,7 @@
 package com.nfl.libraryoflibrary.utils.net;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,7 @@ public class CustomHttpHelper {
     private static final int writeTimeout = 60;// 单位：秒
     private static final int readTimeout = 60;// 单位：秒
     private static ProgressListener progressListener;
+    public static int requstCount = 0;// 记录请求的次数
 
     private static void getInstance() {
         if (null == okHttpClient) {
@@ -108,43 +111,39 @@ public class CustomHttpHelper {
 //            LogTool.i(R.string.url_error);
 //            return;
 //        }
-        boolean hasUserInfo = false ;// 用于标示访问参数中是否含有用户信息
         getInstance();
         FormBody.Builder builder = new FormBody.Builder();
         String valueTemp;
-        if (null != keyValuePairs && keyValuePairs.size() > 0) {
-            for(String key : keyValuePairs.keySet()){
-                if(!hasUserInfo){
-                    if("username".equals(key)){
-                        hasUserInfo = true ;
-                    }
-                }
-                valueTemp = keyValuePairs.get(key);
-                builder.add(key, null == valueTemp ? "" : valueTemp);
-            }
-            }
-        if(!hasUserInfo){
-            // 如果请求服务器的参数中没有用户信息，这里自动加上
-            builder.add("username", ApplicationContext.USERNAME);
-            builder.add("userid", ApplicationContext.USERID + "");
-            builder.add("devid", ApplicationContext.DEVID);
+        if (null == keyValuePairs) {
+            keyValuePairs = new HashMap<>();
         }
-
-        builder.add("devtype", "Android");// 设备类型（区分安卓和IOS）
-        builder.add("appversion", Constants.APPVERSION);// app版本
-        builder.add("sysversion", Build.VERSION.RELEASE);
-        builder.add("systype", "Android");
-        builder.add("phonemodel", Build.BRAND + " - " + Build.MODEL);
+        keyValuePairs.put("devid", ApplicationContext.DEVID);
+        keyValuePairs.put("devtype", "Android");// 设备类型（区分安卓和IOS）
+        keyValuePairs.put("appversion", Constants.APPVERSION);// app版本
+        keyValuePairs.put("sysversion", Build.VERSION.RELEASE);
+        keyValuePairs.put("systype", "Android");
+        keyValuePairs.put("phonemodel", Build.BRAND + " - " + Build.MODEL);
+        for (String key : keyValuePairs.keySet()) {
+            valueTemp = keyValuePairs.get(key);
+            builder.add(key, null == valueTemp ? "" : valueTemp);
+        }
+        if (TextUtils.isEmpty(keyValuePairs.get("username"))) {
+            builder.add("username", ApplicationContext.USERNAME);
+        }
+        if (TextUtils.isEmpty(keyValuePairs.get("userid"))) {
+            builder.add("userid", ApplicationContext.USERID + "");
+        }
         FormBody formBody = builder.build();
         Request request = new Request.Builder().url(url).post(formBody).build();
         if (isUpload) {
             okHttpClient2.newCall(request).enqueue((Callback) customCallBack);
-            LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis()) ;
+            LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis());
             isUpload = false;
         } else {
             customCallBackList.add(customCallBack);
-        okHttpClient.newCall(request).enqueue((Callback) customCallBack);
-    }
+            okHttpClient.newCall(request).enqueue((Callback) customCallBack);
+        }
+        requstCount++;
     }
 
     public static void download(String url, CustomCallBack4Download mCustomCallBack, final ProgressListener mProgressListener) {
@@ -169,13 +168,14 @@ public class CustomHttpHelper {
         mOkHttpClient.newCall(request).enqueue(mCustomCallBack);
     }
 
+
     public static void uploadBase64File(String url, Map<String, String> keyValuePairs, CustomCallBackInterface customCallBack) {
         getInstance2();
         isUpload = true;
         getDataFromServer(url, keyValuePairs, customCallBack);
     }
 
-    public static void uploadImg(String imagePath , String url) {
+    public static void uploadImg(String imagePath, String url) {
         showNetExceptionInfo();
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         File f = new File(imagePath);
@@ -188,28 +188,28 @@ public class CustomHttpHelper {
                 .url(url)//地址
                 .post(requestBody)//添加请求体
                 .build();
-
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 CustomProgressBarDialog.dimissProgressBarDialog();
-                LogTool.i("上传图片失败") ;
+                LogTool.i("上传图片失败");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 CustomProgressBarDialog.dimissProgressBarDialog();
-                JSONObject jsonObject = null ;
+                JSONObject jsonObject = null;
                 try {
-                    jsonObject = new JSONObject(response.body().string()) ;
-                    LogTool.i("图片上传返回信息：" + jsonObject.toString()) ;
-                }catch (Exception e){
-                    LogTool.i("图片上传失败") ;
+                    jsonObject = new JSONObject(response.body().string());
+                    LogTool.i("图片上传返回信息：" + jsonObject.toString());
+                } catch (Exception e) {
+                    LogTool.i("图片上传失败");
                 }
 
-                if(null != jsonObject && 0 == jsonObject.optInt("status" , 1)){
+                if (null != jsonObject && 0 == jsonObject.optInt("status", 1)) {
                     LogTool.i("图片上传成功");
-                }else{
-                    LogTool.i("图片上传失败了jsonObject.isNull:" + (null == jsonObject ? "null" : "not null , msg:" + jsonObject.optString("msg" , "error")) ) ;
+                } else {
+                    LogTool.i("图片上传失败了jsonObject.isNull:" + (null == jsonObject ? "null" : "not null , msg:" + jsonObject.optString("msg", "error")));
                 }
 
             }
@@ -219,8 +219,8 @@ public class CustomHttpHelper {
     /**
      * 上传文件
      *
-     * @param actionUrl 接口地址
-     * @param paramsMap 参数
+     * @param actionUrl      接口地址
+     * @param paramsMap      参数
      * @param customCallBack 回调
      */
     public void upLoadFile(String actionUrl, Map<String, Object> paramsMap, CustomCallBackInterface customCallBack) {
@@ -237,7 +237,7 @@ public class CustomHttpHelper {
 //                return;
 //            }
             getInstance();
-            boolean hasUserInfo = false ;// 用于标示访问参数中是否含有用户信息
+            boolean hasUserInfo = false;// 用于标示访问参数中是否含有用户信息
             MultipartBody.Builder builder = new MultipartBody.Builder();
             //创建RequestBody
             RequestBody body = builder.build();
@@ -245,9 +245,9 @@ public class CustomHttpHelper {
             builder.setType(MultipartBody.FORM);
             //追加参数
             for (String key : paramsMap.keySet()) {
-                if(!hasUserInfo){
-                    if("username".equals(key)){
-                        hasUserInfo = true ;
+                if (!hasUserInfo) {
+                    if ("username".equals(key)) {
+                        hasUserInfo = true;
                     }
                 }
                 Object object = paramsMap.get(key);
@@ -255,15 +255,15 @@ public class CustomHttpHelper {
                     builder.addFormDataPart(key, object.toString());
                 } else {
                     File file = (File) object;
-                    builder.addFormDataPart(key, file.getName(), RequestBody.create(null , file));
+                    builder.addFormDataPart(key, file.getName(), RequestBody.create(null, file));
                 }
             }
-            if(!hasUserInfo){
+            if (!hasUserInfo) {
                 // 如果请求服务器的参数中没有用户信息，这里自动加上
                 builder.addFormDataPart("username", ApplicationContext.USERNAME);
                 builder.addFormDataPart("userid", ApplicationContext.USERID + "");
-                builder.addFormDataPart("devid", ApplicationContext.DEVID);
             }
+            builder.addFormDataPart("devid", ApplicationContext.DEVID);
             builder.addFormDataPart("devtype", "Android");// 设备类型（区分安卓和IOS）
             builder.addFormDataPart("appversion", Constants.APPVERSION);// app版本
             //创建Request
@@ -276,7 +276,7 @@ public class CustomHttpHelper {
     /**
      * 多文件上传
      */
-    private void uploadMultiFile(String uploadUrl , String... filePaths) {
+    private void uploadMultiFile(String uploadUrl, String... filePaths) {
         showNetExceptionInfo();
         getInstance();
         File file = new File("fileDir", "test.jpg");
@@ -293,8 +293,9 @@ public class CustomHttpHelper {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LogTool.i("uploadMultiFile() " + ExceptionTool.getExceptionTraceString(e)) ;
+                LogTool.i("uploadMultiFile() " + ExceptionTool.getExceptionTraceString(e));
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 LogTool.i("uploadMultiFile() response=" + response.body().string());
@@ -305,25 +306,25 @@ public class CustomHttpHelper {
     /**
      * 上传多张图片及参数
      *
-     * @param reqUrl URL地址
-     * @param params 参数
+     * @param reqUrl  URL地址
+     * @param params  参数
      * @param pic_key 上传图片的关键字
-     * @param files  文件
+     * @param files   文件
      */
-    public void sendMultipart(String reqUrl,Map<String, String> params,String pic_key, List<File> files){
+    public void sendMultipart(String reqUrl, Map<String, String> params, String pic_key, List<File> files) {
         showNetExceptionInfo();
         getInstance();
 
         MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
         multipartBodyBuilder.setType(MultipartBody.FORM);
         //遍历map中所有参数到builder
-        if (params != null){
+        if (params != null) {
             for (String key : params.keySet()) {
                 multipartBodyBuilder.addFormDataPart(key, params.get(key));
             }
         }
         //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
-        if (files != null){
+        if (files != null) {
             for (File file : files) {
                 multipartBodyBuilder.addFormDataPart(pic_key, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
             }
@@ -372,7 +373,7 @@ public class CustomHttpHelper {
      */
     public interface ProgressListener {
         void update(long bytesRead, long contentLength, boolean done);
-        }
+    }
 
     private static class ProgressResponseBody extends ResponseBody {
 
@@ -383,7 +384,7 @@ public class CustomHttpHelper {
         ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
             this.responseBody = responseBody;
             this.progressListener = progressListener;
-    }
+        }
 
         @Override
         public MediaType contentType() {

@@ -24,7 +24,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     private Class<T> clz;
     private final int RUN_ON_MAIN_THREAD = 1;
     private final int SUCCESS_ON_MAIN_THREAD = 2;
-    private final int FAILURE_ON_MAIN_THREAD = 3 ;
+    private final int FAILURE_ON_MAIN_THREAD = 3;
     private final int FINALLY_ON_MAIN_THREAD = 4;
     private final int AUXILIARY_METHOD_ON_MAIN_THREAD = 5;
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -32,13 +32,13 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == RUN_ON_MAIN_THREAD) {
-                LogTool.i("runOnMainThread start") ;
+                LogTool.i("runOnMainThread start");
                 runOnMainThread((T) msg.obj);
             } else if (msg.what == SUCCESS_ON_MAIN_THREAD) {
-                LogTool.i("successOnMainThread start") ;
+                LogTool.i("successOnMainThread start");
                 successOnMainThread((String) msg.obj);
-            } else if (msg.what == FAILURE_ON_MAIN_THREAD){
-                LogTool.i("failureOnMainThread start") ;
+            } else if (msg.what == FAILURE_ON_MAIN_THREAD) {
+                LogTool.i("failureOnMainThread start");
                 failureOnMainThread();
             } else if (msg.what == FINALLY_ON_MAIN_THREAD) {
                 LogTool.i("finallyOnMainThread start");
@@ -76,9 +76,9 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
         this.clz = clz;
     }
 
-    public boolean dismissProgressDialog(){
+    public boolean dismissProgressDialog() {
         // TODO 改变自定义 ProgressDialog 是否自动消失，默认自动消失
-        return true ;
+        return true;
     }
 
     @Override
@@ -86,6 +86,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void failureOnMainThread() {
+        autoCloseProgressDialog();
     }
 
     public final void executeAuxiliaryMethodOnMainThread() {
@@ -111,7 +112,6 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void successOnMainThread(String result) {
-
     }
 
     @Override
@@ -120,19 +120,19 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void runOnSelfThread(T t) {
-
     }
 
     @Override
     public void onFailure(Call call, IOException e) {
+        CustomHttpHelper.requstCount--;
         failure();
         /**
          * 发送消息调用 {@link #failureOnMainThread()}
          * */
-            Message msg3 = new Message();
-            msg3.what = FAILURE_ON_MAIN_THREAD;
-            handler.sendMessage(msg3);
-        }
+        Message msg3 = new Message();
+        msg3.what = FAILURE_ON_MAIN_THREAD;
+        handler.sendMessage(msg3);
+    }
 
     @Override
     public void finallyOnMainThread() {
@@ -140,43 +140,47 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        if(dismissProgressDialog()){
-        CustomProgressBarDialog.dimissProgressBarDialog();
+        CustomHttpHelper.requstCount--;
+        if (dismissProgressDialog()) {
+            CustomProgressBarDialog.dimissProgressBarDialog();
+        } else {
+            autoCloseProgressDialog();
         }
-        if(response.isSuccessful()) {
-        String resultTemp = response.body().string() ;
-        success(resultTemp);
+
+        if (response.isSuccessful()) {
+            String resultTemp = response.body().string();
+            success(resultTemp);
             if (null == resultTemp || "".equals(resultTemp) || clz == null) {
-            return;
-        }
+                return;
+            }
             // 以下都是转换成 Bean 的操作
-                Gson gson = new Gson();
-                T t = null ;
-                try{
-                    // gson 转换可能会发生异常
-                    t = gson.fromJson(resultTemp, clz);
-                } catch (Exception e){
-                    LogTool.i(ExceptionTool.getExceptionTraceString(e));
-                }
+            Gson gson = new Gson();
+            T t = null;
+            try {
+                // gson 转换可能会发生异常
+                t = gson.fromJson(resultTemp, clz);
+            } catch (Exception e) {
+                LogTool.i(ExceptionTool.getExceptionTraceString(e));
+            }
             if (null == t) {
                 LogTool.i("CustomCallBack:没有使用有参构造方法或 GSON 转换异常");
             }
-                runOnSelfThread(t);
+            runOnSelfThread(t);
             /**
              * 发送消息调用 {@link #runOnMainThread(Object)}
              * */
-                    Message msg1 = new Message();
-                    msg1.what = RUN_ON_MAIN_THREAD;
-                    msg1.obj = t;
-                    handler.sendMessage(msg1);
+            Message msg1 = new Message();
+            msg1.what = RUN_ON_MAIN_THREAD;
+            msg1.obj = t;
+            handler.sendMessage(msg1);
             /**
              * 发送消息调用 {@link #successOnMainThread(String)}
              * */
-                Message msg2 = new Message();
-                msg2.what = SUCCESS_ON_MAIN_THREAD;
-                msg2.obj = resultTemp;
-                handler.sendMessage(msg2);
-        }else {
+            Message msg2 = new Message();
+            msg2.what = SUCCESS_ON_MAIN_THREAD;
+            msg2.obj = resultTemp;
+            handler.sendMessage(msg2);
+        } else {
             LogTool.i("访问服务器失败 " + response.code());
             // success("访问服务器失败-->com.nfl.libraryoflibrary.utils.net.CustomCallBack");
         }
@@ -194,6 +198,16 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             handler.removeMessages(FAILURE_ON_MAIN_THREAD);
             handler.removeMessages(FINALLY_ON_MAIN_THREAD);
             handler.removeMessages(AUXILIARY_METHOD_ON_MAIN_THREAD);
+        }
+    }
+
+    /**
+     * 当不主动关闭加载框时，如果请求数为 0 也将其关闭
+     */
+    private void autoCloseProgressDialog() {
+        if (CustomHttpHelper.requstCount <= 0) {
+            CustomHttpHelper.requstCount = 0;
+            CustomProgressBarDialog.dimissProgressBarDialog();
         }
     }
 }
