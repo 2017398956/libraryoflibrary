@@ -283,33 +283,33 @@ public class DialogTool {
 
     public static void showDatePickerDialog(Context context, final TextView view, int typeInt , final String splitChar, final TimeSelectedListener timeSelectedListener){
         hideSoftKeyboard(context);
-        final String splitCharTemp = null == splitChar ? "-" : splitChar;
-        TimePickerView.Type type = TimePickerView.Type.YEAR_MONTH_DAY ;
-        if (typeInt == 1){
-            type = TimePickerView.Type.YEAR_MONTH ;
-        }
-        final TimePickerView timerPickerView = new TimePickerView(context, type);
-        timerPickerView.setCancelable(true);
-        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                StringBuilder sb = new StringBuilder();
-                sb.append(calendar.get(Calendar.YEAR));
-                sb.append(splitCharTemp);
-                int month = calendar.get(Calendar.MONTH) + 1;
-                sb.append(month > 9 ? month : ("0" + month));
-                sb.append(splitCharTemp);
-                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-                sb.append(dayOfMonth > 9 ? dayOfMonth : ("0" + dayOfMonth));
-                view.setText(sb.toString());
-                if (null != timeSelectedListener) {
-                    timeSelectedListener.onSelect(date);
-                }
-            }
-        });
-        timerPickerView.show();
+//        final String splitCharTemp = null == splitChar ? "-" : splitChar;
+//        TimePickerView.Type type = TimePickerView.Type.YEAR_MONTH_DAY ;
+//        if (typeInt == 1){
+//            type = TimePickerView.Type.YEAR_MONTH ;
+//        }
+//        final TimePickerView timerPickerView = new TimePickerView(context, type);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//                sb.append(calendar.get(Calendar.YEAR));
+//                sb.append(splitCharTemp);
+//                int month = calendar.get(Calendar.MONTH) + 1;
+//                sb.append(month > 9 ? month : ("0" + month));
+//                sb.append(splitCharTemp);
+//                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+//                sb.append(dayOfMonth > 9 ? dayOfMonth : ("0" + dayOfMonth));
+//                view.setText(sb.toString());
+//                if (null != timeSelectedListener) {
+//                    timeSelectedListener.onSelect(date);
+//                }
+//            }
+//        });
+//        timerPickerView.show();
     }
     /**
      * 显示时间控件（时分）
@@ -327,47 +327,47 @@ public class DialogTool {
 
     public static void showTimePickerDialog(Context context, final TextView view, String splitChar) {
         hideSoftKeyboard(context);
-        final String splitCharTemp = null == splitChar ? ":" : splitChar;
-        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.HOURS_MINS);
-        timerPickerView.setCancelable(true);
-        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                StringBuilder sb = new StringBuilder();
-                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
-                sb.append(splitCharTemp);
-                int minute = calendar.get(Calendar.MINUTE);
-                sb.append(minute > 9 ? minute : ("0" + minute));
-                view.setText(sb.toString());
-            }
-        });
-        timerPickerView.show();
+//        final String splitCharTemp = null == splitChar ? ":" : splitChar;
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.HOURS_MINS);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+//                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
+//                sb.append(splitCharTemp);
+//                int minute = calendar.get(Calendar.MINUTE);
+//                sb.append(minute > 9 ? minute : ("0" + minute));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
     }
 
     public static void showTimePickerDialog(Context context, final TextView view, String splitChar, Date date) {
         hideSoftKeyboard(context);
-        final String splitCharTemp = null == splitChar ? ":" : splitChar;
-        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.HOURS_MINS);
-        timerPickerView.setTime(date);
-        timerPickerView.setCancelable(true);
-        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                StringBuilder sb = new StringBuilder();
-                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
-                sb.append(splitCharTemp);
-                int minute = calendar.get(Calendar.MINUTE);
-                sb.append(minute > 9 ? minute : ("0" + minute));
-                view.setText(sb.toString());
-            }
-        });
-        timerPickerView.show();
+//        final String splitCharTemp = null == splitChar ? ":" : splitChar;
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.HOURS_MINS);
+//        timerPickerView.setTime(date);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+//                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
+//                sb.append(splitCharTemp);
+//                int minute = calendar.get(Calendar.MINUTE);
+//                sb.append(minute > 9 ? minute : ("0" + minute));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
     }
 
     public static void showFullTimePickerDialog(Context context, final TextView view) {
@@ -376,34 +376,34 @@ public class DialogTool {
 
     public static void showFullTimePickerDialog(Context context, final TextView view, String dateSplit) {
         hideSoftKeyboard(context);
-        final String dateSplitChar = (null == dateSplit ? "-" : dateSplit);
-        final String timeSplitChar = ":";
-        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.ALL);
-        timerPickerView.setCancelable(true);
-        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                StringBuilder sb = new StringBuilder();
-
-                sb.append(calendar.get(Calendar.YEAR));
-                sb.append(dateSplitChar);
-                int month = calendar.get(Calendar.MONTH) + 1;
-                sb.append(month > 9 ? month : ("0" + month));
-                sb.append(dateSplitChar);
-                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-                sb.append(dayOfMonth > 9 ? dayOfMonth : ("0" + dayOfMonth));
-                sb.append(" ");
-                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
-                sb.append(timeSplitChar);
-                int minute = calendar.get(Calendar.MINUTE);
-                sb.append(minute > 9 ? minute : ("0" + minute));
-                view.setText(sb.toString());
-            }
-        });
-        timerPickerView.show();
+//        final String dateSplitChar = (null == dateSplit ? "-" : dateSplit);
+//        final String timeSplitChar = ":";
+//        TimePickerView timerPickerView = new TimePickerView(context, TimePickerView.Type.ALL);
+//        timerPickerView.setCancelable(true);
+//        timerPickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+//            @Override
+//            public void onTimeSelect(Date date) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(date);
+//                StringBuilder sb = new StringBuilder();
+//
+//                sb.append(calendar.get(Calendar.YEAR));
+//                sb.append(dateSplitChar);
+//                int month = calendar.get(Calendar.MONTH) + 1;
+//                sb.append(month > 9 ? month : ("0" + month));
+//                sb.append(dateSplitChar);
+//                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+//                sb.append(dayOfMonth > 9 ? dayOfMonth : ("0" + dayOfMonth));
+//                sb.append(" ");
+//                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+//                sb.append(hourOfDay > 9 ? hourOfDay : ("0" + hourOfDay));
+//                sb.append(timeSplitChar);
+//                int minute = calendar.get(Calendar.MINUTE);
+//                sb.append(minute > 9 ? minute : ("0" + minute));
+//                view.setText(sb.toString());
+//            }
+//        });
+//        timerPickerView.show();
     }
 
     public static void showOptionsPickerViewDialog(TextView view, ArrayList<? extends OptionPickerViewBaseBeanInterface> options) {
@@ -411,28 +411,28 @@ public class DialogTool {
     }
 
     public static void showOptionsPickerViewDialog(final TextView view, final ArrayList<? extends OptionPickerViewBaseBeanInterface> options, OnDismissListener onDismissListener) {
-        if (view != null) {
-            hideSoftKeyboard(view.getContext());
-        }
-        if (null == options || options.size() < 1) {
-            return;
-        }
-        OptionsPickerView<OptionPickerViewBaseBeanInterface> optionsPickerView = new OptionsPickerView<>(
-                view.getContext());
-        optionsPickerView.setPicker((ArrayList<OptionPickerViewBaseBeanInterface>) options);
-        optionsPickerView.setCyclic(false);
-        optionsPickerView.setCancelable(true);
-        // 监听确定选择按钮
-        optionsPickerView.setSelectOptions(1);
-        optionsPickerView.setOnoptionsSelectListener(
-                new OptionsPickerView.OnOptionsSelectListener() {
-                    @Override
-                    public void onOptionsSelect(int options1, int option2, int options3) {
-                        view.setText(options.get(options1).getPickerViewText());
-                    }
-                });
-        optionsPickerView.setOnDismissListener(onDismissListener);
-        optionsPickerView.show();
+//        if (view != null) {
+//            hideSoftKeyboard(view.getContext());
+//        }
+//        if (null == options || options.size() < 1) {
+//            return;
+//        }
+//        OptionsPickerView<OptionPickerViewBaseBeanInterface> optionsPickerView = new OptionsPickerView<>(
+//                view.getContext());
+//        optionsPickerView.setPicker((ArrayList<OptionPickerViewBaseBeanInterface>) options);
+//        optionsPickerView.setCyclic(false);
+//        optionsPickerView.setCancelable(true);
+//        // 监听确定选择按钮
+//        optionsPickerView.setSelectOptions(1);
+//        optionsPickerView.setOnoptionsSelectListener(
+//                new OptionsPickerView.OnOptionsSelectListener() {
+//                    @Override
+//                    public void onOptionsSelect(int options1, int option2, int options3) {
+//                        view.setText(options.get(options1).getPickerViewText());
+//                    }
+//                });
+//        optionsPickerView.setOnDismissListener(onDismissListener);
+//        optionsPickerView.show();
     }
 
     private static void hideSoftKeyboard(Context context) {

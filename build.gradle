@@ -145,4 +145,6 @@ dependencies {
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$LEAKCANARY"
     // 讯飞语音
     compile files('libs/Msc.jar')
+    // https://github.com/Bigkoo/Android-PickerView
+    compile "com.contrarywind:Android-PickerView:$ANDROID_PICKERVIEW"
 }
