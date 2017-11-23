@@ -50,3 +50,4 @@
 ##46.添加类属性值复制工具 BeanTools.java
 ##47.添加数据库操作工具 DataBaseTool.java
 ##48.为 CustomRecyclerView 添加 OnItemClickListener
+##49.接入 AOP 框架

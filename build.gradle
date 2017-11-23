@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
-//添加APT plugin
-apply plugin: 'com.neenbedankt.android-apt'
+// 添加APT plugin
+// apply plugin: 'com.neenbedankt.android-apt'
 // def COMPILESDK_VERSION = Integer.parseInt(file('../COMPILESDK_VERSION.txt').text)
 // def BUILDTOOLS_VERSION = file('../BUILDTOOLS_VERSION.txt').text
 
