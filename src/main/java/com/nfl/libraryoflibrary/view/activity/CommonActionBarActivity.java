@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nfl.apt.annotation.BindView;
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
 import com.nfl.libraryoflibrary.utils.DialogTool;
@@ -30,13 +31,15 @@ import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 public abstract class CommonActionBarActivity extends FragmentActivity implements CommonActionBarActivityPretreatments {
 
     protected Context context;
+    @BindView
     private ImageView iv_back;
     private TextView tv_title;
+    // @BindView(R.id.iv_alternate)
     protected ImageView iv_alternate;
+
     private TextView title_conference_search_button;
     protected LinearLayout ll_pad_container;
     protected LinearLayout ll_data_binding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

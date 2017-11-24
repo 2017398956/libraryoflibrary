@@ -147,4 +147,7 @@ dependencies {
     compile files('libs/Msc.jar')
     // https://github.com/Bigkoo/Android-PickerView
     compile "com.contrarywind:Android-PickerView:$ANDROID_PICKERVIEW"
+    // 自定义注解相关
+    provided project(':apt-lib')
+    annotationProcessor project(':apt-compiler')
 }
