@@ -17,6 +17,8 @@ public class ApplicationContext {
     public static int USERID = 0 ;
     public static String DEVID = "" ;
     public static String USERNAMECH = "" ;
+    public static String TOKEN = "";
+    public static String EXPIRE_TIME = "";
 
     /**
      * 判断当前应用程序处于前台还是后台
