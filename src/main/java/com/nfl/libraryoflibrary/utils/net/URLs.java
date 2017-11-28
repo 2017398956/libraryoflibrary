@@ -7,4 +7,6 @@ import com.nfl.libraryoflibrary.constant.Constants;
  */
 public class URLs {
 
+	// µÇÂ¼½Ó¿Ú
+    public static final String LOGIN_URL = "";
 }

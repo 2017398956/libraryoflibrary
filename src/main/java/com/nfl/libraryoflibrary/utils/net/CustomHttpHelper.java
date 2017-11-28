@@ -1,6 +1,7 @@
 package com.nfl.libraryoflibrary.utils.net;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,7 @@ public class CustomHttpHelper {
     private static final int writeTimeout = 60;// 单位：秒
     private static final int readTimeout = 60;// 单位：秒
     private static ProgressListener progressListener;
+    public static int requstCount = 0;// 记录请求的次数
 
     private static void getInstance() {
         if (null == okHttpClient) {
@@ -97,8 +100,12 @@ public class CustomHttpHelper {
      * @param customCallBack
      */
     public static void getDataFromServer(String url, Map<String, String> keyValuePairs, final CustomCallBackInterface customCallBack) {
-        if (showNetExceptionInfo() && null != customCallBack) {
+
+        if (showNetExceptionInfo()) {
+            if (null != customCallBack) {
             customCallBack.finallyOnMainThread();
+        }
+            return;
         }
 //        if(!NetUtils.isLegalUrl(url)){
 //            if(null != customCallBack){
@@ -108,35 +115,31 @@ public class CustomHttpHelper {
 //            LogTool.i(R.string.url_error);
 //            return;
 //        }
-        boolean hasUserInfo = false ;// 用于标示访问参数中是否含有用户信息
         getInstance();
+        if (null == keyValuePairs) {
+            keyValuePairs = new HashMap<>();
+        }
+        keyValuePairs.put("devid", ApplicationContext.DEVID);
+        keyValuePairs.put("devtype", "Android");// 设备类型（区分安卓和IOS）
+        keyValuePairs.put("appversion", Constants.APPVERSION);// app版本
+        keyValuePairs.put("sysversion", Build.VERSION.RELEASE);
+        keyValuePairs.put("systype", "Android");
+        keyValuePairs.put("phonemodel", Build.BRAND + " - " + Build.MODEL);
+        keyValuePairs.put("token", ApplicationContext.TOKEN);
+        if (TextUtils.isEmpty(keyValuePairs.get("username"))) {
+            keyValuePairs.put("username", ApplicationContext.USERNAME);
+        }
+        if (TextUtils.isEmpty(keyValuePairs.get("userid"))) {
+            keyValuePairs.put("userid", ApplicationContext.USERID + "");
+        }
         FormBody.Builder builder = new FormBody.Builder();
         String valueTemp;
-        if (null != keyValuePairs && keyValuePairs.size() > 0) {
             for(String key : keyValuePairs.keySet()){
-                if(!hasUserInfo){
-                    if("username".equals(key)){
-                        hasUserInfo = true ;
-                    }
-                }
                 valueTemp = keyValuePairs.get(key);
                 builder.add(key, null == valueTemp ? "" : valueTemp);
             }
-            }
-        if(!hasUserInfo){
-            // 如果请求服务器的参数中没有用户信息，这里自动加上
-            builder.add("username", ApplicationContext.USERNAME);
-            builder.add("userid", ApplicationContext.USERID + "");
-            builder.add("devid", ApplicationContext.DEVID);
-        }
-
-        builder.add("devtype", "Android");// 设备类型（区分安卓和IOS）
-        builder.add("appversion", Constants.APPVERSION);// app版本
-        builder.add("sysversion", Build.VERSION.RELEASE);
-        builder.add("systype", "Android");
-        builder.add("phonemodel", Build.BRAND + " - " + Build.MODEL);
         FormBody formBody = builder.build();
-        Request request = new Request.Builder().url(url).post(formBody).build();
+        Request request = new Request.Builder().url(url).post(formBody).tag(keyValuePairs).build();
         if (isUpload) {
             okHttpClient2.newCall(request).enqueue((Callback) customCallBack);
             LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis()) ;
@@ -145,6 +148,21 @@ public class CustomHttpHelper {
             customCallBackList.add(customCallBack);
         okHttpClient.newCall(request).enqueue((Callback) customCallBack);
     }
+        requstCount++;
+    }
+
+    /**
+     * 当先前访问失败时，重新请求
+     *
+     * @param request
+     * @param customCallBack
+     */
+    public static void reQuest(Request request, CustomCallBackInterface customCallBack) {
+        getInstance();
+        if (null != request) {
+            CustomHttpHelper.requstCount++;
+            okHttpClient.newCall(request).enqueue((Callback) customCallBack);
+        }
     }
 
     public static void download(String url, CustomCallBack4Download mCustomCallBack, final ProgressListener mProgressListener) {
@@ -262,8 +280,8 @@ public class CustomHttpHelper {
                 // 如果请求服务器的参数中没有用户信息，这里自动加上
                 builder.addFormDataPart("username", ApplicationContext.USERNAME);
                 builder.addFormDataPart("userid", ApplicationContext.USERID + "");
-                builder.addFormDataPart("devid", ApplicationContext.DEVID);
             }
+                builder.addFormDataPart("devid", ApplicationContext.DEVID);
             builder.addFormDataPart("devtype", "Android");// 设备类型（区分安卓和IOS）
             builder.addFormDataPart("appversion", Constants.APPVERSION);// app版本
             //创建Request
@@ -354,7 +372,7 @@ public class CustomHttpHelper {
      *
      * @return false : 有网络 ；true : 没有网络
      */
-    private static boolean showNetExceptionInfo() {
+    public static boolean showNetExceptionInfo() {
         if (!NetUtils.isNetworkAvaliable(ApplicationContext.applicationContext)) {
             CustomProgressBarDialog.dimissProgressBarDialog();
             ToastTool.showShortToast(R.string.no_web_service);

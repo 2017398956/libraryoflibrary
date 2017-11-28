@@ -5,15 +5,25 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.google.gson.Gson;
+import com.nfl.libraryoflibrary.beans.LoginBean;
+import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.utils.ExceptionTool;
 import com.nfl.libraryoflibrary.utils.LogTool;
+import com.nfl.libraryoflibrary.utils.SharePreferenceManager;
 import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -27,6 +37,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
     private final int FAILURE_ON_MAIN_THREAD = 3 ;
     private final int FINALLY_ON_MAIN_THREAD = 4;
     private final int AUXILIARY_METHOD_ON_MAIN_THREAD = 5;
+    private final int RELOGIN = 6;
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -46,6 +57,9 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             } else if (msg.what == AUXILIARY_METHOD_ON_MAIN_THREAD) {
                 LogTool.i("auxiliaryMethodOnMainThread start");
                 auxiliaryMethodOnMainThread();
+            } else if (msg.what == RELOGIN) {
+                LogTool.i("relogin start");
+                reLogin((Call) msg.obj, CustomCallBack.this);
             }
         }
     };
@@ -86,6 +100,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void failureOnMainThread() {
+        autoCloseProgressDialog();
     }
 
     public final void executeAuxiliaryMethodOnMainThread() {
@@ -125,6 +140,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void onFailure(Call call, IOException e) {
+        CustomHttpHelper.requstCount--;
         failure();
         /**
          * 发送消息调用 {@link #failureOnMainThread()}
@@ -140,15 +156,26 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        if(dismissProgressDialog()){
-        CustomProgressBarDialog.dimissProgressBarDialog();
-        }
+        CustomHttpHelper.requstCount--;
         if(response.isSuccessful()) {
         String resultTemp = response.body().string() ;
         success(resultTemp);
             if (null == resultTemp || "".equals(resultTemp) || clz == null) {
             return;
         }
+            try {
+                JSONObject jsonObject = new JSONObject(resultTemp);
+                if (null != jsonObject && "99".equals(jsonObject.get("status") + "")) {
+                    // 这里 99 表示 token 过期
+                    Message reLoginMsg = new Message();
+                    reLoginMsg.what = RELOGIN;
+                    reLoginMsg.obj = call;
+                    handler.sendMessage(reLoginMsg);
+                    return;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             // 以下都是转换成 Bean 的操作
                 Gson gson = new Gson();
                 T t = null ;
@@ -184,6 +211,13 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
          * 发送消息调用 {@link #finallyOnMainThread()} (String)}
          * */
         handler.sendEmptyMessage(FINALLY_ON_MAIN_THREAD);
+        if (!isReGetToken()) {
+            if (dismissProgressDialog()) {
+                CustomProgressBarDialog.dimissProgressBarDialog();
+            } else {
+                autoCloseProgressDialog();
+            }
+        }
     }
 
     @Override
@@ -195,5 +229,61 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             handler.removeMessages(FINALLY_ON_MAIN_THREAD);
             handler.removeMessages(AUXILIARY_METHOD_ON_MAIN_THREAD);
         }
+    }
+
+    /**
+     * 当不主动关闭加载框时，如果请求数为 0 也将其关闭
+     */
+    private void autoCloseProgressDialog() {
+        if (CustomHttpHelper.requstCount <= 0) {
+            CustomHttpHelper.requstCount = 0;
+            CustomProgressBarDialog.dimissProgressBarDialog();
+        }
+    }
+
+
+    private void reLogin(final Call call, final CustomCallBack preCustomCallBack) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("password", SharePreferenceManager.spLogin.getString(SharePreferenceManager.LASTUSER_PASSWORD, SharePreferenceManager.EMPTY_STR));
+        final CustomCallBack<LoginBean> customCallBack = new CustomCallBack<LoginBean>(LoginBean.class) {
+
+            @Override
+            public void failure() {
+            }
+
+            @Override
+            public void success(String result) {
+            }
+
+            @Override
+            boolean isReGetToken() {
+                return true ;
+            }
+
+            @Override
+            public void runOnMainThread(LoginBean loginBean) {
+                super.runOnMainThread(loginBean);
+                if (null != loginBean && "0".equals(loginBean.getStatus())) {
+                    ApplicationContext.TOKEN = loginBean.getToken();
+                    ApplicationContext.EXPIRE_TIME = loginBean.getExpireTime();
+                    Map<String, String> keyValuePairs = (Map<String, String>) call.request().tag();
+                    keyValuePairs.put("token", ApplicationContext.TOKEN);
+                    FormBody.Builder builder = new FormBody.Builder();
+                    String valueTemp;
+                    for (String key : keyValuePairs.keySet()) {
+                        valueTemp = keyValuePairs.get(key);
+                        builder.add(key, null == valueTemp ? "" : valueTemp);
+                    }
+                    FormBody formBody = builder.build();
+                    Request request = new Request.Builder().url(call.request().url()).post(formBody).tag(keyValuePairs).build();
+                    CustomHttpHelper.reQuest(request, preCustomCallBack);
+                }
+            }
+        };
+        CustomHttpHelper.getDataFromServer(URLs.LOGIN_URL, parameters, customCallBack);
+    }
+
+    boolean isReGetToken() {
+        return false;
     }
 }
