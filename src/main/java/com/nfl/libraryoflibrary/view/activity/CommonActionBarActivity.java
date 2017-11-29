@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nfl.apt.annotation.BindView;
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
 import com.nfl.libraryoflibrary.utils.DialogTool;
