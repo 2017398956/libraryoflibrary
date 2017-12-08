@@ -1,5 +1,6 @@
 package com.nfl.libraryoflibrary.view.traffic_float_window;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -12,6 +13,8 @@ import com.nfl.libraryoflibrary.R;
 
 import java.util.List;
 
+import personal.nfl.permission.annotation.GetPermissions;
+
 public class TrafficFloatWindowActivity extends Activity {
 
     private ActivityManager mActivityManager;
@@ -22,6 +25,12 @@ public class TrafficFloatWindowActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liuliang);
+        startTrafficFloatWindowService();
+    }
+
+    @GetPermissions({Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_SETTINGS})
+    private void startTrafficFloatWindowService() {
+        stopService(new Intent(this, TrafficFloatWindowService.class));
         startService(new Intent(this, TrafficFloatWindowService.class));
     }
 

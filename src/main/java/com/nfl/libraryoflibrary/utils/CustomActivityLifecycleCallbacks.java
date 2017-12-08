@@ -28,6 +28,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import personal.nfl.permission.support.constant.ApplicationConstant;
+
 /**
  * Created by fuli.niu on 2016/8/30.
  */
@@ -49,6 +51,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        ApplicationConstant.nowActivity = activity ;
         LogTool.i("ActivityName:" + activity.getClass().getSimpleName() + " created");
         activityName = activity.getComponentName().getClassName();
         boolean canResetActivityTheme = true;
@@ -66,10 +69,12 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
 
     @Override
     public void onActivityStarted(Activity activity) {
+        ApplicationConstant.nowActivity = activity ;
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
+        ApplicationConstant.nowActivity = activity ;
         alertListener(activity);
 //        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes() ;
     }

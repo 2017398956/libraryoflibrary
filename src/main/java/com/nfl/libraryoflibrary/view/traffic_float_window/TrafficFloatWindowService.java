@@ -1,5 +1,6 @@
 package com.nfl.libraryoflibrary.view.traffic_float_window;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,8 @@ import com.nfl.libraryoflibrary.utils.ToastTool;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import personal.nfl.permission.annotation.GetPermissions;
 
 /**
  * 流量悬浮窗服务
@@ -114,17 +117,18 @@ public class TrafficFloatWindowService extends Service {
                 return;
             } else {
                 //Android6.0以上
+                LogTool.i("6.0 以上的悬浮窗");
                 mWindowManager.addView(mFloatLayout, wmParams);// 添加mFloatLayout
             }
         } else {
             //Android6.0以下，不用动态声明权限
-            try{
+            try {
+                LogTool.i("6.0 以下的悬浮窗");
                 mWindowManager.addView(mFloatLayout, wmParams);// 添加mFloatLayout
-            }catch (Exception e){
-                LogTool.i(ExceptionTool.getExceptionTraceString(e)) ;
+            } catch (Exception e) {
+                LogTool.i(ExceptionTool.getExceptionTraceString(e));
                 ToastTool.showShortToast("没有悬浮窗权限");
             }
-
         }
     }
 
@@ -202,7 +206,7 @@ public class TrafficFloatWindowService extends Service {
                     public void run() {
                         rl_delete.setVisibility(View.GONE);
                     }
-                } , 3000) ;
+                }, 3000);
             }
         });
         rl_delete.setOnClickListener(new OnClickListener() {
