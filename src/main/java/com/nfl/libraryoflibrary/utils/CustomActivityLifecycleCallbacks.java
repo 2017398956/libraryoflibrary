@@ -75,7 +75,7 @@ public class CustomActivityLifecycleCallbacks implements Application.ActivityLif
     @Override
     public void onActivityResumed(Activity activity) {
         ApplicationConstant.nowActivity = activity ;
-        alertListener(activity);
+//        alertListener(activity);
 //        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes() ;
     }
 

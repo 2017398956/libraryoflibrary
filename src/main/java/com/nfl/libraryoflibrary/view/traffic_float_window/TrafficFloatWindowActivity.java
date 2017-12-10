@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.nfl.libraryoflibrary.R;
+import com.nfl.libraryoflibrary.constant.ApplicationContext;
 
 import java.util.List;
 
@@ -30,8 +31,8 @@ public class TrafficFloatWindowActivity extends Activity {
 
     @GetPermissions({Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_SETTINGS})
     private void startTrafficFloatWindowService() {
-        stopService(new Intent(this, TrafficFloatWindowService.class));
-        startService(new Intent(this, TrafficFloatWindowService.class));
+        // stopService(new Intent(ApplicationContext.applicationContext, TrafficFloatWindowService.class));
+        startService(new Intent(ApplicationContext.applicationContext, TrafficFloatWindowService.class));
     }
 
     private void updateProcessInfo() {
