@@ -5,11 +5,13 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.google.gson.Gson;
+import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.beans.LoginBean;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.utils.ExceptionTool;
 import com.nfl.libraryoflibrary.utils.LogTool;
 import com.nfl.libraryoflibrary.utils.SharePreferenceManager;
+import com.nfl.libraryoflibrary.utils.ToastTool;
 import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 
 import org.json.JSONException;
@@ -17,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,12 +35,14 @@ import okhttp3.Response;
 public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, Callback {
 
     private Class<T> clz;
+    private Type type;
     private final int RUN_ON_MAIN_THREAD = 1;
     private final int SUCCESS_ON_MAIN_THREAD = 2;
     private final int FAILURE_ON_MAIN_THREAD = 3 ;
     private final int FINALLY_ON_MAIN_THREAD = 4;
     private final int AUXILIARY_METHOD_ON_MAIN_THREAD = 5;
     private final int RELOGIN = 6;
+    private final int RESPONSE_FAILURE = 7;
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -60,6 +65,8 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             } else if (msg.what == RELOGIN) {
                 LogTool.i("relogin start");
                 reLogin((Call) msg.obj, CustomCallBack.this);
+            } else if (msg.what == RESPONSE_FAILURE) {
+                ToastTool.showShortToast(R.string.data_exception);
             }
         }
     };
@@ -78,6 +85,10 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     public CustomCallBack(Class<T> clz) {
         this(true, clz);
+    }
+
+    public CustomCallBack(Type type) {
+        this.type = type;
     }
 
     /**
@@ -100,7 +111,6 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
 
     @Override
     public void failureOnMainThread() {
-        autoCloseProgressDialog();
     }
 
     public final void executeAuxiliaryMethodOnMainThread() {
@@ -148,6 +158,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
             Message msg3 = new Message();
             msg3.what = FAILURE_ON_MAIN_THREAD;
             handler.sendMessage(msg3);
+        autoCloseProgressDialog();
         }
 
     @Override
@@ -160,7 +171,7 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
         if(response.isSuccessful()) {
         String resultTemp = response.body().string() ;
         success(resultTemp);
-            if (null == resultTemp || "".equals(resultTemp) || clz == null) {
+            if (null == resultTemp || "".equals(resultTemp) || (clz == null && type == null)) {
             return;
         }
             try {
@@ -181,7 +192,11 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
                 T t = null ;
                 try{
                     // gson 转换可能会发生异常
+                if (null != clz) {
                     t = gson.fromJson(resultTemp, clz);
+                } else if (null != type) {
+                    t = gson.fromJson(resultTemp, type);
+                }
                 } catch (Exception e){
                     LogTool.i(ExceptionTool.getExceptionTraceString(e));
                 }
@@ -205,20 +220,17 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
                 handler.sendMessage(msg2);
         }else {
             LogTool.i("访问服务器失败 " + response.code());
+            if(showResponseException()){
+                handler.sendEmptyMessage(RESPONSE_FAILURE);
+            }
             // success("访问服务器失败-->com.nfl.libraryoflibrary.utils.net.CustomCallBack");
         }
         /**
          * 发送消息调用 {@link #finallyOnMainThread()} (String)}
          * */
         handler.sendEmptyMessage(FINALLY_ON_MAIN_THREAD);
-        if (!isReGetToken()) {
-            if (dismissProgressDialog()) {
-                CustomProgressBarDialog.dimissProgressBarDialog();
-            } else {
                 autoCloseProgressDialog();
             }
-        }
-    }
 
     @Override
     public void cancel() {
@@ -235,9 +247,16 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
      * 当不主动关闭加载框时，如果请求数为 0 也将其关闭
      */
     private void autoCloseProgressDialog() {
+        LogTool.i("requstCount = " + CustomHttpHelper.requstCount);
+        if (!isReGetToken()) {
+            if (dismissProgressDialog()) {
+                CustomProgressBarDialog.dimissProgressBarDialog();
+            } else {
         if (CustomHttpHelper.requstCount <= 0) {
             CustomHttpHelper.requstCount = 0;
             CustomProgressBarDialog.dimissProgressBarDialog();
+        }
+    }
         }
     }
 
@@ -283,7 +302,19 @@ public abstract class CustomCallBack<T> implements CustomCallBackInterface<T>, C
         CustomHttpHelper.getDataFromServer(URLs.LOGIN_URL, parameters, customCallBack);
     }
 
+    /**
+     * 是否是从服务器获取 token
+     * @return true 是 ；false 不是
+     */
     boolean isReGetToken() {
         return false;
+    }
+
+    /**
+     * 响应后如果网络状态码不是 20X 是否需要 Toast 提示用户
+     * @return
+     */
+    public boolean showResponseException(){
+        return true ;
     }
 }
