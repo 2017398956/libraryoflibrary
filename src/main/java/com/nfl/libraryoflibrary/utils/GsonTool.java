@@ -1,5 +1,7 @@
 package com.nfl.libraryoflibrary.utils;
 
+import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,13 +24,37 @@ public class GsonTool {
 
     //2、string转对象
     public static Object string2Object(String str, Class<?> c){
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        } else {
+            try {
         return gson.fromJson(str, c);
+            } catch (Exception e) {
+                LogTool.i(ExceptionTool.getExceptionTraceString(e));
+                return null;
+            }
+        }
+    }
+
+    //2、string转对象
+    public static Object string2Object(String str, Type type) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        } else {
+            try {
+                return gson.fromJson(str, type);
+            } catch (Exception e) {
+                LogTool.i(ExceptionTool.getExceptionTraceString(e));
+                return null;
+            }
+        }
     }
 
     //3、对象List转string
     public static String list2String(List<Object> l){
 
-        Type type = new TypeToken<List<Object>>(){}.getType();
+        Type type = new TypeToken<List<Object>>() {
+        }.getType();
         return gson.toJson(l, type);
 
     }
@@ -46,7 +72,8 @@ public class GsonTool {
 
     //6、 将HashMap字符串转换为 String
     public static String string2Map(String str){
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
         return gson.fromJson(str, type);
     }
 }

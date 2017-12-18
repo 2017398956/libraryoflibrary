@@ -7,6 +7,7 @@ import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.constant.ApplicationContext;
 import com.nfl.libraryoflibrary.constant.Constants;
 import com.nfl.libraryoflibrary.utils.ExceptionTool;
+import com.nfl.libraryoflibrary.utils.GsonTool;
 import com.nfl.libraryoflibrary.utils.LogTool;
 import com.nfl.libraryoflibrary.utils.NetUtils;
 import com.nfl.libraryoflibrary.utils.ToastTool;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,13 +101,21 @@ public class CustomHttpHelper {
      * @param keyValuePairs
      * @param customCallBack
      */
-    public static void getDataFromServer(String url, Map<String, String> keyValuePairs, final CustomCallBackInterface customCallBack) {
+    public static void getDataFromServer(String url, Map<String, String> keyValuePairs, CustomCallBackInterface customCallBack) {
+        uploadImg(url, keyValuePairs, null, customCallBack);
+    }
 
+    public static Object getDataFromServer(String url, Map<String, String> keyValuePairs, Class clazz) {
+        return GsonTool.string2Object(getDataFromServer(url, keyValuePairs), clazz);
+    }
+
+    public static Object getDataFromServer(String url, Map<String, String> keyValuePairs, Type type) {
+        return GsonTool.string2Object(getDataFromServer(url, keyValuePairs), type);
+    }
+
+    public static String getDataFromServer(String url, Map<String, String> keyValuePairs) {
         if (showNetExceptionInfo()) {
-            if (null != customCallBack) {
-            customCallBack.finallyOnMainThread();
-        }
-            return;
+            return null;
         }
 //        if(!NetUtils.isLegalUrl(url)){
 //            if(null != customCallBack){
@@ -140,15 +150,12 @@ public class CustomHttpHelper {
             }
         FormBody formBody = builder.build();
         Request request = new Request.Builder().url(url).post(formBody).tag(keyValuePairs).build();
-        if (isUpload) {
-            okHttpClient2.newCall(request).enqueue((Callback) customCallBack);
-            LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis()) ;
-            isUpload = false;
-        } else {
-            customCallBackList.add(customCallBack);
-        okHttpClient.newCall(request).enqueue((Callback) customCallBack);
+        try {
+            return okHttpClient.newCall(request).execute().body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
     }
-        requstCount++;
+        return null;
     }
 
     /**
@@ -232,6 +239,76 @@ public class CustomHttpHelper {
 
             }
         });
+    }
+
+    public static void uploadImg(String url, Map<String, String> keyValuePairs, Map<String, String> imgPaths, final CustomCallBackInterface customCallBack) {
+        if (showNetExceptionInfo()) {
+            if (null != customCallBack) {
+                customCallBack.finallyOnMainThread();
+            }
+            return;
+        }
+//        if(!NetUtils.isLegalUrl(url)){
+//            if(null != customCallBack){
+//                customCallBack.failure();
+//            }
+//            CustomProgressBarDialog.dimissProgressBarDialog();
+//            LogTool.i(R.string.url_error);
+//            return;
+//        }
+        getInstance();
+        if (null == keyValuePairs) {
+            keyValuePairs = new HashMap<>();
+        }
+        keyValuePairs.put("devid", ApplicationContext.DEVID);
+        keyValuePairs.put("devtype", "Android");// 设备类型（区分安卓和IOS）
+        keyValuePairs.put("appversion", Constants.APPVERSION);// app版本
+        keyValuePairs.put("sysversion", Build.VERSION.RELEASE);
+        keyValuePairs.put("systype", "Android");
+        keyValuePairs.put("phonemodel", Build.BRAND + " - " + Build.MODEL);
+        keyValuePairs.put("token", ApplicationContext.TOKEN);
+        if (TextUtils.isEmpty(keyValuePairs.get("username"))) {
+            keyValuePairs.put("username", ApplicationContext.USERNAME);
+        }
+        if (TextUtils.isEmpty(keyValuePairs.get("userid"))) {
+            keyValuePairs.put("userid", ApplicationContext.USERID + "");
+        }
+        Request request;
+
+        if (null != imgPaths) {
+            MultipartBody requestBody = null;
+            MultipartBody.Builder multiBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            String valueTemp;
+            for (String key : keyValuePairs.keySet()) {
+                valueTemp = keyValuePairs.get(key);
+                multiBuilder.addFormDataPart(key, null == valueTemp ? "" : valueTemp);
+            }
+            File f;
+            for (String key : imgPaths.keySet()) {
+                f = new File(imgPaths.get(key));
+                multiBuilder.addFormDataPart(key, f.getName(), RequestBody.create(MEDIA_TYPE_PNG, f));
+            }
+            requestBody = multiBuilder.build();
+            request = new Request.Builder().url(url).post(requestBody).tag(keyValuePairs).build();
+        } else {
+            FormBody.Builder builder = new FormBody.Builder();
+            String valueTemp;
+            for (String key : keyValuePairs.keySet()) {
+                valueTemp = keyValuePairs.get(key);
+                builder.add(key, null == valueTemp ? "" : valueTemp);
+            }
+            FormBody formBody = builder.build();
+            request = new Request.Builder().url(url).post(formBody).tag(keyValuePairs).build();
+        }
+        if (isUpload) {
+            okHttpClient2.newCall(request).enqueue((Callback) customCallBack);
+            LogTool.i("上传 Base64 超时设定：" + okHttpClient2.writeTimeoutMillis());
+            isUpload = false;
+        } else {
+            customCallBackList.add(customCallBack);
+            okHttpClient.newCall(request).enqueue((Callback) customCallBack);
+        }
+        requstCount++;
     }
 
     /**
