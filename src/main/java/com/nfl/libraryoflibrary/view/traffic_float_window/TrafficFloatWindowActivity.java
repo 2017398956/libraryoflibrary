@@ -14,7 +14,7 @@ import com.nfl.libraryoflibrary.constant.ApplicationContext;
 
 import java.util.List;
 
-import personal.nfl.permission.annotation.GetPermissions;
+import personal.nfl.permission.annotation.GetPermissionsAuto;
 
 public class TrafficFloatWindowActivity extends Activity {
 
@@ -29,7 +29,7 @@ public class TrafficFloatWindowActivity extends Activity {
         startTrafficFloatWindowService();
     }
 
-    @GetPermissions({Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_SETTINGS})
+    @GetPermissionsAuto({Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_SETTINGS})
     private void startTrafficFloatWindowService() {
         // stopService(new Intent(ApplicationContext.applicationContext, TrafficFloatWindowService.class));
         startService(new Intent(ApplicationContext.applicationContext, TrafficFloatWindowService.class));
