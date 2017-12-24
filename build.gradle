@@ -1,21 +1,8 @@
 apply plugin: 'com.android.library'
-// 添加APT plugin
-// apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'abcpermission.plugin'
+
 // def COMPILESDK_VERSION = Integer.parseInt(file('../COMPILESDK_VERSION.txt').text)
 // def BUILDTOOLS_VERSION = file('../BUILDTOOLS_VERSION.txt').text
-import org.aspectj.bridge.IMessage
-import org.aspectj.bridge.MessageHandler
-import org.aspectj.tools.ajc.Main
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.aspectj:aspectjtools:1.8.13'
-        classpath 'org.aspectj:aspectjweaver:1.8.13'
-    }
-}
 
 android {
     compileSdkVersion "${COMPILE_SDK_VERSION}" as int
@@ -176,37 +163,3 @@ dependencies {
         exclude module: 'permissionSupport'
     }
 }
-
-android.libraryVariants.all { variant ->
-    Task javaCompile = variant.getJavaCompiler()
-    javaCompile.doLast {
-        String[] args = ["-showWeaveInfo",
-                         "-1.5",
-                         "-inpath", javaCompile.destinationDir.toString(),
-                         "-aspectpath", javaCompile.classpath.asPath,
-                         "-d", javaCompile.destinationDir.toString(),
-                         "-classpath", javaCompile.classpath.asPath,
-                         "-bootclasspath", android.bootClasspath.join(File.pathSeparator)]
-        MessageHandler handler = new MessageHandler(true)
-        new Main().run(args, handler)
-
-        def log = project.logger
-        for (IMessage message : handler.getMessages(null, true)) {
-            switch (message.getKind()) {
-                case IMessage.ABORT:
-                case IMessage.ERROR:
-                case IMessage.FAIL:
-                    log.error message.message, message.thrown
-                    break;
-                case IMessage.WARNING:
-                case IMessage.INFO:
-                    log.info message.message, message.thrown
-                    break;
-                case IMessage.DEBUG:
-                    log.debug message.message, message.thrown
-                    break;
-            }
-        }
-    }
-}
-
