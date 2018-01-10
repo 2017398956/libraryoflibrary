@@ -168,7 +168,7 @@ public class DateTool {
      * @return 日期格式 yyyy-MM-dd
      */
     public static String getDateSimpleFromACertainDate(Date appointDate, int beforeOrAfterDays) {
-        appointDate.setTime(appointDate.getTime() + beforeOrAfterDays * 24 * 60 * 60 * 1000);
+        appointDate.setTime(appointDate.getTime() + (long) beforeOrAfterDays * 24 * 60 * 60 * 1000);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
                 Locale.CHINA);
         return formatter.format(appointDate);
@@ -177,7 +177,7 @@ public class DateTool {
     public static String getDateSimpleFromACertainDate(String appointDateString, int beforeOrAfterDays) {
         Date appointDate = turnString2Date(appointDateString);
         if (null != appointDate) {
-            appointDate.setTime(appointDate.getTime() + beforeOrAfterDays * 24 * 60 * 60 * 1000);
+            appointDate.setTime(appointDate.getTime() + (long) beforeOrAfterDays * 24 * 60 * 60 * 1000);
         } else {
             return null;
         }

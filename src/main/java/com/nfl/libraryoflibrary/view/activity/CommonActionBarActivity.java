@@ -30,6 +30,7 @@ import com.nfl.libraryoflibrary.view.CustomProgressBarDialog;
 public abstract class CommonActionBarActivity extends FragmentActivity implements CommonActionBarActivityPretreatments {
 
     protected Context context;
+    private LinearLayout app_bar;
     private ImageView iv_back;
     private TextView tv_title;
     protected ImageView iv_alternate;
@@ -59,7 +60,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     public void setContentView(int layoutResID) {
         super.setContentView(R.layout.activity_common);
         initActionBarAndViewStub();
-        View view = LayoutInflater.from(CommonActionBarActivity.this).inflate(layoutResID , ll_data_binding , false) ;
+        View view = LayoutInflater.from(CommonActionBarActivity.this).inflate(layoutResID, null);
         if (null != view) {
             ll_pad_container.addView(view);
         } else {
@@ -130,6 +131,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     }
 
     private void initActionBarAndViewStub() {
+        app_bar = (LinearLayout) findViewById(R.id.app_bar);
         iv_alternate = (ImageView) findViewById(R.id.iv_alternate);
         title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button);
         ll_pad_container = (LinearLayout) findViewById(R.id.ll_pad_container);
@@ -182,7 +184,19 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         this.setMenuText(getResources().getString(strId), onClickListener);
     }
 
-    protected void hiddenBackIcon() {
-        iv_back.setVisibility(View.GONE);
+    public void setBackListener(CustomOnClickListener customOnClickListener) {
+        iv_back.setOnClickListener(customOnClickListener);
+    }
+
+    public void showAppBar() {
+        app_bar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideAppBar() {
+        app_bar.setVisibility(View.GONE);
+    }
+
+    public boolean isAppBarVisible() {
+        return app_bar.getVisibility() == View.VISIBLE;
     }
 }

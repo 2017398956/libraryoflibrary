@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.webkit.GeolocationPermissions;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.RenderPriority;
@@ -63,6 +65,12 @@ public class WebViewHelper {
 
 	// WebViewClient主要帮助WebView处理各种通知、请求事件
 	private WebViewClient mWebViewClient = new WebViewClient() {
+		@Override
+		public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+			super.onReceivedError(view, request, error);
+//			ToastTool.showLongToast("onReceivedError : " + error.toString());
+		}
+
 		/**
 		 * 其他未复写方法： 1.onReceiveError 接收出错 ; 2.onReceivedHttpAuthRequest ;
 		 * 3.doUpdateVisitedHistory(WebView view, String url, boolean isReload)
@@ -93,22 +101,20 @@ public class WebViewHelper {
 		@Override
 		public void onReceivedSslError(WebView view, SslErrorHandler handler,
 				SslError error) {
-			// TODO Auto-generated method stub
-			super.onReceivedSslError(view, handler, error);
+			// super.onReceivedSslError(view, handler, error);
 			handler.proceed();
+			// ToastTool.showLongToast("onReceivedSslError : " + error.toString());
 		}
 
 		// 重写此方法才能够处理在浏览器中的按键事件
 		@Override
 		public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-			// TODO Auto-generated method stub
 			return super.shouldOverrideKeyEvent(view, event);
 		}
 
 		// 在加载页面资源时会调用，每一个资源（比如图片）的加载都会调用一次。
 		@Override
 		public void onLoadResource(WebView view, String url) {
-			// TODO Auto-generated method stub
 			super.onLoadResource(view, url);
 		}
 
