@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class ExecShell {
     private static String LOG_TAG = ExecShell.class.getName();
 
-    public static enum SHELL_CMD {
-        check_su_binary(new String[]{"/system/xbin/which", "su"}),;
+    public enum SHELL_CMD {
+        check_su_binary(new String[]{"/system/xbin/which", "su"});
         String[] command;
 
         SHELL_CMD(String[] command) {
@@ -24,27 +24,31 @@ public class ExecShell {
         }
     }
 
-    public ArrayList<String> executeCommand(SHELL_CMD shellCmd) {
+    public ArrayList<String> executeCommand(String[] commands) {
         String line = null;
         ArrayList<String> fullResponse = new ArrayList<String>();
         Process localProcess = null;
         try {
-            localProcess = Runtime.getRuntime().exec(shellCmd.command);
+            localProcess = Runtime.getRuntime().exec(commands);
         } catch (Exception e) {
+            LogTool.e("命令行执行失败");
+            e.printStackTrace();
             return null;
-            //e.printStackTrace();
         }
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(localProcess.getOutputStream()));
         BufferedReader in = new BufferedReader(new InputStreamReader(localProcess.getInputStream()));
         try {
             while ((line = in.readLine()) != null) {
-                LogTool.i(LOG_TAG , "–> Line received: " + line);
                 fullResponse.add(line);
             }
         } catch (Exception e) {
+            LogTool.e("命令行结果处理失败");
             e.printStackTrace();
         }
-        LogTool.i(LOG_TAG, "–> Full response was: " + fullResponse);
         return fullResponse;
+    }
+
+    public ArrayList<String> executeCommand(SHELL_CMD shellCmd) {
+        return executeCommand(shellCmd.command);
     }
 }

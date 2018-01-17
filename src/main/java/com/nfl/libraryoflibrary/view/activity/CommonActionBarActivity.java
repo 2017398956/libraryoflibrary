@@ -199,4 +199,10 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     public boolean isAppBarVisible() {
         return app_bar.getVisibility() == View.VISIBLE;
     }
+
+    protected void hiddenBackIcon(){
+        if(null != iv_back){
+            iv_back.setVisibility(View.GONE);
+        }
+    }
 }
