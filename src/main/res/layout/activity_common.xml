@@ -5,7 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include android:id="@+id/app_bar" layout="@layout/custom_action_bar"></include>
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/custom_action_bar"></include>
+
+    <ViewStub
+        android:id="@+id/vs_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/view_stub_no_data">
+
+    </ViewStub>
 
     <LinearLayout
         android:id="@+id/ll_data_binding"

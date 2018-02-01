@@ -31,4 +31,8 @@ public class CustomOnClickListener<T> implements View.OnClickListener {
     public void setT(T t) {
         this.t = t;
     }
+
+    public T getT() {
+        return t;
+    }
 }

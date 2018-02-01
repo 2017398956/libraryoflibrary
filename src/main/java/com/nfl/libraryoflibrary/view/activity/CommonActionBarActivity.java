@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -204,5 +205,13 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         if(null != iv_back){
             iv_back.setVisibility(View.GONE);
         }
+    }
+
+    public void showNoDataView() {
+        ((ViewStub) findViewById(R.id.vs_no_data)).inflate();
+    }
+
+    public void hideNoDataView(){
+        findViewById(R.id.vs_no_data).setVisibility(View.GONE);
     }
 }

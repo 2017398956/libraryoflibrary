@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.listener.CustomOnClickListener;
 import com.nfl.libraryoflibrary.utils.LogTool;
+import com.nfl.libraryoflibrary.utils.ToastTool;
 
 import java.util.List;
 
@@ -71,6 +72,8 @@ public abstract class RecyclerViewBaseAdapter<T extends RecyclerViewBaseAdapter.
             // 初始化
             customRecyclerView = (CustomRecyclerView) parent;
             onItemClickListenerList = customRecyclerView.getOnItemClickListenerList();
+        }else {
+            LogTool.e("CustomRecyclerView 添加 onItemClickListener 失败");
         }
         if (viewType == VIEW_TYPE_FOOTER && null != customRecyclerView && footerView == null) {
             footerView = LayoutInflater.from(customRecyclerView.getContext()).inflate(R.layout.view_recycler_view_footer, customRecyclerView, false);
@@ -96,8 +99,9 @@ public abstract class RecyclerViewBaseAdapter<T extends RecyclerViewBaseAdapter.
 
     public class BaseViewHolder extends RecyclerView.ViewHolder {
 
-        private View itemView;
-        private CustomOnClickListener customOnClickListener = new CustomOnClickListener<Integer>(0) {
+        protected View itemView;
+        protected CustomOnClickListener customOnClickListener = new CustomOnClickListener<Integer>(0) {
+
             @Override
             public void onClick(View view, Integer integer) {
                 super.onClick(view, integer);
@@ -105,6 +109,8 @@ public abstract class RecyclerViewBaseAdapter<T extends RecyclerViewBaseAdapter.
                     for (CustomRecyclerView.OnItemClickListener onItemClickListener : onItemClickListenerList) {
                         onItemClickListener.onClick(view, integer);
                     }
+                }else {
+                    // LogTool.i("onItemClickListenerList is null");
                 }
             }
         };

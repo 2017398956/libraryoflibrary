@@ -47,4 +47,25 @@
         <attr name="text_size" format="dimension"></attr>
     </declare-styleable>
 
+
+    <declare-styleable name="WaveView">
+        <!--波浪颜色-->
+        <attr name="waveColor" format="color" />
+        <!--波浪背景颜色-->
+        <attr name="waveBackgroundColor" format="color" />
+        <!--波浪速度-->
+        <attr name="speed" format="float" />
+        <!--正弦曲线相关-->
+        <!--波浪振幅-->
+        <attr name="amplitude" format="integer" />
+        <!--波浪相对于控件的位置-->
+        <attr name="quadrant" format="float" />
+        <!--波浪的频率-->
+        <attr name="frequency" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="WaveView2">
+        <attr name="delay" format="integer" />
+    </declare-styleable>
+
 </resources>

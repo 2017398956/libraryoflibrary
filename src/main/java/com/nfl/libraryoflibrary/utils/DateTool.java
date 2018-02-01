@@ -14,6 +14,21 @@ public class DateTool {
 //        public static final String str = "yyyy-MM-dd" ;
 //    }
 
+    public static boolean isWeekend(String dateString) {
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(DateTool.turnString2Date(dateString));
+            int week = calendar.get(Calendar.DAY_OF_WEEK);
+            if (week == Calendar.SATURDAY || week == Calendar.SUNDAY) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static String getDayOfWeekName(String dateString) {
         if (TextUtils.isEmpty(dateString)) {
             return "";
@@ -23,19 +38,19 @@ public class DateTool {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             switch (calendar.get(Calendar.DAY_OF_WEEK)) {
-                case 1:
+                case Calendar.SUNDAY:
                     return "周日";
-                case 2:
+                case Calendar.MONDAY:
                     return "周一";
-                case 3:
+                case Calendar.TUESDAY:
                     return "周二";
-                case 4:
+                case Calendar.WEDNESDAY:
                     return "周三";
-                case 5:
+                case Calendar.THURSDAY:
                     return "周四";
-                case 6:
+                case Calendar.FRIDAY:
                     return "周五";
-                case 7:
+                case Calendar.SATURDAY:
                     return "周六";
             }
         }
