@@ -2,28 +2,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nfl.libraryoflibrary">
 
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <!--讯飞所需要的权限-->
-    <!--获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <!--读取手机信息权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <!--读取联系人权限，上传联系人需要用到此权限 -->
-    <!--<uses-permission android:name="android.permission.READ_CONTACTS"/>-->
+    <!-- 讯飞所需要的权限 -->
+    <!-- 获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- 读取手机信息权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!-- 读取联系人权限，上传联系人需要用到此权限 -->
+    <!-- <uses-permission android:name="android.permission.READ_CONTACTS"/> -->
     <application>
         <activity android:name=".view.CustomCrop.CustomCropActivity" />
-        <activity android:name=".view.CustomCrop.ShowImageActivity"></activity>
+        <activity android:name=".view.CustomCrop.ShowImageActivity" />
+
         <receiver android:name=".utils.CustomBroadcastReceiver">
             <intent-filter android:priority="2147483647"> <!-- 优先级加最高 -->
                 <!-- 系统启动完成后会调用 -->
@@ -110,6 +112,7 @@
         <activity android:name=".view.db_insight.ShowDBTableActivity" />
         <!-- 计步器模块 -->
         <service android:name=".utils.pedometer.SensorListener" />
+
         <receiver android:name=".utils.pedometer.AppUpdatedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -120,8 +123,7 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".utils.pedometer.StartPedometerReceiver">
+        <receiver android:name=".utils.pedometer.StartPedometerReceiver">
             <intent-filter android:priority="2147483647"> <!-- 优先级加最高 -->
                 <!-- 系统启动完成后会调用 -->
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -131,9 +133,22 @@
                 <action android:name="android.media.RINGER_MODE_CHANGED" />
                 <!-- 监听网络类型 -->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-				<action android:name="cn.bill.app.gw.pedometer.start" />
+                <action android:name="cn.bill.app.gw.pedometer.start" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".service.RedPacketService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/redpacket_service_config"></meta-data>
+        </service>
     </application>
 
 </manifest>
