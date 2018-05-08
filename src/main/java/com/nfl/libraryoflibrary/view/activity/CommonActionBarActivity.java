@@ -58,10 +58,11 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
      *
      * @param layoutResID
      */
+    @Override
     public void setContentView(int layoutResID) {
         super.setContentView(R.layout.activity_common);
         initActionBarAndViewStub();
-        View view = LayoutInflater.from(CommonActionBarActivity.this).inflate(layoutResID, null);
+        View view = LayoutInflater.from(CommonActionBarActivity.this).inflate(layoutResID, ll_pad_container , false);
         if (null != view) {
             ll_pad_container.addView(view);
         } else {
@@ -69,6 +70,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
         }
     }
 
+    @Override
     public void setContentView(View view) {
         super.setContentView(R.layout.activity_common);
         initActionBarAndViewStub();
