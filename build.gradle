@@ -41,7 +41,6 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-
     // include group:'com.android.support',module:'animated-vector-drawable'
     // include group:'com.android.support',module:'support-annotations'
     // include group:'com.android.support',module:'support-compat'
@@ -148,6 +147,6 @@ dependencies {
     // https://github.com/Bigkoo/Android-PickerView
     api "com.contrarywind:Android-PickerView:$ANDROID_PICKERVIEW"
     // 自定义注解相关
-    compileOnly project(':apt-lib')
+    api project(':apt-lib')
     annotationProcessor project(':apt-compiler')
 }

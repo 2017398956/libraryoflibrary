@@ -129,19 +129,7 @@ public class CustomHttpHelper {
         if (null == keyValuePairs) {
             keyValuePairs = new HashMap<>();
         }
-        keyValuePairs.put("devid", ApplicationContext.DEVID);
-        keyValuePairs.put("devtype", "Android");// 设备类型（区分安卓和IOS）
-        keyValuePairs.put("appversion", Constants.APPVERSION);// app版本
-        keyValuePairs.put("sysversion", Build.VERSION.RELEASE);
-        keyValuePairs.put("systype", "Android");
-        keyValuePairs.put("phonemodel", Build.BRAND + " - " + Build.MODEL);
-        keyValuePairs.put("token", ApplicationContext.TOKEN);
-        if (TextUtils.isEmpty(keyValuePairs.get("username"))) {
-            keyValuePairs.put("username", ApplicationContext.USERNAME);
-        }
-        if (TextUtils.isEmpty(keyValuePairs.get("userid"))) {
-            keyValuePairs.put("userid", ApplicationContext.USERID + "");
-        }
+        keyValuePairs.putAll(getParameters());
         FormBody.Builder builder = new FormBody.Builder();
         String valueTemp;
             for(String key : keyValuePairs.keySet()){
@@ -260,19 +248,7 @@ public class CustomHttpHelper {
         if (null == keyValuePairs) {
             keyValuePairs = new HashMap<>();
         }
-        keyValuePairs.put("devid", ApplicationContext.DEVID);
-        keyValuePairs.put("devtype", "Android");// 设备类型（区分安卓和IOS）
-        keyValuePairs.put("appversion", Constants.APPVERSION);// app版本
-        keyValuePairs.put("sysversion", Build.VERSION.RELEASE);
-        keyValuePairs.put("systype", "Android");
-        keyValuePairs.put("phonemodel", Build.BRAND + " - " + Build.MODEL);
-        keyValuePairs.put("token", ApplicationContext.TOKEN);
-        if (TextUtils.isEmpty(keyValuePairs.get("username"))) {
-            keyValuePairs.put("username", ApplicationContext.USERNAME);
-        }
-        if (TextUtils.isEmpty(keyValuePairs.get("userid"))) {
-            keyValuePairs.put("userid", ApplicationContext.USERID + "");
-        }
+        keyValuePairs.putAll(getParameters());
         Request request;
 
         if (null != imgPaths) {
@@ -523,5 +499,23 @@ public class CustomHttpHelper {
             }
         }
         customCallBackList.clear();
+    }
+
+    public static Map<String , String> getParameters(){
+        Map<String , String> keyValuePairs = new HashMap<>() ;
+        keyValuePairs.put("devid", ApplicationContext.DEVID);
+        keyValuePairs.put("devtype", "Android");// 设备类型（区分安卓和IOS）
+        keyValuePairs.put("appversion", Constants.APPVERSION);// app版本
+        keyValuePairs.put("sysversion", Build.VERSION.RELEASE);
+        keyValuePairs.put("systype", "Android");
+        keyValuePairs.put("phonemodel", Build.BRAND + " - " + Build.MODEL);
+        keyValuePairs.put("token", ApplicationContext.TOKEN);
+        if (TextUtils.isEmpty(keyValuePairs.get("username"))) {
+            keyValuePairs.put("username", ApplicationContext.USERNAME);
+        }
+        if (TextUtils.isEmpty(keyValuePairs.get("userid"))) {
+            keyValuePairs.put("userid", ApplicationContext.USERID + "");
+        }
+        return keyValuePairs ;
     }
 }
