@@ -49,7 +49,6 @@ dependencies {
     // include group:'com.android.support',module:'support-fragment'
     // include group:'com.android.support',module:'support-media-compat'
     api "com.android.support:support-v4:$SUPPORT_V4"
-
     // include group: 'com.android.support', module: 'support-vector-drawable'
     api("com.android.support:appcompat-v7:$SUPPORT_APPCOMPAT_V7_VERSION") {
         exclude group: 'com.android.support', module: 'support-v4'
@@ -89,7 +88,7 @@ dependencies {
 
     // http://stackoverflow.com/questions/39286118/getting-java-util-zip-zipexception-duplicate-entry-exception
     // design 为单独包
-    api("com.android.support:design:$SUPPORT_V4") {
+    implementation("com.android.support:design:$SUPPORT_V4") {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-compat'
@@ -150,3 +149,15 @@ dependencies {
     api project(':apt-lib')
     annotationProcessor project(':apt-compiler')
 }
+
+// 解决 support 版本冲突问题，但好像没什么用
+//configurations.all {
+//    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//        def requested = details.requested
+//        if (requested.group == 'com.android.support') {
+//            if (!requested.name.startsWith("multidex")) {
+//                details.useVersion '27.1.1'
+//            }
+//        }
+//    }
+//}
