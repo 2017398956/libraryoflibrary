@@ -88,7 +88,7 @@ dependencies {
 
     // http://stackoverflow.com/questions/39286118/getting-java-util-zip-zipexception-duplicate-entry-exception
     // design 为单独包
-    implementation("com.android.support:design:$SUPPORT_V4") {
+    api("com.android.support:design:$SUPPORT_V4") {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-compat'
