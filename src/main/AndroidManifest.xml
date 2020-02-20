@@ -141,6 +141,8 @@
             android:name=".service.RedPacketService"
             android:enabled="true"
             android:exported="true"
+            android:icon="@drawable/icon_redpacket"
+            android:label="@string/red_packet"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -148,6 +150,51 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/redpacket_service_config"></meta-data>
+        </service>
+
+        <service
+            android:name=".auto_installer.AutoInstallerAcessibilityService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/icon_install"
+            android:label="@string/auto_installer"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/auto_installer_accessibility_service_config"></meta-data>
+        </service>
+
+        <service
+            android:name=".service.TestAccessibilityServiceService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/lab"
+            android:icon="@drawable/icon_lab"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/test_accessibility_service_config"></meta-data>
+        </service>
+
+        <service
+            android:name=".skipads.SkipAdsService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/skip_ads"
+            android:icon="@drawable/icon_adblock"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/skip_ads_accessibility_service_config"></meta-data>
         </service>
     </application>
 
