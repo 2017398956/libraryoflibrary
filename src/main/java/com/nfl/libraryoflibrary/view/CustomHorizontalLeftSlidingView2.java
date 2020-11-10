@@ -1,20 +1,12 @@
 package com.nfl.libraryoflibrary.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
-import android.util.AttributeSet;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.nfl.libraryoflibrary.R;
-import com.nfl.libraryoflibrary.utils.LogTool;
 
 /**
  * Created by nfl on 2016/8/23.

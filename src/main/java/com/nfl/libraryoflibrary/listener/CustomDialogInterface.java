@@ -1,14 +1,10 @@
 package com.nfl.libraryoflibrary.listener;
 
 import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 
 import com.nfl.libraryoflibrary.utils.LogTool;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by fuli.niu on 2017/1/12.

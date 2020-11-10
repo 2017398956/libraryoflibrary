@@ -51,7 +51,7 @@ public class FloatWindowService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @GetPermissions({Manifest.permission.SYSTEM_ALERT_WINDOW})
+    // @GetPermissions({Manifest.permission.SYSTEM_ALERT_WINDOW})
     private void openFloatWindow() {
         if (timer == null) {
             timer = new Timer();

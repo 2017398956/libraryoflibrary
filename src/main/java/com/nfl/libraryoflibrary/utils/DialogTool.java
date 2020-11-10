@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -14,14 +14,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.bigkoo.pickerview.OptionsPickerView;
-import com.bigkoo.pickerview.TimePickerView;
 import com.bigkoo.pickerview.listener.OnDismissListener;
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.beans.OptionPickerViewBaseBeanInterface;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

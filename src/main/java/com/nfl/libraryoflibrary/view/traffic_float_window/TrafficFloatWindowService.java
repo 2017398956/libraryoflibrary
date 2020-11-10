@@ -1,6 +1,5 @@
 package com.nfl.libraryoflibrary.view.traffic_float_window;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,8 +30,6 @@ import com.nfl.libraryoflibrary.utils.ToastTool;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import personal.nfl.permission.annotation.GetPermissions;
 
 /**
  * 流量悬浮窗服务

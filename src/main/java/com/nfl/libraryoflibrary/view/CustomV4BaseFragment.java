@@ -2,7 +2,8 @@ package com.nfl.libraryoflibrary.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by fuli.niu on 2016/9/21.

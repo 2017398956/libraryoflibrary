@@ -29,7 +29,7 @@ public class TrafficFloatWindowActivity extends Activity {
         startTrafficFloatWindowService();
     }
 
-    @GetPermissionsAuto({Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_SETTINGS})
+    // @GetPermissionsAuto({Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.WRITE_SETTINGS})
     private void startTrafficFloatWindowService() {
         // stopService(new Intent(ApplicationContext.applicationContext, TrafficFloatWindowService.class));
         startService(new Intent(ApplicationContext.applicationContext, TrafficFloatWindowService.class));

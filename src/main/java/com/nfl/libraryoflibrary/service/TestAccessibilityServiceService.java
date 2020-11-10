@@ -2,7 +2,7 @@ package com.nfl.libraryoflibrary.service;
 
 import android.accessibilityservice.AccessibilityService;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;

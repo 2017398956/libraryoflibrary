@@ -9,7 +9,7 @@ import android.net.LocalSocket;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.v4.view.InputDeviceCompat;
+import androidx.core.view.InputDeviceCompat;
 import android.view.IWindowManager;
 import android.view.InputEvent;
 import android.view.KeyEvent;
