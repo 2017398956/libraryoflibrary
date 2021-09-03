@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'AspectPlugin'
 apply plugin: 'abcpermission.plugin'
 
 // def COMPILESDK_VERSION = Integer.parseInt(file('../COMPILESDK_VERSION.txt').text)
@@ -10,8 +11,6 @@ android {
     defaultConfig {
         minSdkVersion "${MIN_SDK_VERSION}" as int
         targetSdkVersion "${TARGET_SDK_VERSION}" as int
-        versionCode 1
-        versionName "1.0"
     }
 
     sourceSets {
@@ -27,6 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     dataBinding {
         enabled = true
     }
@@ -81,8 +81,6 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 //    debugApi "com.squareup.leakcanary:leakcanary-android:$LEAKCANARY"
 //    releaseApi "com.squareup.leakcanary:leakcanary-android-no-op:$LEAKCANARY"
-    // 讯飞语音
-    implementation files('libs/Msc.jar')
     // https://github.com/Bigkoo/Android-PickerView
     api "com.contrarywind:Android-PickerView:4.1.9"
     // 自定义注解相关
