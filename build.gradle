@@ -7,7 +7,6 @@ apply plugin: 'abcpermission.plugin'
 
 android {
     compileSdkVersion "${COMPILE_SDK_VERSION}" as int
-    buildToolsVersion "${BUILD_TOOLS_VERSION}"
     defaultConfig {
         minSdkVersion "${MIN_SDK_VERSION}" as int
         targetSdkVersion "${TARGET_SDK_VERSION}" as int
@@ -30,6 +29,7 @@ android {
     dataBinding {
         enabled = true
     }
+    namespace 'com.nfl.libraryoflibrary'
 }
 
 //repositories{
