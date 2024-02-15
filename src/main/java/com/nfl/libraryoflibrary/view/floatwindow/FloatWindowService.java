@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import personal.nfl.permission.annotation.GetPermissions;
+//import personal.nfl.permission.annotation.GetPermissions;
 
 public class FloatWindowService extends Service {
 

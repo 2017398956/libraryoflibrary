@@ -1,6 +1,8 @@
 package com.nfl.libraryoflibrary.utils;
 
 import android.content.Context;
+import android.os.Build;
+import android.telephony.CellInfo;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
@@ -49,17 +51,23 @@ public class TelephonyInfoTool {
                 lac = location1.getNetworkId();
                 cellId = location1.getBaseStationId();
                 cellId /= 16;*/
-
-        // 获取邻区基站信息
-        List<NeighboringCellInfo> infos = mTelephonyManager.getNeighboringCellInfo();
-
-        StringBuffer sb = new StringBuffer("总数 : " + infos.size() + "\n");
-        for (NeighboringCellInfo info1 : infos) { // 根据邻区总数进行循环
-            sb.append(" LAC : " + info1.getLac()); // 取出当前邻区的LAC
-            sb.append(" CID : " + info1.getCid()); // 取出当前邻区的CID
-            sb.append(" BSSS : " + (-113 + 2 * info1.getRssi()) + "\n"); // 获取邻区基站信号强度
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            List<CellInfo> infos = mTelephonyManager.getAllCellInfo();
+            StringBuffer sb = new StringBuffer("总数 : " + infos.size() + "\n");
+            for (CellInfo info1 : infos) { // 根据邻区总数进行循环
+                sb.append(" info : " + info1 + "\n"); // 获取邻区基站信号强度
+            }
+            Log.i(TAG, " 获取邻区基站信息:" + sb);
         }
-
-        Log.i(TAG, " 获取邻区基站信息:" + sb.toString());
+//        // 获取邻区基站信息
+//        List<NeighboringCellInfo> infos = mTelephonyManager.getNeighboringCellInfo();
+//
+//        StringBuffer sb = new StringBuffer("总数 : " + infos.size() + "\n");
+//        for (NeighboringCellInfo info1 : infos) { // 根据邻区总数进行循环
+//            sb.append(" LAC : " + info1.getLac()); // 取出当前邻区的LAC
+//            sb.append(" CID : " + info1.getCid()); // 取出当前邻区的CID
+//            sb.append(" BSSS : " + (-113 + 2 * info1.getRssi()) + "\n"); // 获取邻区基站信号强度
+//        }
+//        Log.i(TAG, " 获取邻区基站信息:" + sb.toString());
     }
 }

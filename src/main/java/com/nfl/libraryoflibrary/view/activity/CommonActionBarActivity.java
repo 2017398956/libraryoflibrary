@@ -135,12 +135,12 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
     }
 
     private void initActionBarAndViewStub() {
-        app_bar = (LinearLayout) findViewById(R.id.app_bar);
-        iv_alternate = (ImageView) findViewById(R.id.iv_alternate);
-        title_conference_search_button = (TextView) findViewById(R.id.title_conference_search_button);
-        ll_pad_container = (LinearLayout) findViewById(R.id.ll_pad_container);
-        ll_data_binding = (LinearLayout) findViewById(R.id.ll_data_binding);
-        iv_back = (ImageView) findViewById(R.id.iv_back);
+        app_bar = findViewById(R.id.app_bar);
+        iv_alternate = findViewById(R.id.iv_alternate);
+        title_conference_search_button = findViewById(R.id.title_conference_search_button);
+        ll_pad_container = findViewById(R.id.ll_pad_container);
+        ll_data_binding = findViewById(R.id.ll_data_binding);
+        iv_back = findViewById(R.id.iv_back);
         iv_back.setOnClickListener(new CustomOnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,7 +149,7 @@ public abstract class CommonActionBarActivity extends FragmentActivity implement
                 CommonActionBarActivity.this.finish();
             }
         });
-        tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_title = findViewById(R.id.tv_title);
     }
 
 

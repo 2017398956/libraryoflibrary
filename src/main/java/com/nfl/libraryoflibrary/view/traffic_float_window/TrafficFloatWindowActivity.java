@@ -14,7 +14,7 @@ import com.nfl.libraryoflibrary.constant.ApplicationContext;
 
 import java.util.List;
 
-import personal.nfl.permission.annotation.GetPermissionsAuto;
+//import personal.nfl.permission.annotation.GetPermissionsAuto;
 
 public class TrafficFloatWindowActivity extends Activity {
 

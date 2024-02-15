@@ -49,12 +49,12 @@ public class WebViewHelper {
 		webSettings.setBuiltInZoomControls(true); // 设置是否支持缩放
 		webSettings.setJavaScriptEnabled(true); // 设置是否支持JavaScript
 		webSettings.setDomStorageEnabled(true); // 是否支持文件对象存储
-		webSettings.setAppCacheEnabled(true); // 是否支持cache
+//		webSettings.setAppCacheEnabled(true); // 是否支持cache
 		String appCacheDir = context.getDir("cache", Context.MODE_PRIVATE)
 				.getPath();
-		webSettings.setAppCachePath(appCacheDir);
+//		webSettings.setAppCachePath(appCacheDir);
 		webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-		webSettings.setAppCacheMaxSize(1024 * 1024 * 1);// 设置cache最大值
+//		webSettings.setAppCacheMaxSize(1024 * 1024 * 1);// 设置cache最大值
 		webSettings.setAllowFileAccess(true);// 设置启用或禁止访问文件数据
 		webSettings.setRenderPriority(RenderPriority.HIGH); // 设置GPL渲染优先权
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -152,7 +152,7 @@ public class WebViewHelper {
 		}
 
 		// 摄者cache大小
-		@Override
+//		@Override
 		public void onReachedMaxAppCacheSize(long spaceNeeded,
 				long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater) {
 

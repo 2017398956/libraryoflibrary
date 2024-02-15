@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#aaaaaa"   >
 
-    <com.zhy.view.ClipImageLayout
+    <com.nfl.libraryoflibrary.view.CustomCrop.ClipImageLayout
         android:id="@+id/id_clipImageLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />

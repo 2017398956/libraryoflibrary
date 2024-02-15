@@ -5,14 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Pair;
 
-import com.nfl.libraryoflibrary.BuildConfig;
 import com.nfl.libraryoflibrary.utils.DesTool;
-import com.nfl.libraryoflibrary.utils.LogTool;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Database extends SQLiteOpenHelper {
@@ -108,17 +103,18 @@ public class Database extends SQLiteOpenHelper {
         } finally {
             getWritableDatabase().endTransaction();
         }
-        insertNewDayEncrypt(date , steps , correctSensorSteps , off);
+        insertNewDayEncrypt(date, steps, correctSensorSteps, off);
     }
+
     public void insertNewDayEncrypt(long date, int steps, int correctSensorSteps, int off) {
         getWritableDatabase().beginTransaction();
         try {
             ContentValues values = new ContentValues();
             values.put("date", date);
-            values.put("steps", DesTool.encrypt(steps + "" ));
-            values.put("sensor", DesTool.encrypt(correctSensorSteps + "" ));
+            values.put("steps", DesTool.encrypt(steps + ""));
+            values.put("sensor", DesTool.encrypt(correctSensorSteps + ""));
             values.put("off", off);
-            getWritableDatabase().insert(DB_NAME_ENCRYPT , null, values);
+            getWritableDatabase().insert(DB_NAME_ENCRYPT, null, values);
             getWritableDatabase().setTransactionSuccessful();
         } finally {
             getWritableDatabase().endTransaction();
@@ -143,20 +139,21 @@ public class Database extends SQLiteOpenHelper {
                     "UPDATE " + DB_NAME + " SET steps = steps + " + correctSensorSteps + " WHERE date = " + date);
         }
         c.close();
-        updateStepsEncrypt(date , correctSensorSteps);
+        updateStepsEncrypt(date, correctSensorSteps);
     }
+
     public void updateStepsEncrypt(long date, int correctSensorSteps) {
-        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT , new String[]{"date"}, "date = ?",
+        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"date"}, "date = ?",
                 new String[]{String.valueOf(date)}, null, null, null);
         c.moveToFirst();
         if (c.getCount() == 0) {
             // 没有记录,说明之前传感器没有动，所以一概为0 ；
             insertNewDayEncrypt(date, 0, 0, 1);
         } else {
-            int steps = 0 ;
-            try{
-                steps = Integer.parseInt(DesTool.decrypt(getStepsEncrypt(date))) ;
-            }catch (Exception e){
+            int steps = 0;
+            try {
+                steps = Integer.parseInt(DesTool.decrypt(getStepsEncrypt(date)));
+            } catch (Exception e) {
 
             }
             getWritableDatabase().execSQL(
@@ -180,17 +177,18 @@ public class Database extends SQLiteOpenHelper {
         }
         return re;
     }
+
     public String getStepsEncrypt(long date) {
-        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT , new String[]{"steps"}, "date = ?",
+        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"steps"}, "date = ?",
                 new String[]{String.valueOf(date)}, null, null, null);
         c.moveToFirst();
-        String re = null ;
+        String re = null;
         if (c.getCount() == 0) {
-            re = "" ;
+            re = "";
         } else {
             re = c.getString(0);
-            if(null == re){
-                re = "" ;
+            if (null == re) {
+                re = "";
             }
         }
         c.close();
@@ -215,8 +213,9 @@ public class Database extends SQLiteOpenHelper {
                     "UPDATE " + DB_NAME + " SET sensor = " + correctSensorSteps + " WHERE date = " + date);
         }
         c.close();
-        updateSensorStepsEncrypt(date , correctSensorSteps);
+        updateSensorStepsEncrypt(date, correctSensorSteps);
     }
+
     public void updateSensorStepsEncrypt(long date, int correctSensorSteps) {
         Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"date"}, "date = ?",
                 new String[]{String.valueOf(date)}, null, null, null);
@@ -248,17 +247,18 @@ public class Database extends SQLiteOpenHelper {
         c.close();
         return re;
     }
+
     public String getSensorStepsEncrypt(long date) {
         Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"sensor"}, "date = ?",
                 new String[]{String.valueOf(date)}, null, null, null);
         c.moveToFirst();
-        String re = null ;
+        String re = null;
         if (c.getCount() == 0) {
-            re = "" ;
+            re = "";
         } else {
             re = c.getString(0);
-            if(null == re){
-                re = "" ;
+            if (null == re) {
+                re = "";
             }
         }
         c.close();
@@ -277,22 +277,23 @@ public class Database extends SQLiteOpenHelper {
         c.moveToFirst();
         if (c.getCount() == 0) {
             // 没有记录,统统为0
-            insertNewDay(date, 0 , 0 , offStatus);
-        }else {
+            insertNewDay(date, 0, 0, offStatus);
+        } else {
             getWritableDatabase().execSQL(
                     "UPDATE " + DB_NAME + " SET off = " + offStatus + " WHERE date = " + date);
         }
         c.close();
-        updateOffStatusEncrypt(date , offStatus) ;
+        updateOffStatusEncrypt(date, offStatus);
     }
+
     public void updateOffStatusEncrypt(long date, int offStatus) {
-        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT , new String[]{"date"}, "date = ?",
+        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"date"}, "date = ?",
                 new String[]{String.valueOf(date)}, null, null, null);
         c.moveToFirst();
         if (c.getCount() == 0) {
             // 没有记录,统统为0
-            insertNewDay(date, 0 , 0 , offStatus);
-        }else {
+            insertNewDay(date, 0, 0, offStatus);
+        } else {
             getWritableDatabase().execSQL(
                     "UPDATE " + DB_NAME_ENCRYPT + " SET off = " + offStatus + " WHERE date = " + date);
         }
@@ -317,6 +318,7 @@ public class Database extends SQLiteOpenHelper {
         c.close();
         return hasOffed;
     }
+
     public int getOffStatusEncypt(long date) {
         Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"off"}, "date = ?",
                 new String[]{String.valueOf(date)}, null, null, null);
@@ -333,19 +335,19 @@ public class Database extends SQLiteOpenHelper {
     public void updateAll() {
         getWritableDatabase().execSQL(
                 "UPDATE " + DB_NAME + " SET off = 1,steps = steps + sensor,sensor = 0");
-        updateAllEncrypt() ;
+        updateAllEncrypt();
     }
 
     public void updateAllEncrypt() {
-        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT , new String[]{"date"}, "date > ?",
+        Cursor c = getReadableDatabase().query(DB_NAME_ENCRYPT, new String[]{"date"}, "date > ?",
                 new String[]{String.valueOf(1)}, null, null, null);
         if (c.getCount() == 0) {
             // 没有记录,说明之前传感器没有动,不进行任何操作
         } else {
-            while (c.moveToNext()){
-                long date = c.getLong(0) ;
-                int steps = getSteps(date) ;
-                int sensor = getSensorSteps(date) ;
+            while (c.moveToNext()) {
+                long date = c.getLong(0);
+                int steps = getSteps(date);
+                int sensor = getSensorSteps(date);
                 getWritableDatabase().execSQL(
                         "UPDATE " + DB_NAME_ENCRYPT + " SET off = 1,steps = \"" + DesTool.encrypt((steps + sensor) + "")
                                 + "\",sensor = \"" + DesTool.encrypt("0") + "\" WHERE date = " + date);
