@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 //apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-//apply plugin: 'AspectPlugin'
-//apply plugin: 'abcpermission.plugin'
+apply plugin: 'AspectPlugin'
+apply plugin: 'abcpermission.plugin'
 
 // def COMPILESDK_VERSION = Integer.parseInt(file('../COMPILESDK_VERSION.txt').text)
 // def BUILDTOOLS_VERSION = file('../BUILDTOOLS_VERSION.txt').text
@@ -82,8 +82,8 @@ dependencies {
     // annotationProcessor "com.github.bumptech.glide:compiler:$GLIDE"
     api "com.nostra13.universalimageloader:universal-image-loader:$UNIVERSAL_IMAGE_LOADER"
     api "org.xutils:xutils:3.8.12"
-    // https://github.com/smuyyh/ImageSelector
-    // api 'com.yuyh.imgsel:library:2.1.0'
+    // 由于 ImageSelector 使用的是 support，所以这里不再使用(https://github.com/smuyyh/ImageSelector)
+    // api 'com.github.smuyyh:ImageSelector:3.0'
     api 'org.greenrobot:eventbus:3.3.1'
     implementation 'androidx.core:core-ktx:1.12.0'
     // api 'ch.acra:acra:4.11.1'

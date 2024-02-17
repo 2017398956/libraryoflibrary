@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//import personal.nfl.permission.annotation.GetPermissions;
+import personal.nfl.permission.annotation.GetPermissions4AndroidX;
 
 public class FloatWindowService extends Service {
 
     /**
      * 用于在线程中创建或移除悬浮窗。
      */
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     /**
      * 定时器，定时进行检测当前应该创建还是移除悬浮窗。
@@ -32,7 +32,7 @@ public class FloatWindowService extends Service {
     private Timer timer;
 
     /**
-     * 是否只在桌面显示 , 默认为true ，其具体取值根据用户的配置文件设置
+     * 是否只在桌面显示 , 默认为 true ，其具体取值根据用户的配置文件设置
      */
     private boolean isOnlyShowOnDesktop = true;
 
@@ -51,8 +51,18 @@ public class FloatWindowService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    // @GetPermissions({Manifest.permission.SYSTEM_ALERT_WINDOW})
     private void openFloatWindow() {
+        if (timer == null) {
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new RefreshTask(), 0, 500);
+        }
+    }
+
+    /**
+     * 演示权限申请
+     */
+    @GetPermissions4AndroidX({Manifest.permission.SYSTEM_ALERT_WINDOW})
+    private void openFloatWindow2() {
         if (timer == null) {
             timer = new Timer();
             timer.scheduleAtFixedRate(new RefreshTask(), 0, 500);
@@ -71,39 +81,20 @@ public class FloatWindowService extends Service {
 
         @Override
         public void run() {
-
             // 创建悬浮窗。（逻辑看else比较清楚）
             if (!isOnlyShowOnDesktop || isHome()) {
                 if (!MyWindowManager.isWindowShowing()) {
                     // 还不存在悬浮窗，则创建悬浮窗
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyWindowManager
-                                    .createSmallWindow(getApplicationContext());
-
-                        }
-                    });
+                    handler.post(() -> MyWindowManager.createSmallWindow(getApplicationContext()));
                 } else {
                     // 已有悬浮窗，则更新悬浮窗
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyWindowManager
-                                    .updateUsedPercent(getApplicationContext());
-                        }
-                    });
+                    handler.post(() -> MyWindowManager.updateUsedPercent(getApplicationContext()));
                 }
             } else {
                 // 仅在桌面显示，但当前不是桌面，则移除悬浮窗。
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        MyWindowManager
-                                .removeSmallWindow(getApplicationContext());
-                        MyWindowManager
-                                .removeBigWindow(getApplicationContext());
-                    }
+                handler.post(() -> {
+                    MyWindowManager.removeSmallWindow(getApplicationContext());
+                    MyWindowManager.removeBigWindow(getApplicationContext());
                 });
             }
         }
@@ -141,7 +132,6 @@ public class FloatWindowService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
         return null;
     }
 

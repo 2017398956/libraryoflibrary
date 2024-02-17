@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.nfl.libraryoflibrary.R;
 import com.nfl.libraryoflibrary.utils.LogTool;
-import com.nfl.libraryoflibrary.utils.SoftKeyBoardTool;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -44,7 +42,7 @@ public class DBInsightActivity extends Activity {
     }
 
     private void initView() {
-        dataBasePath = (EditText) findViewById(R.id.dataBasePath);
+        dataBasePath = findViewById(R.id.dataBasePath);
         workplacePath = Environment.getExternalStorageDirectory()
                 .getAbsolutePath() + File.separator + "NFLDBWORKPLACE";
         // + File.separator + "DataBases";
@@ -53,30 +51,23 @@ public class DBInsightActivity extends Activity {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
         data = new ArrayList<>();
-        dbList = (ListView) findViewById(R.id.dbList);
+        dbList = findViewById(R.id.dbList);
         adapter = new SimpleAdapter(this, data,
                 android.R.layout.simple_list_item_1, new String[]{"dbName"},
                 new int[]{android.R.id.text1});
         dbList.setAdapter(adapter);
-        dbList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(DBInsightActivity.this,
-                        ShowDBTableActivity.class);
-                intent.putExtra("filePath", data.get(position).get("filePath"));
-                intent.putExtra("dbName", data.get(position).get("dbName"));
-                startActivityForResult(intent , 100);// 这里只是为了解决back键不回退到当前Activity的情况
-            }
+        dbList.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(DBInsightActivity.this,
+                    ShowDBTableActivity.class);
+            intent.putExtra("filePath", data.get(position).get("filePath"));
+            intent.putExtra("dbName", data.get(position).get("dbName"));
+            startActivityForResult(intent, 100);// 这里只是为了解决back键不回退到当前Activity的情况
         });
-        String selfDataPath = this.getDir("test", MODE_PRIVATE).getParent() + File.separator + "databases" ;
+        String selfDataPath = this.getDir("test", MODE_PRIVATE).getParent() + File.separator + "databases";
         dataBasePath.setText(selfDataPath);
         LogTool.i(selfDataPath);
         getDataBaseList(selfDataPath);
@@ -131,8 +122,6 @@ public class DBInsightActivity extends Activity {
      * @param path
      */
     private void getDataBaseList(String path) {
-        // TODO Auto-generated method stub
-
         File dir = new File(path);
         if (!dir.exists()) {
             LogTool.i("该应用不存在databases目录");
@@ -152,8 +141,8 @@ public class DBInsightActivity extends Activity {
                 String fileName = files[i].getName();
                 String filePath = files[i].getAbsolutePath();
                 // LogTool.i("file[" + i + "]:" + filePath);
-                String endString = ".db" ;
-                endString = "" ;
+                String endString = ".db";
+                endString = "";
                 if (fileName.endsWith(endString)) {
                     map = new HashMap<>();
                     map.put("dbName", fileName);

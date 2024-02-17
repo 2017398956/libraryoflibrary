@@ -261,6 +261,7 @@ public class CustomRecyclerView extends RecyclerView {
     }
 
     public void setPullToLoadMoreListener(PullToLoadMoreListener pullToLoadMoreListener) {
+        canLoadMore = true;
         this.pullToLoadMoreListener = pullToLoadMoreListener;
     }
 }

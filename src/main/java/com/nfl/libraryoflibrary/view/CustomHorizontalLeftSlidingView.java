@@ -39,6 +39,7 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
         super(context, attrs, defStyleAttr);
         viewDragHelper = ViewDragHelper.create(this, new DragHelperCallback());
     }
+
     /**
      * XMl中所有视图都加载完毕后，执行该方法
      */
@@ -55,7 +56,6 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        LogTool.i("onMeasure") ;
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         dragDistance = hiddenView.getMeasuredWidth();
     }
@@ -128,69 +128,22 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
         }
     }
 
-    /**
-     * Implement this method to intercept all touch screen motion events.  This
-     * allows you to watch events as they are dispatched to your children, and
-     * take ownership of the current gesture at any point.
-     *
-     * <p>Using this function takes some care, as it has a fairly complicated
-     * interaction with {@link View#onTouchEvent(MotionEvent)
-     * View.onTouchEvent(MotionEvent)}, and using it requires implementing
-     * that method as well as this one in the correct way.  Events will be
-     * received in the following order:
-     *
-     * <ol>
-     * <li> You will receive the down event here.
-     * <li> The down event will be handled either by a child of this view
-     * group, or given to your own onTouchEvent() method to handle; this means
-     * you should implement onTouchEvent() to return true, so you will
-     * continue to see the rest of the gesture (instead of looking for
-     * a parent view to handle it).  Also, by returning true from
-     * onTouchEvent(), you will not receive any following
-     * events in onInterceptTouchEvent() and all touch processing must
-     * happen in onTouchEvent() like normal.
-     * <li> For as long as you return false from this function, each following
-     * event (up to and including the final up) will be delivered first here
-     * and then to the target's onTouchEvent().
-     * <li> If you return true from here, you will not receive any
-     * following events: the target view will receive the same event but
-     * with the action {@link MotionEvent#ACTION_CANCEL}, and all further
-     * events will be delivered to your onTouchEvent() method and no longer
-     * appear here.
-     * </ol>
-     *
-     * @param ev The motion event being dispatched down the hierarchy.
-     * @return Return true to steal motion events from the children and have
-     * them dispatched to this ViewGroup through onTouchEvent().
-     * The current target will receive an ACTION_CANCEL event, and no further
-     * messages will be delivered here.
-     */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        LogTool.i("onInterceptTouchEvent" + ev.getAction()) ;
-        /**
-         * ViewDragHelper.shouldInterceptTouchEvent(MotionEvent ev)
-         *
-         * Check if this event as provided to the parent view's onInterceptTouchEvent should
-         * cause the parent to intercept the touch event stream.
-         *
-         * @param ev MotionEvent provided to onInterceptTouchEvent
-         * @return true if the parent view should return true from onInterceptTouchEvent
-         * @return true 事件将不会分发到子View
-         */
+        LogTool.i("onInterceptTouchEvent" + ev.getAction());
         if(viewDragHelper.shouldInterceptTouchEvent(ev)) {
-            // 如果ViewDragHelper应该拦截触摸事件，则触摸事件不会分发到子View。
+            // 如果 ViewDragHelper 应该拦截触摸事件，则触摸事件不会分发到子 View。
             // 即：处理滑动事件
-            // 现在问题：displayedView滑动时不会触法该事件，hiddenView滑动会调用该事件
-            // 原因：displayedView滑动时ev.getAction()为ACTION_DOWN,
-            //       hidden滑动时ev.getAction()为ACTION_MOVE 。
-            // 这是由于hidden设置OnClickListener等触摸类监听方法时，hidden是GONE状态
-            // 而displayedView设置OnClickListener等触摸类监听方法时，displayedView是VISIBLE状态
+            // 现在问题：displayedView 滑动时不会触法该事件，hiddenView 滑动会调用该事件
+            // 原因：displayedView 滑动时 ev.getAction()为 ACTION_DOWN,
+            //       hidden 滑动时 ev.getAction()为 ACTION_MOVE 。
+            // 这是由于 hidden 设置 OnClickListener 等触摸类监听方法时，hidden 是 GONE状态
+            // 而 displayedView 设置 OnClickListener 等触摸类监听方法时，displayedView 是VISIBLE状态
             LogTool.i("====================") ;
             return true;
         }
         // 由于 super.onInterceptTouchEvent(ev) = false ，所以直接返回false即可
-        return false ;
+        return true ;
     }
 
 
@@ -201,7 +154,7 @@ public class CustomHorizontalLeftSlidingView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_DOWN){
-            // 解决滑动后ACTION_UP没有被触法，displayedViewMoveCount没清空的问题
+            // 解决滑动后 ACTION_UP 没有被触法，displayedViewMoveCount 没清空的问题
             // 所以，重置操作不能放在ACTION_UP触法时进行。ACTION_DOWN一定会触法
             displayedViewMoveCount = 0 ;
         }
