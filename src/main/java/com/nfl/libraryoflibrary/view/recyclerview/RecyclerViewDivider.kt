@@ -19,7 +19,11 @@ class RecyclerViewDivider(context: Context, orientation: Int) : ItemDecoration()
     private var transparentDrawable: Drawable? = null
     private var mPaint: Paint? = null
     private var mDivider: Drawable?
-    private var mDividerHeight = 2 //分割线高度，默认为1px
+
+    /**
+     * 为了均等分割，当绘制竖直分割线时应当为 3 的整数倍
+     */
+    private var mDividerHeight = 3 //分割线高度，默认为1px
 
     //列表的方向：LinearLayoutManager.VERTICAL或LinearLayoutManager.HORIZONTAL
     private val mOrientation: Int
@@ -92,9 +96,11 @@ class RecyclerViewDivider(context: Context, orientation: Int) : ItemDecoration()
                 val spanCount = (parent.layoutManager as GridLayoutManager?)!!.spanCount
                 if (curPosition / spanCount * spanCount + spanCount >= state.itemCount) {
                     // 说明是最后一行,不应该设置
-                    outRect[0, 0, 0] = 0
+//                    outRect.set(0, 0, 0, 0)
+                    outRect.bottom = 0
                 } else {
-                    outRect[0, 0, 0] = mDividerHeight
+                    outRect.bottom = mDividerHeight
+//                    outRect.set(0, 0, 0, mDividerHeight)
                 }
             } else {
                 if (curPosition == state.itemCount - 1) {
@@ -108,9 +114,17 @@ class RecyclerViewDivider(context: Context, orientation: Int) : ItemDecoration()
                 val spanCount = (parent.layoutManager as GridLayoutManager?)!!.spanCount
                 if ((curPosition + 1) % spanCount == 0) {
                     // 说明在这里换行，不要绘制了
-                    outRect[0, 0, 0] = 0
+                    outRect.right = 0
+                    outRect.left = mDividerHeight / 3 * 2
+//                    outRect.set(0, 0, 0, 0)
+                } else if (curPosition % spanCount == 0) {
+                    // 开头的
+                    outRect.right = mDividerHeight / 3 * 2
                 } else {
-                    outRect[0, 0, mDividerHeight] = 0
+                    // 中间的
+                    outRect.right = mDividerHeight / 3
+                    outRect.left = outRect.right
+//                    outRect.set(0, 0, mDividerHeight, 0)
                 }
             } else {
                 outRect[0, 0, mDividerHeight] = 0
@@ -186,19 +200,6 @@ class RecyclerViewDivider(context: Context, orientation: Int) : ItemDecoration()
             val layoutParams = child.layoutParams as RecyclerView.LayoutParams
             val left = child.right + layoutParams.rightMargin
             val right = left + mDividerHeight
-            if (mDivider != null) {
-                mDivider!!.setBounds(left, top, right, bottom)
-                mDivider!!.draw(canvas)
-            }
-            if (mPaint != null) {
-                canvas.drawRect(
-                    left.toFloat(),
-                    top.toFloat(),
-                    right.toFloat(),
-                    bottom.toFloat(),
-                    mPaint!!
-                )
-            }
             if (bgTransparent) {
                 if (null == transparentDrawable) {
                     transparentDrawable =
@@ -206,6 +207,20 @@ class RecyclerViewDivider(context: Context, orientation: Int) : ItemDecoration()
                     transparentDrawable?.setBounds(left, top, right, bottom)
                 }
                 transparentDrawable!!.draw(canvas)
+            } else {
+                if (mDivider != null) {
+                    mDivider!!.setBounds(left, top, right, bottom)
+                    mDivider!!.draw(canvas)
+                }
+                if (mPaint != null) {
+                    canvas.drawRect(
+                        left.toFloat(),
+                        top.toFloat(),
+                        right.toFloat(),
+                        bottom.toFloat(),
+                        mPaint!!
+                    )
+                }
             }
         }
     }
