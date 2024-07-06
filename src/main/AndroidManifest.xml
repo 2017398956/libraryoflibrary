@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <!-- 讯飞所需要的权限 -->
     <!-- 获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
@@ -23,7 +25,9 @@
 
     <!-- 读取联系人权限，上传联系人需要用到此权限 -->
     <!-- <uses-permission android:name="android.permission.READ_CONTACTS"/> -->
-    <application>
+    <application
+        android:preserveLegacyExternalStorage="true"
+        android:requestLegacyExternalStorage="true">
         <activity android:name=".view.CustomCrop.CustomCropActivity" />
         <activity android:name=".view.CustomCrop.ShowImageActivity" />
 
@@ -172,8 +176,8 @@
             android:name=".service.TestAccessibilityServiceService"
             android:enabled="true"
             android:exported="true"
-            android:label="@string/lab"
             android:icon="@drawable/icon_lab"
+            android:label="@string/lab"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />

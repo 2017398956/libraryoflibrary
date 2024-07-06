@@ -1,12 +1,12 @@
 package com.nfl.libraryoflibrary.utils;
 
 import android.app.Activity;
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 
 import java.lang.reflect.Field;
@@ -77,5 +77,53 @@ public class PermissionUtil {
         } else {//4.4-6.0以下
             //无需处理了
         }
+    }
+
+    /**
+     * 申请管理所有文件的权限
+     * 需要和 {@link android.Manifest.permission#MANAGE_EXTERNAL_STORAGE} 一起使用
+     *
+     * @param activity
+     * @param requestCode
+     * @return true 有权限；false 没有权限，需要在 {@link Activity#onActivityResult(int, int, Intent)} 中处理
+     */
+    public static boolean requestManagerAllFiles(Activity activity, int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                // ACTION_APPLICATION_DETAILS_SETTINGS
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.fromParts("package", activity.getPackageName(), null));
+                activity.startActivityForResult(intent, requestCode);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 请求安装 apk 权限
+     * 需要和 {@link android.Manifest.permission#REQUEST_INSTALL_PACKAGES}一起使用
+     * @param activity
+     * @param requestCode
+     * @return true 有权限；false 没有权限，需要在 {@link Activity#onActivityResult(int, int, Intent)} 中处理
+     */
+    public static boolean requestInstallApk(Activity activity, int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            boolean haveInstallPermission = activity.getPackageManager().canRequestPackageInstalls();
+            if (!haveInstallPermission) {
+                Uri packageURI = Uri.parse("package:" + activity.getPackageName());
+                Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+                activity.startActivityForResult(intent, requestCode);
+//                activity.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+//                    if (result.getResultCode() == RESULT_OK) {
+//                        Toast.makeText(this, "已授权安装 APK", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(this, "未授权安装 APK", Toast.LENGTH_SHORT).show();
+//                    }
+//                }).launch(intent);
+                return false;
+            }
+        }
+        return true;
     }
 }
