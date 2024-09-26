@@ -61,15 +61,15 @@ dependencies {
     // include group:'com.android.support',module:'support-media-compat'
     api 'androidx.legacy:legacy-support-v4:1.0.0'
     // include group: 'com.android.support', module: 'support-vector-drawable'
-    api('androidx.appcompat:appcompat:1.6.1')
+    api('androidx.appcompat:appcompat:1.7.0')
     api('androidx.recyclerview:recyclerview:1.3.2')
     api('androidx.legacy:legacy-support-v13:1.0.0')
 
-    api('androidx.transition:transition:1.4.1')
+    api('androidx.transition:transition:1.5.1')
 
     // http://stackoverflow.com/questions/39286118/getting-java-util-zip-zipexception-duplicate-entry-exception
     // design 为单独包
-    api('com.google.android.material:material:1.11.0')
+    api('com.google.android.material:material:1.12.0')
 
     api('androidx.constraintlayout:constraintlayout:2.1.4')
     api('androidx.multidex:multidex:2.0.1')
@@ -77,7 +77,7 @@ dependencies {
 
     api "com.squareup.okhttp3:okhttp:4.12.0"
     api "id.zelory:compressor:3.0.1"
-    api "com.google.code.gson:gson:2.10.1"
+    api 'com.google.code.gson:gson:2.11.0'
     api 'com.github.bumptech.glide:glide:4.16.0'
     // annotationProcessor "com.github.bumptech.glide:compiler:$GLIDE"
     api "com.nostra13.universalimageloader:universal-image-loader:$UNIVERSAL_IMAGE_LOADER"
@@ -85,13 +85,13 @@ dependencies {
     // 由于 ImageSelector 使用的是 support，所以这里不再使用(https://github.com/smuyyh/ImageSelector)
     // api 'com.github.smuyyh:ImageSelector:3.0'
     api 'org.greenrobot:eventbus:3.3.1'
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
     // api 'ch.acra:acra:4.11.1'
 
     testImplementation "junit:junit:4.13.2"
 
     // debugImplementation because LeakCanary should only run in debug builds.
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 //    debugApi "com.squareup.leakcanary:leakcanary-android:$LEAKCANARY"
 //    releaseApi "com.squareup.leakcanary:leakcanary-android-no-op:$LEAKCANARY"
     // https://github.com/Bigkoo/Android-PickerView
