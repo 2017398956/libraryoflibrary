@@ -10,7 +10,7 @@ apply plugin: 'abcpermission.plugin'
 
 android {
 
-    compileSdk 34
+    compileSdk 35
     defaultConfig {
         minSdkVersion "${MIN_SDK_VERSION}" as int
         multiDexEnabled true
@@ -71,7 +71,7 @@ dependencies {
     // design 为单独包
     api('com.google.android.material:material:1.12.0')
 
-    api('androidx.constraintlayout:constraintlayout:2.1.4')
+    api('androidx.constraintlayout:constraintlayout:2.2.0')
     api('androidx.multidex:multidex:2.0.1')
     api('androidx.viewpager:viewpager:1.0.0')
 
@@ -85,7 +85,7 @@ dependencies {
     // 由于 ImageSelector 使用的是 support，所以这里不再使用(https://github.com/smuyyh/ImageSelector)
     // api 'com.github.smuyyh:ImageSelector:3.0'
     api 'org.greenrobot:eventbus:3.3.1'
-    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.core:core-ktx:1.15.0'
     // api 'ch.acra:acra:4.11.1'
 
     testImplementation "junit:junit:4.13.2"

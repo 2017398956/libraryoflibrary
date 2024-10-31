@@ -17,7 +17,6 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSpecifier;
 import android.net.wifi.WifiNetworkSuggestion;
 import android.os.Build;
-import android.os.PatternMatcher;
 import android.util.Log;
 
 import androidx.activity.ComponentActivity;
@@ -51,6 +50,10 @@ public class WifiTool {
 
     WifiManager.WifiLock mWifiLock;
 
+    /**
+     * @param context
+     * @deprecated use {@link WifiTool(androidx.appcompat.app.AppCompatActivity)} instead
+     */
     public WifiTool(Context context) {
         applicationContext = context.getApplicationContext();
         // 取得WifiManager对象
@@ -102,6 +105,11 @@ public class WifiTool {
         this.wifiName = wifiName;
         this.wifiPw = wifiPw;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            IntentFilter intentFilter = new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
+            hasRegisterWifiConnectReceiver = true;
+            if (activityRef != null && activityRef.get() != null) {
+                activityRef.get().registerReceiver(broadcastReceiver, intentFilter);
+            }
             WifiNetworkSuggestion networkSuggestion = new WifiNetworkSuggestion.Builder()
                     .setSsid(wifiName)
 //                    .setPriority(0)
@@ -114,13 +122,10 @@ public class WifiTool {
             if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
                 // do error handling here
                 Log.e("NFL", "add network suggestions failed!!!");
+            } else {
+                connectWifiBySsid();
             }
-            // Optional (Wait for post connection broadcast to one of your suggestions)
-            IntentFilter intentFilter = new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
-            hasRegisterWifiConnectReceiver = true;
-            if (activityRef != null && activityRef.get() != null) {
-                activityRef.get().registerReceiver(broadcastReceiver, intentFilter);
-            }
+
         } else {
             connectToWiFiBelowQ(wifiName, wifiPw);
         }
@@ -132,14 +137,15 @@ public class WifiTool {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         // FIXME：是否应该在添加建议wifi成功后执行连接wifi的操作
         WifiNetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
-                .setSsidPattern(new PatternMatcher(this.wifiName, PatternMatcher.PATTERN_PREFIX))
+                .setSsid(this.wifiName)
+//                .setSsidPattern(new PatternMatcher(this.wifiName, PatternMatcher.PATTERN_PREFIX))
 //                .setWpa3Passphrase(this.wifiPw)
 //                    .setBssidPattern(MacAddress.fromString("10:03:23:00:00:00"), MacAddress.fromString("ff:ff:ff:00:00:00"))
                 .build();
         NetworkRequest networkRequest = new NetworkRequest.Builder()
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
 //                .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+//                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                 .setNetworkSpecifier(specifier)
                 .build();
         ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
@@ -147,8 +153,14 @@ public class WifiTool {
             public void onAvailable(@NonNull Network network) {
                 super.onAvailable(network);
                 Log.d("NFL", "onAvailable$network");
+//                connectivityManager.bindProcessToNetwork(network);
 //                connectivityManager.unregisterNetworkCallback(networkCallback)
-                mWifiManager.disconnect();
+//                mWifiManager.disconnect();
+//                mWifiManager.reconnect();
+                List<String> pingResultList = new ExecShell().executeCommand(new String[]{"ping", "-c", "4", "192.168.100.255"});
+                for (String string : pingResultList) {
+                    LogTool.d("NFL", "pingResultList:" + string);
+                }
             }
 
             @Override
@@ -157,6 +169,14 @@ public class WifiTool {
                 Log.d("NFL", "onUnavailable");
             }
         };
+//        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
+//        ComponentActivity activity = this.activityRef.get();
+//        activity.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+//            @Override
+//            public void onDestroy(@NonNull LifecycleOwner owner) {
+//                connectivityManager.unregisterNetworkCallback(networkCallback);
+//            }
+//        });
         connectivityManager.requestNetwork(networkRequest, networkCallback);
     }
 
@@ -171,9 +191,9 @@ public class WifiTool {
     public void closeWifi() {
         if (!mWifiManager.isWifiEnabled()) {
             mWifiManager.setWifiEnabled(false);
-            LogTool.i("wifi即将被关闭") ;
-        }else{
-            LogTool.i("wifi是关闭状态，不需要关闭") ;
+            LogTool.i("wifi即将被关闭");
+        } else {
+            LogTool.i("wifi是关闭状态，不需要关闭");
         }
     }
 
@@ -226,6 +246,7 @@ public class WifiTool {
             }
         }
     };
+
     public void startScan() {
         // 注册 WiFi 扫描结果、WiFi 状态变化的广播接收
         IntentFilter intentFilter = new IntentFilter();
@@ -401,10 +422,10 @@ public class WifiTool {
     /**
      * 将WiFi信息打印在log上
      */
-    public void printWifiInfo(){
-        LogTool.i(mWifiManager.getDhcpInfo().toString() + "wifi信息：" + getWifiInfo()) ;
+    public void printWifiInfo() {
+        LogTool.i(mWifiManager.getDhcpInfo().toString() + "wifi信息：" + getWifiInfo());
         closeWifi();
-        mWifiInfo = mWifiManager.getConnectionInfo()  ;
-        LogTool.i(mWifiManager.getDhcpInfo().toString() + "wifi信息2：" + getWifiInfo()) ;
+        mWifiInfo = mWifiManager.getConnectionInfo();
+        LogTool.i(mWifiManager.getDhcpInfo().toString() + "wifi信息2：" + getWifiInfo());
     }
 }
